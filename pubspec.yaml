@@ -1,0 +1,23 @@
+name: edumunch
+description: "EduMunch is a comprehensive Learning Management System designed to empower educational institutions and coaching institutes. Streamline student enrollment, track academic progress, manage courses, assignments, and grades all in one intuitive platform. Foster better teacher-student collaboration and parental engagement with real-time notifications and progress reports. Elevate your educational experience with EduMunch - where teaching and learning thrive together."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo.png
