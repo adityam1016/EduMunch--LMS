@@ -243,3 +243,4 @@ class _RoleCardWidgetState extends State<_RoleCardWidget> {
       ),
     );
   }
+}

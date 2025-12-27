@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'splash_screen.dart';
 import 'role_selection_screen.dart';
+import 'login_screen.dart';
+import 'forgot_password_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,8 +18,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home: const SplashScreen(),
+      home: const LoginScreen(),
       routes: {
+        '/login': (context) => const LoginScreen(),
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/role-selection': (context) => const RoleSelectionScreen(),
         '/home': (context) => const MyHomePage(title: 'EduMunch'),
       },
