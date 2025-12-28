@@ -3,6 +3,12 @@ import 'splash_screen.dart';
 import 'role_selection_screen.dart';
 import 'login_screen.dart';
 import 'forgot_password_screen.dart';
+import 'student/student_dashboard.dart';
+import 'student/notification_screen.dart';
+import 'student/attendance_screen.dart';
+import 'student/courses_screen.dart';
+import 'student/timetable_screen.dart';
+import 'student/doubt_lecture_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,14 +21,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EduMunch',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
       routes: {
-        '/login': (context) => const LoginScreen(),
+        '/login': (context) {
+          final role = ModalRoute.of(context)?.settings.arguments as String?;
+          return LoginScreen(role: role ?? 'Student');
+        },
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/role-selection': (context) => const RoleSelectionScreen(),
+        '/dashboard': (context) => const StudentDashboard(),
+        '/notifications': (context) => const NotificationScreen(),
+        '/attendance': (context) => const AttendanceScreen(),
+        '/courses': (context) => const CoursesScreen(),
+        '/timetable': (context) => const TimetableScreen(),
+        '/doubt-lecture': (context) => const DoubtLectureScreen(),
         '/home': (context) => const MyHomePage(title: 'EduMunch'),
       },
     );

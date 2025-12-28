@@ -99,8 +99,13 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       height: 55,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Add your navigation logic here
+                          // Navigate to login screen with selected role
                           print("Selected Role: $selectedRole");
+                          Navigator.pushNamed(
+                            context,
+                            '/login',
+                            arguments: selectedRole,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2962FF), // Primary Blue
