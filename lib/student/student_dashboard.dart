@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'notification_screen.dart';
 import 'app_drawer.dart';
 
@@ -24,87 +25,95 @@ class _StudentDashboardState extends State<StudentDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            // App Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  // Menu Icon
-                  Builder(
-                    builder: (context) => GestureDetector(
+            // App Bar with Gradient
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.blue[400]!,
+                    Colors.blue[700]!,
+                  ],
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Row(
+                  children: [
+                    // Menu Icon
+                    Builder(
+                      builder: (context) => GestureDetector(
+                        onTap: () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white.withOpacity(0.1)
+                                : Colors.white.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.menu,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Centered EduMunch Title
+                    Expanded(
+                      child: Text(
+                        'EduMunch',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    // Notification Icon
+                    GestureDetector(
                       onTap: () {
-                        Scaffold.of(context).openDrawer();
+                        Get.to(() => const NotificationScreen());
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.grey[100],
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.white.withOpacity(0.3),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(
-                          Icons.menu,
-                          color: Color(0xFF1A237E),
+                          Icons.notifications_outlined,
+                          color: Colors.white,
                           size: 24,
                         ),
                       ),
                     ),
-                  ),
-                  // Centered EduMunch Title
-                  const Expanded(
-                    child: Text(
-                      'EduMunch',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A237E),
-                      ),
-                    ),
-                  ),
-                  // Notification Icon
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NotificationScreen(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.notifications_outlined,
-                        color: Color(0xFF1A237E),
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 
             // Dashboard Title
-            const Padding(
-              padding: EdgeInsets.only(left: 20, top: 8, bottom: 16),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 16, bottom: 16),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Dashboard',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: Theme.of(context).textTheme.displayMedium,
                 ),
               ),
             ),
@@ -144,9 +153,18 @@ class _StudentDashboardState extends State<StudentDashboard> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey[50],
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white,
+              Colors.white.withOpacity(0.95),
+            ],
+          ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
+          border: Border.all(
+            color: Colors.grey[300]!,
+          ),
         ),
         child: Column(
           children: [
@@ -173,7 +191,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                           errorBuilder: (context, error, stackTrace) {
                             return Container(
                               color: Colors.grey[200],
-                              child: const Icon(
+                              child: Icon(
                                 Icons.person,
                                 size: 40,
                                 color: Colors.grey,
@@ -215,25 +233,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     children: [
                       Text(
                         studentData['name']!,
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         studentData['batch']!,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       Text(
                         'ID: ${studentData['studentId']}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF4CAF50),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: const Color(0xFF4CAF50),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -245,7 +257,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   _isProfileExpanded
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  color: Colors.black54,
+                  color: Colors.grey,
                 ),
               ],
             ),
@@ -277,26 +289,19 @@ class _StudentDashboardState extends State<StudentDashboard> {
             width: 100,
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          const Text(
+          Text(
             ': ',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black54,
-            ),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -313,17 +318,18 @@ class _StudentDashboardState extends State<StudentDashboard> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
           padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 'Change Profile Picture',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 24),
               Row(
@@ -333,21 +339,21 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     icon: Icons.camera_alt,
                     label: 'Camera',
                     onTap: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                   ),
                   _buildImageOption(
                     icon: Icons.photo_library,
                     label: 'Gallery',
                     onTap: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                   ),
                   _buildImageOption(
                     icon: Icons.delete,
                     label: 'Remove',
                     onTap: () {
-                      Navigator.pop(context);
+                      Get.back();
                     },
                   ),
                 ],
@@ -365,6 +371,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
     required String label,
     required VoidCallback onTap,
   }) {
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -372,62 +381,73 @@ class _StudentDashboardState extends State<StudentDashboard> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? [
+                        const Color(0xFF1565C0).withOpacity(0.6),
+                        const Color(0xFF1976D2).withOpacity(0.6),
+                      ]
+                    : [
+                        const Color(0xFFE3F2FD),
+                        const Color(0xFFBBDEFB),
+                      ],
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
               size: 28,
-              color: const Color(0xFF2962FF),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
+            style: Theme.of(context).textTheme.labelSmall,
           ),
         ],
       ),
+    );
+      },
     );
   }
 
   Widget _buildFeatureGrid() {
     final features = [
-      {'icon': Icons.calendar_today_outlined, 'label': 'Attendance', 'color': const Color(0xFF42A5F5), 'route': '/attendance'},
-      {'icon': Icons.school_outlined, 'label': 'Courses', 'color': const Color(0xFF7E57C2), 'route': '/courses'},
-      {'icon': Icons.access_time, 'label': 'Timetable', 'color': const Color(0xFF42A5F5), 'route': '/timetable'},
-      {'icon': Icons.play_circle_outline, 'label': 'Doubt Lecture', 'color': const Color(0xFFEF5350), 'route': '/doubt-lecture'},
-      {'icon': Icons.assignment_outlined, 'label': 'Assignments', 'color': const Color(0xFF26A69A), 'route': '/assignments'},
-      {'icon': Icons.help_outline, 'label': 'Doubts', 'color': const Color(0xFFFFB74D), 'route': '/doubts'},
-      {'icon': Icons.quiz_outlined, 'label': 'Test Portal', 'color': const Color(0xFF66BB6A), 'route': '/test-portal'},
-      {'icon': Icons.emoji_events_outlined, 'label': 'Result', 'color': const Color(0xFFEC407A), 'route': '/result'},
-      {'icon': Icons.feedback_outlined, 'label': 'Feedback', 'color': const Color(0xFF8BC34A), 'route': '/feedback'},
-    ];
+          {'icon': Icons.calendar_today_outlined, 'label': 'Attendance', 'color': const Color(0xFF42A5F5), 'route': '/attendance'},
+          {'icon': Icons.school_outlined, 'label': 'Courses', 'color': const Color(0xFF7E57C2), 'route': '/courses'},
+          {'icon': Icons.access_time, 'label': 'Timetable', 'color': const Color(0xFF42A5F5), 'route': '/timetable'},
+          {'icon': Icons.play_circle_outline, 'label': 'Doubt Lecture', 'color': const Color(0xFFEF5350), 'route': '/doubt-lecture'},
+          {'icon': Icons.assignment_outlined, 'label': 'Assignments', 'color': const Color(0xFF26A69A), 'route': '/assignments'},
+          {'icon': Icons.help_outline, 'label': 'Doubts', 'color': const Color(0xFFFFB74D), 'route': '/doubts'},
+          {'icon': Icons.quiz_outlined, 'label': 'Test Portal', 'color': const Color(0xFF66BB6A), 'route': '/test-portal'},
+          {'icon': Icons.emoji_events_outlined, 'label': 'Result', 'color': const Color(0xFFEC407A), 'route': '/result'},
+          {'icon': Icons.feedback_outlined, 'label': 'Feedback', 'color': const Color(0xFF8BC34A), 'route': '/feedback'},
+        ];
 
-    return GridView.builder(
+        return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 0.9,
+        childAspectRatio: 0.95,
       ),
       itemCount: features.length,
-      itemBuilder: (context, index) {
-        final feature = features[index];
-        return _buildFeatureCard(
-          icon: feature['icon'] as IconData,
-          label: feature['label'] as String,
-          color: feature['color'] as Color,
-          route: feature['route'] as String,
-          index: index,
+          itemBuilder: (context, index) {
+            final feature = features[index];
+            return _buildFeatureCard(
+              icon: feature['icon'] as IconData,
+              label: feature['label'] as String,
+              color: feature['color'] as Color,
+              route: feature['route'] as String,
+              index: index,
+            );
+          },
         );
-      },
-    );
   }
 
   Widget _buildFeatureCard({
@@ -439,14 +459,14 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, route);
+        Get.toNamed(route);
       },
       child: Container(
         decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
+          color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color,
+            color: color.withOpacity(0.5),
             width: 1.5,
           ),
         ),
@@ -456,7 +476,14 @@ class _StudentDashboardState extends State<StudentDashboard> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    color.withOpacity(0.2),
+                    color.withOpacity(0.1),
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -469,10 +496,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
               ),
             ),
           ],

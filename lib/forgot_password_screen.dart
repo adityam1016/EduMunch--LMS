@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -82,21 +83,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     // Navigate back to login
     Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pop(context);
+      Get.back();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
+          // Background Image with overlay
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/bg.png'),
                 fit: BoxFit.cover,
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.black.withOpacity(0.6)
+                    : Colors.black.withOpacity(0.1),
               ),
             ),
           ),
@@ -113,7 +122,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     Align(
                       alignment: Alignment.topLeft,
                       child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => Get.back(),
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -130,13 +139,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const SizedBox(height: 32),
 
                     // Title
-                    const Text(
+                    Text(
                       'Forgot Password?',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 28,
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -145,9 +153,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     Text(
                       _getSubtitle(),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.white70,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -158,35 +165,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         controller: _userIdController,
                         decoration: InputDecoration(
                           hintText: 'Enter your User ID',
-                          prefixIcon: const Icon(
-                            Icons.person,
-                            color: Color(0xFF999999),
-                          ),
-                          hintStyle: const TextStyle(
-                            color: Color(0xFF999999),
-                            fontSize: 16,
-                          ),
+                          prefixIcon: const Icon(Icons.person),
                           filled: true,
-                          fillColor: const Color(0xFFF5F5F5),
+                          fillColor: Colors.grey[100],
+                          hintStyle: const TextStyle(color: Color(0xFF999999)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFFE0E0E0),
-                              width: 1.5,
-                            ),
+                            borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFFE0E0E0),
-                              width: 1.5,
-                            ),
+                            borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(
-                              color: Colors.blue,
-                              width: 1.5,
+                              color: Color(0xFF0288D1),
+                              width: 2,
                             ),
                           ),
                           contentPadding: const EdgeInsets.symmetric(

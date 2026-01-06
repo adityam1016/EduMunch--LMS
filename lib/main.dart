@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'splash_screen.dart';
 import 'role_selection_screen.dart';
 import 'login_screen.dart';
@@ -9,6 +10,13 @@ import 'student/attendance_screen.dart';
 import 'student/courses_screen.dart';
 import 'student/timetable_screen.dart';
 import 'student/doubt_lecture_screen.dart';
+import 'student/assignments_screen.dart';
+import 'student/doubts_screen.dart';
+import 'student/test_portal_screen.dart';
+import 'student/result.dart';
+import 'student/feedback_screen.dart';
+import 'parent/parent_dashboard.dart';
+import 'parent/parent_notification_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,28 +27,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'EduMunch',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+        brightness: Brightness.light,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
+        ),
       ),
       home: const SplashScreen(),
-      routes: {
-        '/login': (context) {
-          final role = ModalRoute.of(context)?.settings.arguments as String?;
-          return LoginScreen(role: role ?? 'Student');
-        },
-        '/forgot-password': (context) => const ForgotPasswordScreen(),
-        '/role-selection': (context) => const RoleSelectionScreen(),
-        '/dashboard': (context) => const StudentDashboard(),
-        '/notifications': (context) => const NotificationScreen(),
-        '/attendance': (context) => const AttendanceScreen(),
-        '/courses': (context) => const CoursesScreen(),
-        '/timetable': (context) => const TimetableScreen(),
-        '/doubt-lecture': (context) => const DoubtLectureScreen(),
-        '/home': (context) => const MyHomePage(title: 'EduMunch'),
-      },
+      getPages: [
+        GetPage(
+          name: '/login',
+          page: () {
+            final role = Get.arguments as String? ?? 'Student';
+            return LoginScreen(role: role);
+          },
+        ),
+        GetPage(name: '/forgot-password', page: () => const ForgotPasswordScreen()),
+        GetPage(name: '/role-selection', page: () => const RoleSelectionScreen()),
+        GetPage(name: '/dashboard', page: () => const StudentDashboard()),
+        GetPage(name: '/parent-dashboard', page: () => const ParentDashboard()),
+        GetPage(name: '/notifications', page: () => const NotificationScreen()),
+        GetPage(name: '/attendance', page: () => const AttendanceScreen()),
+        GetPage(name: '/courses', page: () => const CoursesScreen()),
+        GetPage(name: '/timetable', page: () => const TimetableScreen()),
+        GetPage(name: '/doubt-lecture', page: () => const DoubtLectureScreen()),
+        GetPage(name: '/assignments', page: () => const AssignmentsScreen()),
+        GetPage(name: '/doubts', page: () => const DoubtsScreen()),
+        GetPage(name: '/test-portal', page: () => const TestPortalScreen()),
+        GetPage(name: '/academic-performance', page: () => const AcademicPerformanceScreen()),
+        GetPage(name: '/result', page: () => const AcademicPerformanceScreen()),
+        GetPage(name: '/feedback', page: () => const FeedbackScreen()),
+        GetPage(name: '/parent-notification', page: () => const ParentNotificationScreen()),
+        GetPage(name: '/home', page: () => const MyHomePage(title: 'EduMunch')),
+      ],
     );
   }
 }
@@ -99,20 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('You have pushed the button this many times:'),
             Text(

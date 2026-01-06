@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -34,30 +35,48 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 children: [
                   const SizedBox(height: 60),
                   
-                  // Header Text
-                  const Text(
+                  // Header Text with Shadow
+                  Text(
                     "Welcome to",
-                    style: TextStyle(
-                      fontSize: 32,
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A237E), // Dark tech blue
+                      shadows: [
+                        Shadow(
+                          offset: const Offset(2, 2),
+                          blurRadius: 4,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ],
                     ),
                   ),
-                  const Text(
+                  Text(
                     "EduMunch",
-                    style: TextStyle(
-                      fontSize: 36,
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A237E),
+                      shadows: [
+                        Shadow(
+                          offset: const Offset(2, 2),
+                          blurRadius: 4,
+                          color: Colors.black.withOpacity(0.5),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     "Please select your role to continue.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.black,
+                      shadows: [
+                        Shadow(
+                          offset: const Offset(1, 1),
+                          blurRadius: 3,
+                          color: Colors.black.withOpacity(0.4),
+                        ),
+                      ],
                     ),
                   ),
                   
@@ -68,21 +87,25 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                     child: ListView(
                       children: [
                         _buildRoleCard(
+                          context,
                           title: 'Student',
                           icon: Icons.school_outlined,
                           isSelected: selectedRole == 'Student',
                         ),
                         _buildRoleCard(
+                          context,
                           title: 'Parent',
                           icon: Icons.people_outline,
                           isSelected: selectedRole == 'Parent',
                         ),
                         _buildRoleCard(
+                          context,
                           title: 'Teacher',
                           icon: Icons.co_present_outlined,
                           isSelected: selectedRole == 'Teacher',
                         ),
                         _buildRoleCard(
+                          context,
                           title: 'Staff',
                           icon: Icons.badge_outlined,
                           isSelected: selectedRole == 'Staff',
@@ -101,18 +124,17 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                         onPressed: () {
                           // Navigate to login screen with selected role
                           print("Selected Role: $selectedRole");
-                          Navigator.pushNamed(
-                            context,
+                          Get.toNamed(
                             '/login',
                             arguments: selectedRole,
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2962FF), // Primary Blue
+                          backgroundColor: Colors.blue[600],
+                          elevation: 8,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          elevation: 2,
                         ),
                         child: const Text(
                           "Continue",
@@ -135,12 +157,14 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   }
 
   // Widget helper for Role Cards
-  Widget _buildRoleCard({
+  Widget _buildRoleCard(
+    BuildContext context, {
     required String title,
     required IconData icon,
     required bool isSelected,
   }) {
     return _RoleCardWidget(
+      context,
       title: title,
       icon: icon,
       isSelected: isSelected,
@@ -154,12 +178,14 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 }
 
 class _RoleCardWidget extends StatefulWidget {
+  final BuildContext parentContext;
   final String title;
   final IconData icon;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _RoleCardWidget({
+  const _RoleCardWidget(
+    this.parentContext, {
     required this.title,
     required this.icon,
     required this.isSelected,
@@ -193,9 +219,19 @@ class _RoleCardWidgetState extends State<_RoleCardWidget> {
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           decoration: BoxDecoration(
-            color: _isHovering 
-                ? const Color(0xFFE3F2FD) // Light blue on hover
-                : Colors.white.withOpacity(0.9),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: _isHovering
+                  ? [
+                      widget.isSelected ? const Color(0xFFE3F2FD) : Colors.white.withOpacity(0.95),
+                      widget.isSelected ? const Color(0xFFBBDEFB) : Colors.white.withOpacity(0.9),
+                    ]
+                  : [
+                      Colors.white.withOpacity(0.9),
+                      Colors.white.withOpacity(0.85),
+                    ],
+            ),
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
               color: widget.isSelected ? const Color(0xFF2962FF) : Colors.transparent,

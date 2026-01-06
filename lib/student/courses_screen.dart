@@ -12,6 +12,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
   late String _currentScreen; // 'subjects', 'courses', 'details'
   late String _selectedSubject;
   late String _selectedCourse;
+  final Map<String, bool> _expandedSections = {};
 
   @override
   void initState() {
@@ -572,16 +573,18 @@ class _CoursesScreenState extends State<CoursesScreen> {
     required String title,
     required List<Widget> children,
   }) {
+    _expandedSections.putIfAbsent(title, () => false);
     return StatefulBuilder(
       builder: (context, setBuilderState) {
-        bool isExpanded = true;
+        bool isExpanded = _expandedSections[title] ?? false;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
               onTap: () {
                 setBuilderState(() {
-                  isExpanded = !isExpanded;
+                  _expandedSections[title] = !_expandedSections[title]!;
+                  isExpanded = _expandedSections[title]!;
                 });
               },
               child: Row(

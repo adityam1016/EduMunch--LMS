@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -7,15 +8,22 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Column(
           children: [
-            // Drawer Header
+            // Drawer Header with Gradient
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(top: 50, bottom: 24, left: 20, right: 20),
-              decoration: const BoxDecoration(
-                color: Color(0xFF2962FF),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF1565C0),
+                    const Color(0xFF1976D2),
+                  ],
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,6 +135,12 @@ class AppDrawer extends StatelessWidget {
                   ),
                   _buildMenuItem(
                     context,
+                    icon: Icons.trending_up,
+                    title: 'Academic Performance',
+                    route: '/academic-performance',
+                  ),
+                  _buildMenuItem(
+                    context,
                     icon: Icons.emoji_events_outlined,
                     title: 'Result',
                     route: '/result',
@@ -138,12 +152,6 @@ class AppDrawer extends StatelessWidget {
                     route: '/feedback',
                   ),
                   const Divider(height: 32),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.settings_outlined,
-                    title: 'Settings',
-                    route: '/settings',
-                  ),
                 ],
               ),
             ),
@@ -157,17 +165,17 @@ class AppDrawer extends StatelessWidget {
                   onPressed: () {
                     _showLogoutDialog(context);
                   },
-                  icon: const Icon(Icons.logout, color: Colors.white),
+                  icon: const Icon(Icons.logout),
                   label: const Text(
                     'Logout',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFEF5350),
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -191,23 +199,19 @@ class AppDrawer extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: const Color(0xFF2962FF),
+        color: Theme.of(context).colorScheme.primary,
         size: 24,
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 15,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.w500,
-          color: Colors.black87,
         ),
       ),
       onTap: () {
-        Navigator.pop(context); // Close drawer
+        Get.back(); // Close drawer
         // Navigate to route
-        if (ModalRoute.of(context)?.settings.name != route) {
-          Navigator.pushReplacementNamed(context, route);
-        }
+        Get.toNamed(route);
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -220,14 +224,21 @@ class AppDrawer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(
+          'Logout',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        content: Text(
+          'Are you sure you want to logout?',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Get.back(),
             child: const Text(
               'Cancel',
               style: TextStyle(color: Colors.black54),
@@ -235,23 +246,17 @@ class AppDrawer extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/role-selection',
-                (route) => false,
-              );
+              Get.back(); // Close dialog
+              Get.offAllNamed('/role-selection');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF5350),
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
-              'Logout',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text('Logout'),
           ),
         ],
       ),
