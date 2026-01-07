@@ -5,6 +5,9 @@ import 'parent_notification_screen.dart';
 import 'parent_grievance_screen.dart';
 import 'parent_ptm_screen.dart';
 import 'parent_attendance_screen.dart';
+import 'parent_performance_screen.dart';
+import 'parent_payment_screen.dart';
+import 'parent_timetable_screen.dart';
 
 class ParentDashboard extends StatefulWidget {
   const ParentDashboard({super.key});
@@ -456,40 +459,38 @@ class _ParentDashboardState extends State<ParentDashboard> {
       {
         'icon': Icons.assignment_outlined,
         'label': 'Grievance',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFEF5350),
         'onTap': () => Get.to(() => const ParentGrievanceScreen()),
       },
       {
         'icon': Icons.people_outline,
-        'label': 'Parent-Teacher\nMeeting',
+        'label': 'Parent-Teacher Meeting',
         'color': const Color(0xFFBA68C8),
         'onTap': () => Get.to(() => const ParentPTMScreen()),
       },
       {
         'icon': Icons.calendar_today_outlined,
-        'label': 'Attendance\nRecord',
-        'color': const Color(0xFFFFCA28),
+        'label': 'Attendance',
+        'color': const Color(0xFF4FC3F7),
         'onTap': () => Get.to(() => const ParentAttendanceScreen()),
       },
       {
         'icon': Icons.trending_up,
-        'label': 'Student\nPerformance',
-        'color': const Color(0xFFEF5350),
+        'label': 'Performance',
+        'color': const Color(0xFF66BB6A),
+        'onTap': () => Get.to(() => const ParentPerformanceScreen()),
       },
       {
         'icon': Icons.account_balance_wallet,
-        'label': 'Payments\nScreen',
-        'color': const Color(0xFF66BB6A),
-      },
-      {
-        'icon': Icons.emoji_events_outlined,
-        'label': 'Results',
-        'color': const Color(0xFF42A5F5),
+        'label': 'Payments',
+        'color': const Color(0xFFFFCA28),
+        'onTap': () => Get.to(() => const ParentPaymentScreen()),
       },
       {
         'icon': Icons.schedule_outlined,
         'label': 'Timetable',
         'color': const Color(0xFF9C27B0),
+        'onTap': () => Get.to(() => const ParentTimetableScreen()),
       },
     ];
 
@@ -498,9 +499,9 @@ class _ParentDashboardState extends State<ParentDashboard> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.85,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.9,
       ),
       itemCount: features.length,
       itemBuilder: (context, index) {
@@ -524,33 +525,42 @@ class _ParentDashboardState extends State<ParentDashboard> {
     return GestureDetector(
       onTap: onTap ?? () {},
       child: Container(
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.7), color.withOpacity(0.5)],
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: color.withOpacity(0.4),
+            width: 2,
           ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: Colors.white),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 28,
+                color: color,
+              ),
+            ),
             const SizedBox(height: 12),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: Colors.grey[800],
+                height: 1.2,
               ),
             ),
           ],

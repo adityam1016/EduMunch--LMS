@@ -17,6 +17,7 @@ import 'student/result.dart';
 import 'student/feedback_screen.dart';
 import 'parent/parent_dashboard.dart';
 import 'parent/parent_notification_screen.dart';
+import 'Teacher/teacher_dashboard_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/role-selection', page: () => const RoleSelectionScreen()),
         GetPage(name: '/dashboard', page: () => const StudentDashboard()),
         GetPage(name: '/parent-dashboard', page: () => const ParentDashboard()),
+        GetPage(name: '/teacher-dashboard', page: () => const TeacherDashboardScreen()),
         GetPage(name: '/notifications', page: () => const NotificationScreen()),
         GetPage(name: '/attendance', page: () => const AttendanceScreen()),
         GetPage(name: '/courses', page: () => const CoursesScreen()),

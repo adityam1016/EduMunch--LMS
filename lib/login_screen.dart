@@ -188,6 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Navigate to appropriate dashboard based on role
                                 if (widget.role == 'Parent') {
                                   Get.offAllNamed('/parent-dashboard');
+                                } else if (widget.role == 'Teacher') {
+                                  Get.offAllNamed('/teacher-dashboard');
                                 } else {
                                   Get.offAllNamed('/dashboard');
                                 }
