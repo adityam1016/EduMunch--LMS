@@ -4,6 +4,11 @@ import 'assignments_list_screen.dart';
 import 'manage_attendance_screen.dart';
 import 'teacher_app_drawer.dart';
 import 'syllabus_tracking_screen.dart';
+import 'teacher_doubts_screen.dart';
+import 'hr_section_screen.dart';
+import 'student_performance_screen.dart';
+import 'teacher_notification_screen.dart';
+import 'teacher_timetable_screen.dart';
 
 class TeacherDashboardScreen extends StatefulWidget {
   const TeacherDashboardScreen({super.key});
@@ -68,9 +73,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to notifications
-                      },
+                      onTap: () => Get.to(() => const TeacherNotificationScreen()),
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
@@ -202,26 +205,25 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
         'icon': Icons.help_outline,
         'label': 'Doubts',
         'color': const Color(0xFFEF5350),
+        'onTap': () => Get.to(() => const TeacherDoubtsScreen()),
       },
       {
         'icon': Icons.bar_chart_outlined,
         'label': 'Student Performance',
         'color': const Color(0xFFFF9800),
-      },
-      {
-        'icon': Icons.notifications_outlined,
-        'label': 'Notifications',
-        'color': const Color(0xFF66BB6A),
+        'onTap': () => Get.to(() => const StudentPerformanceScreen()),
       },
       {
         'icon': Icons.business_center_outlined,
         'label': 'HR Section',
         'color': const Color(0xFF26A69A),
+        'onTap': () => Get.to(() => const HRSectionScreen()),
       },
       {
         'icon': Icons.schedule_outlined,
         'label': 'Timetable',
         'color': const Color(0xFF9C27B0),
+        'onTap': () => Get.to(() => const TeacherTimetableScreen()),
       },
     ];
 
