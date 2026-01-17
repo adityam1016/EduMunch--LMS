@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'app_drawer.dart';
-import 'doubts_screen.dart';
 
 class CoursesScreen extends StatefulWidget {
   const CoursesScreen({super.key});
@@ -702,7 +700,6 @@ class _VideoContentCard extends StatefulWidget {
 class _VideoContentCardState extends State<_VideoContentCard> {
   YoutubePlayerController? _controller;
   bool _isPlayerReady = false;
-  bool _hasPlayedOnce = false;
 
   @override
   void initState() {
@@ -729,7 +726,6 @@ class _VideoContentCardState extends State<_VideoContentCard> {
     _controller!.addListener(_onPlayerStateChange);
     setState(() {
       _isPlayerReady = true;
-      _hasPlayedOnce = true;
     });
   }
 
