@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'teacher_app_drawer.dart';
+import 'teacher_doubt_discussion_screen.dart';
 
 class TeacherDoubtsScreen extends StatefulWidget {
   const TeacherDoubtsScreen({super.key});
@@ -126,6 +128,7 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const TeacherAppDrawer(),
       backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
         title: const Text(
@@ -135,10 +138,6 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Get.back(),
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.black54),
@@ -195,13 +194,13 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
                   });
                 },
                 backgroundColor: Colors.white,
-                selectedColor: Colors.blueAccent,
+                selectedColor: const Color(0xFF7C3AED),
                 labelStyle: TextStyle(
                   color: isSelected ? Colors.white : Colors.black87,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
                 side: BorderSide(
-                  color: isSelected ? Colors.blueAccent : Colors.grey.shade300,
+                  color: isSelected ? const Color(0xFF7C3AED) : Colors.grey.shade300,
                 ),
               ),
             );
@@ -236,7 +235,7 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: const Color(0xFF7C3AED),
                 foregroundColor: Colors.white,
               ),
             ),
@@ -309,7 +308,7 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: const Color(0xFF7C3AED),
                     child: Text(
                       doubt['studentInitials'],
                       style: const TextStyle(
@@ -332,13 +331,13 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: Colors.blue[50],
+                            color: const Color(0xFFF5F3FF),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             doubt['subject'],
                             style: TextStyle(
-                              color: Colors.blue[800],
+                              color: const Color(0xFF6D28D9),
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -427,23 +426,6 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-// Placeholder for discussion screen - will be created next
-class TeacherDoubtDiscussionScreen extends StatelessWidget {
-  final Map<String, dynamic> doubt;
-
-  const TeacherDoubtDiscussionScreen({super.key, required this.doubt});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(doubt['studentName']),
-      ),
-      body: const Center(child: Text('Discussion Screen')),
     );
   }
 }

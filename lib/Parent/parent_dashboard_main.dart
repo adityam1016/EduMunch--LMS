@@ -40,7 +40,7 @@ class _ParentDashboardMainState extends State<ParentDashboardMain> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blue[400]!, Colors.blue[700]!],
+                  colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
                 ),
               ),
               child: Padding(
@@ -144,7 +144,7 @@ class _ParentDashboardMainState extends State<ParentDashboardMain> {
             height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF1565C0), width: 2),
+              border: Border.all(color: const Color(0xFF7C3AED), width: 2),
             ),
             child: ClipOval(
               child: Image.asset(
@@ -294,12 +294,12 @@ class _ParentDashboardMainState extends State<ParentDashboardMain> {
 
   Widget _buildFeatureGrid() {
     final features = [
-      {'icon': Icons.assignment_outlined, 'label': 'Grievance', 'color': const Color(0xFF4FC3F7)},
+      {'icon': Icons.assignment_outlined, 'label': 'Grievance', 'color': const Color(0xFFBA68C8)},
       {'icon': Icons.people_outline, 'label': 'Parent-Teacher\nMeeting', 'color': const Color(0xFFBA68C8)},
       {'icon': Icons.calendar_today_outlined, 'label': 'Attendance\nRecord', 'color': const Color(0xFFFFCA28)},
       {'icon': Icons.trending_up, 'label': 'Student\nPerformance', 'color': const Color(0xFFEF5350)},
       {'icon': Icons.account_balance_wallet, 'label': 'Payments\nScreen', 'color': const Color(0xFF66BB6A)},
-      {'icon': Icons.emoji_events_outlined, 'label': 'Results', 'color': const Color(0xFF42A5F5)},
+      {'icon': Icons.emoji_events_outlined, 'label': 'Results', 'color': const Color(0xFF8B5CF6)},
     ];
 
     return GridView.builder(

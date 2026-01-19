@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'parent_app_drawer.dart';
 
 class Notification {
   final String id;
@@ -119,9 +119,9 @@ class _ParentNotificationScreenState extends State<ParentNotificationScreen> {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'Academic':
-        return Colors.blue;
+        return const Color(0xFF7C3AED);
       case 'Meeting':
-        return Colors.purple;
+        return const Color(0xFF7C3AED);
       case 'Attendance':
         return Colors.orange;
       case 'Result':
@@ -153,6 +153,7 @@ class _ParentNotificationScreenState extends State<ParentNotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const ParentAppDrawer(),
       appBar: AppBar(
         title: const Text('Notifications'),
         centerTitle: true,
@@ -163,15 +164,11 @@ class _ParentNotificationScreenState extends State<ParentNotificationScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xFF1565C0),
-                Color(0xFF1976D2),
+                Color(0xFF7C3AED),
+                Color(0xFF8B5CF6),
               ],
             ),
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
         ),
       ),
       body: Column(
@@ -444,13 +441,13 @@ class _ParentNotificationScreenState extends State<ParentNotificationScreen> {
         });
       },
       backgroundColor: Colors.white,
-      selectedColor: const Color(0xFF1565C0),
+      selectedColor: const Color(0xFF7C3AED),
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : Colors.black87,
         fontWeight: FontWeight.w500,
       ),
       side: BorderSide(
-        color: isSelected ? const Color(0xFF1565C0) : Colors.grey[300]!,
+        color: isSelected ? const Color(0xFF7C3AED) : Colors.grey[300]!,
       ),
     );
   }

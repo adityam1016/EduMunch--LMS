@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:get/get.dart';
+import 'teacher_app_drawer.dart';
 
 class SyllabusTrackingScreen extends StatefulWidget {
   const SyllabusTrackingScreen({super.key});
@@ -91,7 +91,7 @@ class _SyllabusTrackingScreenState extends State<SyllabusTrackingScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blueAccent,
+              primary: const Color(0xFF7C3AED),
               onPrimary: Colors.white,
               onSurface: Colors.black87,
             ),
@@ -162,6 +162,7 @@ class _SyllabusTrackingScreenState extends State<SyllabusTrackingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const TeacherAppDrawer(),
       backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
         title: const Text(
@@ -171,10 +172,6 @@ class _SyllabusTrackingScreenState extends State<SyllabusTrackingScreen> {
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Get.back(),
-        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -245,7 +242,7 @@ class _SyllabusTrackingScreenState extends State<SyllabusTrackingScreen> {
             style: const TextStyle(color: Colors.white, fontSize: 16),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueAccent,
+            backgroundColor: const Color(0xFF7C3AED),
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -380,13 +377,13 @@ class _SyllabusTrackingScreenState extends State<SyllabusTrackingScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.08),
+                    color: const Color(0xFF7C3AED).withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Text(
                     'Latest Remark',
                     style: TextStyle(
-                      color: Colors.blueAccent,
+                      color: const Color(0xFF7C3AED),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -571,7 +568,7 @@ class _SyllabusTrackingScreenState extends State<SyllabusTrackingScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.blueAccent, width: 2.0),
+        borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2.0),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

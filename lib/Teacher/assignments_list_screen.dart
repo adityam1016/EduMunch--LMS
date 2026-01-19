@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'create_assignment_template_screen.dart';
+import 'teacher_app_drawer.dart';
 
 class AssignmentsListScreen extends StatefulWidget {
   const AssignmentsListScreen({super.key});
@@ -72,10 +73,10 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
+                      color: const Color(0xFF7C3AED).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.groups, color: Colors.blue),
+                    child: const Icon(Icons.groups, color: const Color(0xFF7C3AED)),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
@@ -135,7 +136,7 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                         value: isSelected,
                         contentPadding: EdgeInsets.zero,
                         dense: true,
-                        activeColor: Colors.blue,
+                        activeColor: const Color(0xFF7C3AED),
                         onChanged: (bool? value) {
                           setDialogState(() {
                             if (value == true) {
@@ -174,7 +175,7 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                           );
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: const Color(0xFF7C3AED),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -234,6 +235,7 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const TeacherAppDrawer(),
       backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
         title: const Text(
@@ -243,10 +245,6 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Get.back(),
-        ),
       ),
       body: _assignmentTemplates.isEmpty
           ? _buildEmptyState()
@@ -273,7 +271,7 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
             );
           }
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color(0xFF7C3AED),
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(
           'Create Assignment',
@@ -331,12 +329,12 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                     decoration: BoxDecoration(
                       color: isTheory
                           ? Colors.orange.withOpacity(0.1)
-                          : Colors.purple.withOpacity(0.1),
+                          : const Color(0xFF7C3AED).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       isTheory ? Icons.description : Icons.quiz,
-                      color: isTheory ? Colors.orange : Colors.purple,
+                      color: isTheory ? Colors.orange : const Color(0xFF7C3AED),
                       size: 24,
                     ),
                   ),
@@ -421,13 +419,13 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                   _buildInfoChip(
                     icon: Icons.grid_on,
                     label: assignment['type'],
-                    color: isTheory ? Colors.orange : Colors.purple,
+                    color: isTheory ? Colors.orange : const Color(0xFF7C3AED),
                   ),
                   const SizedBox(width: 8),
                   _buildInfoChip(
                     icon: Icons.star_outline,
                     label: '${assignment['totalMarks']} Marks',
-                    color: Colors.blue,
+                    color: const Color(0xFF7C3AED),
                   ),
                   if (!isTheory) ...[
                     const SizedBox(width: 8),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'teacher_app_drawer.dart';
 
 class TeacherNotification {
   final String id;
@@ -137,9 +137,9 @@ class _TeacherNotificationScreenState extends State<TeacherNotificationScreen> {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'Academic':
-        return Colors.blue;
+        return const Color(0xFF7C3AED);
       case 'Meeting':
-        return Colors.purple;
+        return const Color(0xFF7C3AED);
       case 'Attendance':
         return Colors.orange;
       case 'Syllabus':
@@ -177,6 +177,7 @@ class _TeacherNotificationScreenState extends State<TeacherNotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const TeacherAppDrawer(),
       appBar: AppBar(
         title: const Text('Notifications'),
         centerTitle: true,
@@ -186,13 +187,9 @@ class _TeacherNotificationScreenState extends State<TeacherNotificationScreen> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Colors.blue[400]!, Colors.blue[700]!],
+              colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
             ),
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
         ),
         actions: [
           if (unreadCount > 0)
@@ -503,13 +500,13 @@ class _TeacherNotificationScreenState extends State<TeacherNotificationScreen> {
         });
       },
       backgroundColor: Colors.white,
-      selectedColor: Colors.blue[600],
+      selectedColor: const Color(0xFF7C3AED),
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : Colors.black87,
         fontWeight: FontWeight.w500,
       ),
       side: BorderSide(
-        color: isSelected ? Colors.blue[600]! : Colors.grey[300]!,
+        color: isSelected ? const Color(0xFF7C3AED) : Colors.grey[300]!,
       ),
     );
   }

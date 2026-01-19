@@ -37,8 +37,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.blue[400]!,
-                    Colors.blue[700]!,
+                    const Color(0xFF8B5CF6),
+                    const Color(0xFF7C3AED),
                   ],
                 ),
               ),
@@ -212,7 +212,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: const BoxDecoration(
-                              color: Color(0xFF2962FF),
+                              color: Color(0xFF6D28D9),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -386,12 +386,12 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 end: Alignment.bottomRight,
                 colors: isDark
                     ? [
-                        const Color(0xFF1565C0).withOpacity(0.6),
-                        const Color(0xFF1976D2).withOpacity(0.6),
+                        const Color(0xFF7C3AED).withOpacity(0.6),
+                        const Color(0xFF8B5CF6).withOpacity(0.6),
                       ]
                     : [
-                        const Color(0xFFE3F2FD),
-                        const Color(0xFFBBDEFB),
+                        const Color(0xFFF5F3FF),
+                        const Color(0xFFEDE9FE),
                       ],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -416,9 +416,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   Widget _buildFeatureGrid() {
     final features = [
-          {'icon': Icons.calendar_today_outlined, 'label': 'Attendance', 'color': const Color(0xFF42A5F5), 'route': '/attendance'},
+          {'icon': Icons.calendar_today_outlined, 'label': 'Attendance', 'color': const Color(0xFF8B5CF6), 'route': '/attendance'},
           {'icon': Icons.school_outlined, 'label': 'Courses', 'color': const Color(0xFF7E57C2), 'route': '/courses'},
-          {'icon': Icons.access_time, 'label': 'Timetable', 'color': const Color(0xFF42A5F5), 'route': '/timetable'},
+          {'icon': Icons.access_time, 'label': 'Timetable', 'color': const Color(0xFF8B5CF6), 'route': '/timetable'},
           {'icon': Icons.play_circle_outline, 'label': 'Doubt Lecture', 'color': const Color(0xFFEF5350), 'route': '/doubt-lecture'},
           {'icon': Icons.assignment_outlined, 'label': 'Assignments', 'color': const Color(0xFF26A69A), 'route': '/assignments'},
           {'icon': Icons.help_outline, 'label': 'Doubts', 'color': const Color(0xFFFFB74D), 'route': '/doubts'},
@@ -496,6 +496,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
             Text(
               label,
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.w500,
               ),

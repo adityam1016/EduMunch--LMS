@@ -57,7 +57,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blue[400]!, Colors.blue[700]!],
+                  colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
                 ),
               ),
               child: Padding(
@@ -131,11 +131,11 @@ class _ParentDashboardState extends State<ParentDashboard> {
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [Colors.blue[300]!, Colors.blue[600]!],
+                                  colors: [const Color(0xFFC4B5FD), const Color(0xFF7C3AED)],
                                 ),
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
-                                  BoxShadow(color: Colors.blue.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 8))
+                                  BoxShadow(color: const Color(0xFF7C3AED).withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 8))
                                 ],
                               ),
                               child: Column(

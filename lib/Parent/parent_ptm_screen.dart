@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'parent_app_drawer.dart';
 
 class ParentPTMScreen extends StatefulWidget {
   const ParentPTMScreen({super.key});
@@ -118,7 +119,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF7C4DFF),
+              primary: Color(0xFF7C3AED),
               onPrimary: Colors.white,
               onSurface: Colors.black87,
             ),
@@ -142,7 +143,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF7C4DFF),
+              primary: Color(0xFF7C3AED),
               onPrimary: Colors.white,
               onSurface: Colors.black87,
             ),
@@ -210,7 +211,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Scheduled':
-        return const Color(0xFF2196F3);
+        return const Color(0xFF8B5CF6);
       case 'Completed':
         return const Color(0xFF4CAF50);
       case 'Cancelled':
@@ -231,14 +232,11 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
     }
 
     return Scaffold(
+      drawer: const ParentAppDrawer(),
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFF7C3AED),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
         title: const Text(
           'Parent-Teacher Meetings',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -265,7 +263,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                           _selectedFilter = filter;
                         });
                       },
-                      selectedColor: const Color(0xFF7C4DFF),
+                      selectedColor: const Color(0xFF7C3AED),
                       backgroundColor: Colors.grey[200],
                       labelStyle: TextStyle(
                         color: isSelected ? Colors.white : Colors.black87,
@@ -321,7 +319,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
             _showScheduleForm = true;
           });
         },
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFF7C3AED),
         icon: const Icon(Icons.add),
         label: const Text('Schedule Meeting'),
       ),
@@ -357,10 +355,10 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                 children: [
                   CircleAvatar(
                     radius: 25,
-                    backgroundColor: const Color(0xFF7C4DFF).withOpacity(0.1),
+                    backgroundColor: const Color(0xFF7C3AED).withOpacity(0.1),
                     child: const Icon(
                       Icons.person,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFF7C3AED),
                       size: 28,
                     ),
                   ),
@@ -602,7 +600,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                             child: ElevatedButton(
                               onPressed: () => Get.back(),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF7C4DFF),
+                                backgroundColor: const Color(0xFF7C3AED),
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 16,
                                 ),
@@ -627,7 +625,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                         child: ElevatedButton(
                           onPressed: () => Get.back(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7C4DFF),
+                            backgroundColor: const Color(0xFF7C3AED),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -701,7 +699,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: isLink ? const Color(0xFF2196F3) : Colors.black87,
+              color: isLink ? const Color(0xFF8B5CF6) : Colors.black87,
               decoration: isLink ? TextDecoration.underline : null,
             ),
           ),
@@ -714,7 +712,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFF7C3AED),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -741,12 +739,12 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF7C4DFF), Color(0xFF5E35B1)],
+                    colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.3),
+                      color: const Color(0xFF7C3AED).withOpacity(0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -809,7 +807,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                   value: _selectedRole,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
-                    prefixIcon: Icon(Icons.groups_outlined, color: Color(0xFF7C4DFF)),
+                    prefixIcon: Icon(Icons.groups_outlined, color: Color(0xFF7C3AED)),
                   ),
                   items: _roles.map((role) {
                     return DropdownMenuItem(
@@ -855,7 +853,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                   value: _selectedTeacher,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
-                    prefixIcon: Icon(Icons.person_outline, color: Color(0xFF7C4DFF)),
+                    prefixIcon: Icon(Icons.person_outline, color: Color(0xFF7C3AED)),
                   ),
                   items: _availableStaff.map((staff) {
                     return DropdownMenuItem(
@@ -899,7 +897,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today, color: Color(0xFF7C4DFF), size: 20),
+                      const Icon(Icons.calendar_today, color: Color(0xFF7C3AED), size: 20),
                       const SizedBox(width: 12),
                       Text(
                         _formatDate(_selectedDate),
@@ -940,7 +938,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.access_time, color: Color(0xFF7C4DFF), size: 20),
+                      const Icon(Icons.access_time, color: Color(0xFF7C3AED), size: 20),
                       const SizedBox(width: 12),
                       Text(
                         _formatTime(_selectedTime),
@@ -976,7 +974,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: _selectedMode == 'In-Person' ? const Color(0xFF7C4DFF) : Colors.white,
+                          color: _selectedMode == 'In-Person' ? const Color(0xFF7C3AED) : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
@@ -990,7 +988,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                           children: [
                             Icon(
                               Icons.meeting_room,
-                              color: _selectedMode == 'In-Person' ? Colors.white : const Color(0xFF7C4DFF),
+                              color: _selectedMode == 'In-Person' ? Colors.white : const Color(0xFF7C3AED),
                               size: 32,
                             ),
                             const SizedBox(height: 8),
@@ -1018,7 +1016,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: _selectedMode == 'Online' ? const Color(0xFF7C4DFF) : Colors.white,
+                          color: _selectedMode == 'Online' ? const Color(0xFF7C3AED) : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
@@ -1032,7 +1030,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                           children: [
                             Icon(
                               Icons.video_call,
-                              color: _selectedMode == 'Online' ? Colors.white : const Color(0xFF7C4DFF),
+                              color: _selectedMode == 'Online' ? Colors.white : const Color(0xFF7C3AED),
                               size: 32,
                             ),
                             const SizedBox(height: 8),
@@ -1079,7 +1077,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                   controller: _agendaController,
                   decoration: const InputDecoration(
                     hintText: 'What would you like to discuss?',
-                    prefixIcon: Icon(Icons.description_outlined, color: Color(0xFF7C4DFF)),
+                    prefixIcon: Icon(Icons.description_outlined, color: Color(0xFF7C3AED)),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(16),
                   ),
@@ -1106,7 +1104,7 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
                             if (states.contains(WidgetState.disabled)) {
                               return Colors.grey;
                             }
-                            return const Color(0xFF7C4DFF);
+                            return const Color(0xFF7C3AED);
                           },
                         ),
                       ),

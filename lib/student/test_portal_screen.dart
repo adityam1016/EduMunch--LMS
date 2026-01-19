@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
+import 'app_drawer.dart';
 
 // Enum for view states
 enum PortalView { portalHome, mcqView, theoryView }
@@ -290,6 +291,7 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
         title: const Text(
           'Student Assessment Portal',
@@ -304,8 +306,8 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.blue[600]!,
-                Colors.blue[800]!,
+                const Color(0xFF7C3AED),
+                const Color(0xFF6D28D9),
               ],
             ),
           ),
@@ -348,12 +350,12 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blue[600]!, Colors.blue[800]!],
+                  colors: [const Color(0xFF7C3AED), const Color(0xFF6D28D9)],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.3),
+                    color: const Color(0xFF7C3AED).withOpacity(0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -460,8 +462,8 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
                   _timerStarted = false;
                 });
               },
-              color1: const Color(0xFF1565C0),
-              color2: const Color(0xFF1976D2),
+              color1: const Color(0xFF7C3AED),
+              color2: const Color(0xFF8B5CF6),
             ),
           ],
         ),
@@ -640,10 +642,10 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.blue[50]!, Colors.blue[100]!],
+                      colors: [const Color(0xFFF5F3FF), const Color(0xFFEDE9FE)],
                     ),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue[200]!),
+                    border: Border.all(color: const Color(0xFFDDD6FE)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -655,13 +657,13 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
                             'Question ${currentQuestionIndex + 1}/${mcqQuestions.length}',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: Colors.blue[900],
+                              color: Colors.purple[900],
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: Colors.blue[600],
+                              color: const Color(0xFF7C3AED),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -680,8 +682,8 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
                         child: LinearProgressIndicator(
                           value: (currentQuestionIndex + 1) / mcqQuestions.length,
                           minHeight: 8,
-                          backgroundColor: Colors.blue[200],
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+                          backgroundColor: const Color(0xFFDDD6FE),
+                          valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF7C3AED)),
                         ),
                       ),
                     ],
@@ -700,13 +702,13 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
                         blurRadius: 10,
                       ),
                     ],
-                    border: Border.all(color: Colors.blue[100]!),
+                    border: Border.all(color: const Color(0xFFEDE9FE)),
                   ),
                   child: Text(
                     mcqQuestions[currentQuestionIndex].text,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue[900],
+                      color: Colors.purple[900],
                     ),
                   ),
                 ),

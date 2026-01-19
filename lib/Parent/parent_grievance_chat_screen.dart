@@ -100,7 +100,7 @@ class _ParentGrievanceChatScreenState extends State<ParentGrievanceChatScreen> {
       case 'Pending':
         return const Color(0xFFFF9800);
       case 'In Progress':
-        return const Color(0xFF2196F3);
+        return const Color(0xFF8B5CF6);
       case 'Resolved':
         return const Color(0xFF4CAF50);
       default:
@@ -113,7 +113,7 @@ class _ParentGrievanceChatScreenState extends State<ParentGrievanceChatScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFF7C3AED),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -217,7 +217,7 @@ class _ParentGrievanceChatScreenState extends State<ParentGrievanceChatScreen> {
                   Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF7C4DFF), Color(0xFF5E35B1)],
+                        colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -252,11 +252,11 @@ class _ParentGrievanceChatScreenState extends State<ParentGrievanceChatScreen> {
           if (!isParent) ...[
             CircleAvatar(
               radius: 18,
-              backgroundColor: const Color(0xFF7C4DFF).withOpacity(0.2),
+              backgroundColor: const Color(0xFF7C3AED).withOpacity(0.2),
               child: const Icon(
                 Icons.admin_panel_settings,
                 size: 20,
-                color: Color(0xFF7C4DFF),
+                color: Color(0xFF7C3AED),
               ),
             ),
             const SizedBox(width: 8),
@@ -284,7 +284,7 @@ class _ParentGrievanceChatScreenState extends State<ParentGrievanceChatScreen> {
                   decoration: BoxDecoration(
                     gradient: isParent
                         ? const LinearGradient(
-                            colors: [Color(0xFF7C4DFF), Color(0xFF5E35B1)],
+                            colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
                           )
                         : null,
                     color: isParent ? null : Colors.white,
@@ -327,11 +327,11 @@ class _ParentGrievanceChatScreenState extends State<ParentGrievanceChatScreen> {
             const SizedBox(width: 8),
             CircleAvatar(
               radius: 18,
-              backgroundColor: const Color(0xFF7C4DFF).withOpacity(0.2),
+              backgroundColor: const Color(0xFF7C3AED).withOpacity(0.2),
               child: const Icon(
                 Icons.person,
                 size: 20,
-                color: Color(0xFF7C4DFF),
+                color: Color(0xFF7C3AED),
               ),
             ),
           ],
@@ -373,7 +373,7 @@ class _ParentGrievanceChatScreenState extends State<ParentGrievanceChatScreen> {
                 child: ElevatedButton(
                   onPressed: () => Get.back(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C4DFF),
+                    backgroundColor: const Color(0xFF7C3AED),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

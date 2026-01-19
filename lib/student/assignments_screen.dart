@@ -119,7 +119,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
       'type': 'Image',
       'icon': Icons.image,
       'status': 'Graded: A+',
-      'statusColor': const Color(0xFF42A5F5),
+      'statusColor': const Color(0xFF8B5CF6),
       'dueDate': '10 Oct 2024',
       'timeStatus': 'Submitted: 10 Oct 2024',
       'assignmentType': 'file',
@@ -188,7 +188,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                         ),
                         child: const Icon(
                           Icons.menu,
-                          color: Color(0xFF1A237E),
+                          color: Color(0xFF5B21B6),
                           size: 24,
                         ),
                       ),
@@ -201,7 +201,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A237E),
+                        color: Color(0xFF5B21B6),
                       ),
                     ),
                   ),
@@ -231,7 +231,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: selectedFilterIndex == index
-                                ? const Color(0xFF42A5F5)
+                                ? const Color(0xFF8B5CF6)
                                 : Colors.grey[100],
                             borderRadius: BorderRadius.circular(20),
                             border: selectedFilterIndex == index
@@ -560,7 +560,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                       ),
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Color(0xFF1A237E),
+                        color: Color(0xFF5B21B6),
                         size: 24,
                       ),
                     ),
@@ -572,7 +572,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A237E),
+                        color: Color(0xFF5B21B6),
                       ),
                     ),
                   ),
@@ -709,13 +709,13 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color:
-                                        const Color(0xFF42A5F5).withOpacity(0.1),
+                                        const Color(0xFF8B5CF6).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const Icon(
                                     Icons.file_present,
                                     size: 20,
-                                    color: Color(0xFF42A5F5),
+                                    color: Color(0xFF8B5CF6),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -838,7 +838,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF42A5F5),
+                      backgroundColor: const Color(0xFF8B5CF6),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -971,7 +971,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                           });
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF42A5F5),
+                          backgroundColor: const Color(0xFF8B5CF6),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -1038,11 +1038,11 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF42A5F5).withOpacity(0.15)
+                        ? const Color(0xFF8B5CF6).withOpacity(0.15)
                         : Colors.white,
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF42A5F5)
+                          ? const Color(0xFF8B5CF6)
                           : Colors.grey[300]!,
                       width: isSelected ? 2 : 1,
                     ),
@@ -1057,7 +1057,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: isSelected
-                                ? const Color(0xFF42A5F5)
+                                ? const Color(0xFF8B5CF6)
                                 : Colors.grey[400]!,
                             width: isSelected ? 6 : 2,
                           ),
@@ -1073,7 +1073,7 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                                 ? FontWeight.bold
                                 : FontWeight.w500,
                             color: isSelected
-                                ? const Color(0xFF42A5F5)
+                                ? const Color(0xFF8B5CF6)
                                 : Colors.black87,
                           ),
                         ),

@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Color(0xFF0288D1), width: 2),
+                                borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
                               ),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             ),
@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: Color(0xFF0288D1), width: 2),
+                                borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
                               ),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             ),
@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                               } : null,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: _isFormFilled ? Colors.blue[600] : Colors.grey[400],
+                                backgroundColor: _isFormFilled ? const Color(0xFF7C3AED) : Colors.grey[400],
                                 disabledBackgroundColor: Colors.grey[400],
                               ),
                               child: Text(

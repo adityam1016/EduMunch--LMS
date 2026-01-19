@@ -25,7 +25,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
   }
 
   final List<Map<String, dynamic>> subjects = [
-    {'name': 'Physics', 'icon': '⚡', 'color': const Color(0xFF42A5F5)},
+    {'name': 'Physics', 'icon': '⚡', 'color': const Color(0xFF8B5CF6)},
     {'name': 'Chemistry', 'icon': '🧪', 'color': const Color(0xFF7E57C2)},
     {'name': 'Maths', 'icon': '📊', 'color': const Color(0xFF66BB6A)},
   ];
@@ -36,7 +36,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         'name': 'Kinematics',
         'status': 'In Progress',
         'progress': 0.65,
-        'statusColor': Colors.blue,
+        'statusColor': const Color(0xFF7C3AED),
       },
       {
         'name': 'Electromagnetism',
@@ -56,7 +56,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         'name': 'Stoichiometry',
         'status': 'In Progress',
         'progress': 0.45,
-        'statusColor': Colors.blue,
+        'statusColor': const Color(0xFF7C3AED),
       },
     ],
     'Maths': [
@@ -70,7 +70,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         'name': 'Algebra Refresher',
         'status': 'In Progress',
         'progress': 0.8,
-        'statusColor': Colors.blue,
+        'statusColor': const Color(0xFF7C3AED),
       },
     ],
   };
@@ -255,7 +255,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         ),
                         child: const Icon(
                           Icons.arrow_back,
-                          color: Color(0xFF1A237E),
+                          color: Color(0xFF5B21B6),
                           size: 24,
                         ),
                       ),
@@ -274,7 +274,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                           ),
                           child: const Icon(
                             Icons.menu,
-                            color: Color(0xFF1A237E),
+                            color: Color(0xFF5B21B6),
                             size: 24,
                           ),
                         ),
@@ -287,7 +287,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A237E),
+                        color: Color(0xFF5B21B6),
                       ),
                     ),
                   ),
@@ -415,13 +415,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE3F2FD),
+                            color: const Color(0xFFF5F3FF),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
                             Icons.rocket_launch,
                             size: 20,
-                            color: Color(0xFF42A5F5),
+                            color: Color(0xFF8B5CF6),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -529,7 +529,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF42A5F5),
+                        color: Color(0xFF8B5CF6),
                       ),
                     ),
                   ],
@@ -542,7 +542,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     minHeight: 8,
                     backgroundColor: Colors.grey[300],
                     valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFF42A5F5),
+                      Color(0xFF8B5CF6),
                     ),
                   ),
                 ),
@@ -667,7 +667,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
       case 'Completed':
         return Colors.green;
       case 'In Progress':
-        return Colors.blue;
+        return const Color(0xFF7C3AED);
       case 'Not Started':
         return Colors.grey;
       default:
@@ -920,9 +920,9 @@ class _VideoContentCardState extends State<_VideoContentCard> {
                     icon: const Icon(Icons.note_outlined, size: 18),
                     label: const Text('View Notes'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF42A5F5),
+                      foregroundColor: const Color(0xFF8B5CF6),
                       side: const BorderSide(
-                        color: Color(0xFF42A5F5),
+                        color: Color(0xFF8B5CF6),
                         width: 1.5,
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 10),

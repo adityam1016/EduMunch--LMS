@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'create_mcq_assignment_screen.dart';
+import 'teacher_app_drawer.dart';
 
 enum AssignmentType { theory, mcq }
 
@@ -75,7 +76,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blueAccent,
+              primary: const Color(0xFF7C3AED),
               onPrimary: Colors.white,
               onSurface: Colors.black87,
             ),
@@ -93,7 +94,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
           return Theme(
             data: Theme.of(context).copyWith(
               colorScheme: const ColorScheme.light(
-                primary: Colors.blueAccent,
+                primary: const Color(0xFF7C3AED),
                 onPrimary: Colors.white,
                 onSurface: Colors.black87,
               ),
@@ -169,6 +170,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const TeacherAppDrawer(),
       backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
         title: const Text(
@@ -181,10 +183,6 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Get.back(),
-        ),
       ),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -268,7 +266,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
           width: 4,
           height: 24,
           decoration: BoxDecoration(
-            color: Colors.blueAccent,
+            color: const Color(0xFF7C3AED),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -300,7 +298,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
+        prefixIcon: Icon(icon, color: const Color(0xFF7C3AED)),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
@@ -313,7 +311,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+          borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -339,7 +337,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
       value: _selectedBatch,
       decoration: InputDecoration(
         labelText: 'Select Batch',
-        prefixIcon: const Icon(Icons.class_outlined, color: Colors.blueAccent),
+        prefixIcon: const Icon(Icons.class_outlined, color: const Color(0xFF7C3AED)),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
@@ -352,7 +350,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+          borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
@@ -384,7 +382,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         labelText: 'Due Date & Time',
         hintText: 'Select due date and time',
         prefixIcon: const Icon(Icons.calendar_today_outlined,
-            color: Colors.blueAccent),
+            color: const Color(0xFF7C3AED)),
         suffixIcon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
         filled: true,
         fillColor: Colors.white,
@@ -398,7 +396,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+          borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
@@ -426,7 +424,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
             title: 'Theory / Upload',
             subtitle: 'Students will write and upload their answers',
             icon: Icons.description_outlined,
-            color: Colors.blue,
+            color: const Color(0xFF7C3AED),
           ),
           Divider(height: 1, color: Colors.grey[300]),
           _buildTypeOption(
@@ -434,7 +432,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
             title: 'Multiple Choice Questions',
             subtitle: 'Create MCQ-based assignment with auto-grading',
             icon: Icons.quiz_outlined,
-            color: Colors.purple,
+            color: const Color(0xFF7C3AED),
           ),
         ],
       ),
@@ -516,7 +514,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
       child: ElevatedButton(
         onPressed: _proceedToNext,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: const Color(0xFF7C3AED),
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

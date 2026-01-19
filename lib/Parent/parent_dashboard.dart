@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'parent_app_drawer.dart';
 import 'parent_notification_screen.dart';
@@ -8,6 +8,7 @@ import 'parent_attendance_screen.dart';
 import 'parent_performance_screen.dart';
 import 'parent_payment_screen.dart';
 import 'parent_timetable_screen.dart';
+import 'parent_child_controller.dart';
 
 class ParentDashboard extends StatefulWidget {
   const ParentDashboard({super.key});
@@ -17,6 +18,8 @@ class ParentDashboard extends StatefulWidget {
 }
 
 class _ParentDashboardState extends State<ParentDashboard> {
+  final ParentChildController childController = Get.find<ParentChildController>();
+  
   final List<Map<String, String>> children = [
     {
       'name': 'Aarav Sharma',
@@ -28,17 +31,19 @@ class _ParentDashboardState extends State<ParentDashboard> {
     {
       'name': 'Vikas Sharma',
       'studentId': '202400102',
-      'batch': '10th BOARDS',
+      'batch': '9th CBSE',
       'center': 'Kota Main Center',
       'branch': 'Science',
     },
   ];
 
-  String? selectedChildName;
   bool _isProfileExpanded = false;
 
   Map<String, String> get selectedChild {
-    return children.firstWhere((child) => child['name'] == selectedChildName);
+    return children.firstWhere(
+      (child) => child['name'] == childController.selectedChildName.value,
+      orElse: () => children.first,
+    );
   }
 
   @override
@@ -54,7 +59,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blue[400]!, Colors.blue[700]!],
+                  colors: [const Color(0xFF8B5CF6), const Color(0xFF8B5CF6)],
                 ),
               ),
               child: Padding(
@@ -112,37 +117,29 @@ class _ParentDashboardState extends State<ParentDashboard> {
                 ),
               ),
             ),
-            if (selectedChildName == null)
-              Padding(
-                padding: const EdgeInsets.only(left: 20, top: 16, bottom: 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Select Your Child',
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              )
-            else
-              Padding(
-                padding: const EdgeInsets.only(left: 20, top: 16, bottom: 16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Parent Dashboard',
+            Padding(
+              padding: const EdgeInsets.only(left: 20, top: 16, bottom: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Obx(() {
+                  return Text(
+                    childController.hasSelectedChild 
+                        ? 'Parent Dashboard' 
+                        : 'Welcome, Parent',
                     style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                ),
+                  );
+                }),
               ),
+            ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: selectedChildName == null
-                    ? _buildChildSelection()
-                    : _buildDashboardContent(),
-              ),
+              child: Obx(() {
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: childController.hasSelectedChild
+                      ? _buildDashboardContent()
+                      : _buildChildSelection(),
+                );
+              }),
             ),
           ],
         ),
@@ -154,101 +151,118 @@ class _ParentDashboardState extends State<ParentDashboard> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 40),
+        Text(
+          'Select a Child',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF7C3AED),
+          ),
+        ),
+        const SizedBox(height: 8),
         Text(
           'Choose a child to view their dashboard',
           textAlign: TextAlign.center,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: Colors.grey[600],
+          ),
         ),
         const SizedBox(height: 40),
         Column(
           children: children.map((child) {
             return GestureDetector(
-              onTap: () => setState(() {
-                selectedChildName = child['name'];
-                _isProfileExpanded = false;
-              }),
+              onTap: () {
+                childController.switchChild(
+                  name: child['name']!,
+                  batch: child['batch']!,
+                  studentId: child['studentId']!,
+                );
+              },
               child: Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [const Color(0xFF7C4DFF), const Color(0xFF5E35B1)],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.grey[300]!,
+                    width: 1,
                   ),
-                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.4),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Column(
+                child: Row(
                   children: [
                     Container(
-                      width: 80,
-                      height: 80,
+                      width: 60,
+                      height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.2),
-                        border: Border.all(color: Colors.white, width: 3),
+                        border: Border.all(
+                          color: const Color(0xFF7C3AED),
+                          width: 3,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 48,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      child['name']!,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      child['batch']!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/profile.png',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[200],
+                              child: const Icon(
+                                Icons.person,
+                                size: 30,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'ID: ${child['studentId']}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white60,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'View Dashboard',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            child['name']!,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            child['batch']!,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'ID: ${child['studentId']}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF7C3AED),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.grey[400],
+                      size: 20,
                     ),
                   ],
                 ),
@@ -256,6 +270,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
             );
           }).toList(),
         ),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -292,7 +307,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
             height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF1565C0), width: 2),
+              border: Border.all(color: const Color(0xFF7C3AED), width: 2),
             ),
             child: ClipOval(
               child: Image.asset(
@@ -471,7 +486,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
       {
         'icon': Icons.calendar_today_outlined,
         'label': 'Attendance',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFBA68C8),
         'onTap': () => Get.to(() => const ParentAttendanceScreen()),
       },
       {
@@ -489,7 +504,7 @@ class _ParentDashboardState extends State<ParentDashboard> {
       {
         'icon': Icons.schedule_outlined,
         'label': 'Timetable',
-        'color': const Color(0xFF9C27B0),
+        'color': const Color(0xFF8B5CF6),
         'onTap': () => Get.to(() => const ParentTimetableScreen()),
       },
     ];

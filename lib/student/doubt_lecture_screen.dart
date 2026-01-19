@@ -142,13 +142,13 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
       case 'Ongoing':
         return const Color(0xFF66BB6A);
       case 'Upcoming':
-        return const Color(0xFF42A5F5);
+        return const Color(0xFF8B5CF6);
       case 'Scheduled':
         return Colors.orange;
       case 'Completed':
         return Colors.grey;
       case 'Open for Registration':
-        return const Color(0xFF42A5F5);
+        return const Color(0xFF8B5CF6);
       case 'Limited Seats':
         return const Color(0xFFEF5350);
       default:
@@ -172,7 +172,7 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
   Color _getModeColor(String mode) {
     switch (mode) {
       case 'Online':
-        return const Color(0xFF42A5F5);
+        return const Color(0xFF8B5CF6);
       case 'Offline':
         return const Color(0xFFEF5350);
       case 'Hybrid':
@@ -221,7 +221,7 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
                         ),
                         child: const Icon(
                           Icons.menu,
-                          color: Color(0xFF1A237E),
+                          color: Color(0xFF5B21B6),
                           size: 24,
                         ),
                       ),
@@ -234,7 +234,7 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A237E),
+                        color: Color(0xFF5B21B6),
                       ),
                     ),
                   ),
@@ -685,7 +685,7 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
               vertical: 6,
             ),
             decoration: BoxDecoration(
-              color: const Color(0xFF42A5F5).withOpacity(0.2),
+              color: const Color(0xFF8B5CF6).withOpacity(0.2),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -693,7 +693,7 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF42A5F5),
+                color: Color(0xFF8B5CF6),
               ),
             ),
           ),

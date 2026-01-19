@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'app_drawer.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -121,7 +121,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1565C0),
+              color: Color(0xFF7C3AED),
             ),
           ),
           const SizedBox(height: 8),
@@ -153,7 +153,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: Color(0xFF1565C0), width: 2),
+                borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             ),
@@ -166,6 +166,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
         title: const Text('Feedback'),
         centerTitle: true,
@@ -176,15 +177,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Color(0xFF1565C0),
-                Color(0xFF1976D2),
+                Color(0xFF7C3AED),
+                Color(0xFF8B5CF6),
               ],
             ),
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
         ),
       ),
       body: SingleChildScrollView(
@@ -196,14 +193,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFE3F2FD),
+                color: const Color(0xFFF5F3FF),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
                 'Your feedback helps us improve. Please be honest and constructive.',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Color(0xFF1565C0),
+                  color: Color(0xFF7C3AED),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -304,7 +301,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF1565C0),
+                      color: Color(0xFF7C3AED),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -326,7 +323,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: const BorderSide(color: Color(0xFF1565C0), width: 2),
+                        borderSide: const BorderSide(color: Color(0xFF7C3AED), width: 2),
                       ),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     ),
@@ -343,7 +340,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               child: ElevatedButton(
                 onPressed: _submitFeedback,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1565C0),
+                  backgroundColor: const Color(0xFF7C3AED),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

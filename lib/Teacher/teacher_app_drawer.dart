@@ -29,8 +29,8 @@ class TeacherAppDrawer extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF1565C0),
-                    Color(0xFF1976D2),
+                    Color(0xFF7C3AED),
+                    Color(0xFF8B5CF6),
                   ],
                 ),
               ),

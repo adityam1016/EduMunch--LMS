@@ -35,7 +35,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blue[400]!, Colors.blue[700]!],
+                  colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
                 ),
               ),
               child: Padding(
@@ -142,7 +142,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
             height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF1565C0), width: 2),
+              border: Border.all(color: const Color(0xFF7C3AED), width: 2),
             ),
             child: ClipOval(
               child: Image.asset(
@@ -186,7 +186,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
       {
         'icon': Icons.check_box_outlined,
         'label': 'Manage Attendance',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFBA68C8),
         'onTap': () => Get.to(() => const ManageAttendanceScreen()),
       },
       {
@@ -222,7 +222,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
       {
         'icon': Icons.schedule_outlined,
         'label': 'Timetable',
-        'color': const Color(0xFF9C27B0),
+        'color': const Color(0xFF8B5CF6),
         'onTap': () => Get.to(() => const TeacherTimetableScreen()),
       },
     ];

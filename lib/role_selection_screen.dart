@@ -130,7 +130,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[600],
+                          backgroundColor: const Color(0xFF7C3AED),
                           elevation: 8,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -224,8 +224,8 @@ class _RoleCardWidgetState extends State<_RoleCardWidget> {
               end: Alignment.bottomRight,
               colors: _isHovering
                   ? [
-                      widget.isSelected ? const Color(0xFFE3F2FD) : Colors.white.withOpacity(0.95),
-                      widget.isSelected ? const Color(0xFFBBDEFB) : Colors.white.withOpacity(0.9),
+                      widget.isSelected ? const Color(0xFFF5F3FF) : Colors.white.withOpacity(0.95),
+                      widget.isSelected ? const Color(0xFFEDE9FE) : Colors.white.withOpacity(0.9),
                     ]
                   : [
                       Colors.white.withOpacity(0.9),
@@ -234,7 +234,7 @@ class _RoleCardWidgetState extends State<_RoleCardWidget> {
             ),
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
-              color: widget.isSelected ? const Color(0xFF2962FF) : Colors.transparent,
+              color: widget.isSelected ? const Color(0xFF6D28D9) : Colors.transparent,
               width: 2,
             ),
             boxShadow: [
@@ -250,7 +250,7 @@ class _RoleCardWidgetState extends State<_RoleCardWidget> {
               Icon(
                 widget.icon,
                 size: 28,
-                color: widget.isSelected ? const Color(0xFF2962FF) : Colors.black45,
+                color: widget.isSelected ? const Color(0xFF6D28D9) : Colors.black45,
               ),
               const SizedBox(width: 20),
               Text(
@@ -258,7 +258,7 @@ class _RoleCardWidgetState extends State<_RoleCardWidget> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: widget.isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: widget.isSelected ? const Color(0xFF2962FF) : Colors.black87,
+                  color: widget.isSelected ? const Color(0xFF6D28D9) : Colors.black87,
                 ),
               ),
               const Spacer(),
@@ -269,10 +269,10 @@ class _RoleCardWidgetState extends State<_RoleCardWidget> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: widget.isSelected ? const Color(0xFF2962FF) : Colors.black26,
+                    color: widget.isSelected ? const Color(0xFF6D28D9) : Colors.black26,
                     width: 2,
                   ),
-                  color: widget.isSelected ? const Color(0xFF2962FF) : Colors.transparent,
+                  color: widget.isSelected ? const Color(0xFF6D28D9) : Colors.transparent,
                 ),
                 child: widget.isSelected
                     ? const Icon(Icons.check, size: 16, color: Colors.white)

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'app_drawer.dart';
 
 class SubjectPerformance {
   final String name;
@@ -178,7 +178,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.blue[400]!, Colors.blue[700]!],
+                    colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
                   ),
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -319,7 +319,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
                   icon: const Icon(Icons.close),
                   label: const Text('Close'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
+                    backgroundColor: const Color(0xFF7C3AED),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -401,7 +401,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
               '${percentage.toStringAsFixed(0)}%',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.blue[600],
+                color: const Color(0xFF7C3AED),
               ),
             ),
           ],
@@ -413,7 +413,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
             value: percentage / 100,
             minHeight: 10,
             backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+            valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF7C3AED)),
           ),
         ),
       ],
@@ -423,6 +423,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AppDrawer(),
       appBar: AppBar(
         title: const Text(
           'Academic Performance',
@@ -436,15 +437,11 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.blue[600]!,
-                Colors.blue[800]!,
+                const Color(0xFF7C3AED),
+                const Color(0xFF6D28D9),
               ],
             ),
           ),
-        ),
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(
@@ -457,9 +454,9 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
+                  color: const Color(0xFFF5F3FF),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue[200]!),
+                  border: Border.all(color: const Color(0xFFDDD6FE)),
                 ),
                 child: Row(
                   children: [
@@ -468,7 +465,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
                       height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.blue[600],
+                        color: const Color(0xFF7C3AED),
                       ),
                       child: const Center(
                         child: Icon(Icons.person, color: Colors.white, size: 32),
@@ -548,7 +545,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.blue[600] : Colors.grey[200],
+                            color: isSelected ? const Color(0xFF7C3AED) : Colors.grey[200],
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -572,10 +569,10 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: entry.isCurrentUser ? Colors.blue[50] : Colors.white,
+                      color: entry.isCurrentUser ? const Color(0xFFF5F3FF) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: entry.isCurrentUser ? Colors.blue[300]! : Colors.grey[300]!,
+                        color: entry.isCurrentUser ? const Color(0xFFC4B5FD) : Colors.grey[300]!,
                       ),
                     ),
                     child: Row(
@@ -620,7 +617,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: entry.isCurrentUser ? Colors.blue[600] : Colors.grey[300],
+                            color: entry.isCurrentUser ? const Color(0xFF7C3AED) : Colors.grey[300],
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -647,7 +644,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
     final color = subject.percentage >= 90
         ? Colors.green
         : subject.percentage >= 80
-            ? Colors.blue
+            ? const Color(0xFF7C3AED)
             : subject.percentage >= 70
                 ? Colors.orange
                 : Colors.red;

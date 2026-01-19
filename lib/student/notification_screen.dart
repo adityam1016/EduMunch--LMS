@@ -1,266 +1,459 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'app_drawer.dart';
 
-class NotificationScreen extends StatelessWidget {
+class Notification {
+  final String id;
+  final String title;
+  final String message;
+  final String description;
+  final DateTime timestamp;
+  bool isRead;
+  final String category;
+
+  Notification({
+    required this.id,
+    required this.title,
+    required this.message,
+    required this.description,
+    required this.timestamp,
+    this.isRead = false,
+    required this.category,
+  });
+}
+
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
 
   @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  final List<Notification> notifications = [
+    Notification(
+      id: '1',
+      title: 'Physics Class Scheduled',
+      message: 'Your Physics class with Mr. Sharma',
+      description:
+          'Your Physics class with Mr. Sharma is scheduled for tomorrow at 10:00 AM. Please be on time and bring your textbook.',
+      timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+      category: 'Class',
+    ),
+    Notification(
+      id: '2',
+      title: 'Mathematics Exam Alert',
+      message: 'Unit Test scheduled on 30th December',
+      description:
+          'Unit Test for Mathematics is scheduled on 30th December 2025 at 9:00 AM. Topics covered: Algebra, Trigonometry, and Calculus.',
+      timestamp: DateTime.now().subtract(const Duration(hours: 5)),
+      category: 'Exam',
+    ),
+    Notification(
+      id: '3',
+      title: 'Chemistry Lab Session',
+      message: 'Practical session rescheduled',
+      description:
+          'Practical session for Chemistry has been rescheduled to 3:00 PM today. Please bring your lab manual and safety equipment.',
+      timestamp: DateTime.now().subtract(const Duration(days: 1)),
+      isRead: true,
+      category: 'Class',
+    ),
+    Notification(
+      id: '4',
+      title: 'JEE Mock Test Results',
+      message: 'Mock Test 5 results available',
+      description:
+          'Your JEE Mock Test 5 results are now available. You scored 245/300. Check detailed analysis in the Result section.',
+      timestamp: DateTime.now().subtract(const Duration(days: 2)),
+      isRead: true,
+      category: 'Result',
+    ),
+    Notification(
+      id: '5',
+      title: 'Biology Class Cancelled',
+      message: 'Tomorrow\'s class cancelled',
+      description:
+          'Tomorrow\'s Biology class has been cancelled due to unavoidable circumstances. Make-up class will be scheduled next week.',
+      timestamp: DateTime.now().subtract(const Duration(days: 2)),
+      isRead: true,
+      category: 'Class',
+    ),
+    Notification(
+      id: '6',
+      title: 'Assignment Deadline',
+      message: 'Chemistry assignment due tomorrow',
+      description:
+          'Chemistry assignment submission deadline is tomorrow. Please submit before 5:00 PM through the portal.',
+      timestamp: DateTime.now().subtract(const Duration(days: 3)),
+      isRead: true,
+      category: 'Assignment',
+    ),
+  ];
+
+  String selectedFilter = 'All';
+  String? expandedNotificationId;
+
+  List<Notification> get filteredNotifications {
+    if (selectedFilter == 'Unread') {
+      return notifications.where((n) => !n.isRead).toList();
+    } else if (selectedFilter == 'All') {
+      return notifications;
+    } else {
+      return notifications.where((n) => n.category == selectedFilter).toList();
+    }
+  }
+
+  void _markAsRead(String id) {
+    setState(() {
+      final notification = notifications.firstWhere((n) => n.id == id);
+      notification.isRead = true;
+    });
+  }
+
+  String _formatTime(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+    }
+  }
+
+  Color _getCategoryColor(String category) {
+    switch (category) {
+      case 'Class':
+        return const Color(0xFF7C3AED);
+      case 'Exam':
+        return Colors.red;
+      case 'Result':
+        return Colors.green;
+      case 'Assignment':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Class':
+        return Icons.class_outlined;
+      case 'Exam':
+        return Icons.assignment_outlined;
+      case 'Result':
+        return Icons.emoji_events_outlined;
+      case 'Assignment':
+        return Icons.assignment_turned_in_outlined;
+      default:
+        return Icons.notifications_outlined;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Dummy notifications data
-    final notifications = [
-      {
-        'title': 'Physics Class Scheduled',
-        'message': 'Your Physics class with Mr. Sharma is scheduled for tomorrow at 10:00 AM.',
-        'time': '2 hours ago',
-        'type': 'class',
-        'isRead': false,
-      },
-      {
-        'title': 'Mathematics Exam Alert',
-        'message': 'Unit Test for Mathematics is scheduled on 30th December 2025 at 9:00 AM.',
-        'time': '5 hours ago',
-        'type': 'exam',
-        'isRead': false,
-      },
-      {
-        'title': 'Chemistry Lab Session',
-        'message': 'Practical session for Chemistry has been rescheduled to 3:00 PM today.',
-        'time': '1 day ago',
-        'type': 'class',
-        'isRead': true,
-      },
-      {
-        'title': 'JEE Mock Test Results',
-        'message': 'Your JEE Mock Test 5 results are now available. Check your score in the Result section.',
-        'time': '2 days ago',
-        'type': 'exam',
-        'isRead': true,
-      },
-      {
-        'title': 'Biology Class Cancelled',
-        'message': 'Tomorrow\'s Biology class has been cancelled due to unavoidable circumstances.',
-        'time': '2 days ago',
-        'type': 'class',
-        'isRead': true,
-      },
-      {
-        'title': 'English Mid-Term Exam',
-        'message': 'Mid-term examination for English is scheduled on 5th January 2026.',
-        'time': '3 days ago',
-        'type': 'exam',
-        'isRead': true,
-      },
-      {
-        'title': 'Doubt Session Available',
-        'message': 'Special doubt clearing session for Physics is available this Saturday.',
-        'time': '4 days ago',
-        'type': 'class',
-        'isRead': true,
-      },
-      {
-        'title': 'Assignment Deadline',
-        'message': 'Chemistry assignment submission deadline is tomorrow. Please submit before 5:00 PM.',
-        'time': '5 days ago',
-        'type': 'exam',
-        'isRead': true,
-      },
-    ];
-
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const AppDrawer(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // App Bar
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.blue[400]!,
-                    Colors.blue[700]!,
-                  ],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Notifications',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('All notifications marked as read'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Mark all read',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+      appBar: AppBar(
+        title: const Text('Notifications'),
+        centerTitle: true,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF7C3AED),
+                Color(0xFF8B5CF6),
+              ],
             ),
-
-            // Notifications List
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  final notification = notifications[index];
-                  return _buildNotificationCard(
-                    title: notification['title'] as String,
-                    message: notification['message'] as String,
-                    time: notification['time'] as String,
-                    type: notification['type'] as String,
-                    isRead: notification['isRead'] as bool,
-                  );
-                },
-              ),
-            ),
-          ],
+          ),
         ),
+      ),
+      body: Column(
+        children: [
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                _buildFilterChip('All', notifications.length),
+                const SizedBox(width: 8),
+                _buildFilterChip('Unread', notifications.where((n) => !n.isRead).length),
+                const SizedBox(width: 8),
+                _buildFilterChip('Class', notifications.where((n) => n.category == 'Class').length),
+                const SizedBox(width: 8),
+                _buildFilterChip('Exam', notifications.where((n) => n.category == 'Exam').length),
+                const SizedBox(width: 8),
+                _buildFilterChip('Assignment', notifications.where((n) => n.category == 'Assignment').length),
+              ],
+            ),
+          ),
+
+          // Notifications List
+          Expanded(
+            child: filteredNotifications.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.notifications_none,
+                          size: 64,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No notifications',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: filteredNotifications.length,
+                    itemBuilder: (context, index) {
+                      final notification = filteredNotifications[index];
+                      final isExpanded = expandedNotificationId == notification.id;
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isExpanded) {
+                              expandedNotificationId = null;
+                            } else {
+                              expandedNotificationId = notification.id;
+                              _markAsRead(notification.id);
+                            }
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: notification.isRead
+                                  ? Colors.grey[300]!
+                                  : _getCategoryColor(notification.category),
+                              width: notification.isRead ? 1 : 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(
+                                  notification.isRead ? 0.05 : 0.1,
+                                ),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  children: [
+                                    // Category Icon
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: _getCategoryColor(notification.category)
+                                            .withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Icon(
+                                        _getCategoryIcon(notification.category),
+                                        color: _getCategoryColor(notification.category),
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+
+                                    // Title and Message
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  notification.title,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                              if (!notification.isRead)
+                                                Container(
+                                                  width: 8,
+                                                  height: 8,
+                                                  decoration: BoxDecoration(
+                                                    color: _getCategoryColor(
+                                                        notification.category),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            notification.message,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+
+                                    // Time
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          _formatTime(notification.timestamp),
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey[500],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Icon(
+                                          isExpanded
+                                              ? Icons.keyboard_arrow_up
+                                              : Icons.keyboard_arrow_down,
+                                          color: Colors.grey[500],
+                                          size: 18,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Expanded Details
+                              if (isExpanded) ...[
+                                Container(
+                                  height: 1,
+                                  color: Colors.grey[200],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Details',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        notification.description,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[700],
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Category: ${notification.category}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: _getCategoryColor(
+                                                  notification.category),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          if (!notification.isRead)
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 6,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: _getCategoryColor(
+                                                        notification.category)
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                'New',
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: _getCategoryColor(
+                                                      notification.category),
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildNotificationCard({
-    required String title,
-    required String message,
-    required String time,
-    required String type,
-    required bool isRead,
-  }) {
-    return Builder(
-      builder: (context) {
-        final isClass = type == 'class';
-        final iconColor = isClass ? const Color(0xFF42A5F5) : const Color(0xFFEF5350);
-        final icon = isClass ? Icons.class_outlined : Icons.assignment_outlined;
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isRead
-                  ? [
-                      Colors.grey[50]!,
-                      Colors.grey[50]!.withOpacity(0.95),
-                    ]
-                  : [
-                      const Color(0xFFE3F2FD),
-                      const Color(0xFFBBDEFB).withOpacity(0.5),
-                    ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.grey[200]!,
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Icon
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  color: iconColor,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 14),
-              // Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: isRead ? FontWeight.w500 : FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ),
-                        if (!isRead)
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF2962FF),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      message,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      time,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
+  Widget _buildFilterChip(String label, int count) {
+    final isSelected = selectedFilter == label;
+    return FilterChip(
+      label: Text('$label ($count)'),
+      selected: isSelected,
+      onSelected: (value) {
+        setState(() {
+          selectedFilter = label;
+        });
       },
+      backgroundColor: Colors.white,
+      selectedColor: const Color(0xFF7C3AED),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.black87,
+        fontWeight: FontWeight.w500,
+      ),
+      side: BorderSide(
+        color: isSelected ? const Color(0xFF7C3AED) : Colors.grey[300]!,
+      ),
     );
   }
 }

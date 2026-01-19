@@ -218,13 +218,13 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.purple.withOpacity(0.1),
+                      color: const Color(0xFF7C3AED).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       '${_questions.length} Questions',
                       style: const TextStyle(
-                        color: Colors.purple,
+                        color: const Color(0xFF7C3AED),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -281,10 +281,10 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: const Color(0xFF7C3AED).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.quiz, color: Colors.purple),
+                  child: const Icon(Icons.quiz, color: const Color(0xFF7C3AED)),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -387,7 +387,7 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
                       style: const TextStyle(color: Colors.white),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
+                      backgroundColor: const Color(0xFF7C3AED),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -472,13 +472,13 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: const Color(0xFF7C3AED).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     'Q${index + 1}',
                     style: const TextStyle(
-                      color: Colors.purple,
+                      color: const Color(0xFF7C3AED),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -499,7 +499,7 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
                     IconButton(
                       icon: const Icon(Icons.edit, size: 20),
                       onPressed: () => _editQuestion(index),
-                      color: Colors.blue,
+                      color: const Color(0xFF7C3AED),
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete, size: 20),
@@ -558,13 +558,13 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: const Color(0xFF7C3AED).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 '${question['marks']} Mark${question['marks'] > 1 ? 's' : ''}',
                 style: const TextStyle(
-                  color: Colors.blue,
+                  color: const Color(0xFF7C3AED),
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),

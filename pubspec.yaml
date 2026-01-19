@@ -18,7 +18,7 @@ dependencies:
   permission_handler: ^11.0.1
   open_file: ^3.3.2
   table_calendar: ^3.0.9
-  record: ^5.1.2
+  record: ^6.1.2
   audioplayers: ^5.2.1
   intl: ^0.18.1
   youtube_player_flutter: ^9.0.3
@@ -35,6 +35,3 @@ flutter:
     - assets/logo.png
     - assets/bg.png
     - assets/profile.png
-
-dependency_overrides:
-  record_platform_interface: 1.2.0

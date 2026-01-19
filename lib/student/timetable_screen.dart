@@ -253,7 +253,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                         ),
                         child: const Icon(
                           Icons.menu,
-                          color: Color(0xFF1A237E),
+                          color: Color(0xFF5B21B6),
                           size: 24,
                         ),
                       ),
@@ -266,7 +266,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A237E),
+                        color: Color(0xFF5B21B6),
                       ),
                     ),
                   ),
@@ -307,7 +307,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: !isWeeklyView
-                                  ? const Color(0xFF42A5F5)
+                                  ? const Color(0xFF8B5CF6)
                                   : Colors.grey[600],
                             ),
                           ),
@@ -336,7 +336,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               color: isWeeklyView
-                                  ? const Color(0xFF42A5F5)
+                                  ? const Color(0xFF8B5CF6)
                                   : Colors.grey[600],
                             ),
                           ),
@@ -375,7 +375,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           child: const Icon(
                             Icons.arrow_back,
                             size: 20,
-                            color: Color(0xFF42A5F5),
+                            color: Color(0xFF8B5CF6),
                           ),
                         ),
                       ),
@@ -400,7 +400,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                                 const Icon(
                                   Icons.calendar_today,
                                   size: 18,
-                                  color: Color(0xFF42A5F5),
+                                  color: Color(0xFF8B5CF6),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -429,7 +429,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
                           child: const Icon(
                             Icons.arrow_forward,
                             size: 20,
-                            color: Color(0xFF42A5F5),
+                            color: Color(0xFF8B5CF6),
                           ),
                         ),
                       ),
@@ -505,7 +505,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
             width: 4,
             height: 100,
             decoration: BoxDecoration(
-              color: const Color(0xFF42A5F5),
+              color: const Color(0xFF8B5CF6),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 bottomLeft: Radius.circular(12),
@@ -574,7 +574,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFF42A5F5).withOpacity(0.2),
+              color: const Color(0xFF8B5CF6).withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -582,7 +582,7 @@ class _TimetableScreenState extends State<TimetableScreen> {
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF42A5F5),
+                color: Color(0xFF8B5CF6),
               ),
             ),
           ),

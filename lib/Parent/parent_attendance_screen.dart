@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'parent_app_drawer.dart';
 
 class ParentAttendanceScreen extends StatefulWidget {
   const ParentAttendanceScreen({super.key});
@@ -193,14 +193,11 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const ParentAppDrawer(),
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Get.back(),
-        ),
         title: const Text(
           'Attendance Report',
           style: TextStyle(
@@ -211,7 +208,7 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_today, color: Color(0xFF7C4DFF)),
+            icon: const Icon(Icons.calendar_today, color: Color(0xFF7C3AED)),
             onPressed: _selectWeek,
           ),
         ],
@@ -250,14 +247,14 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF7C4DFF), Color(0xFF5E35B1)],
+          colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C4DFF).withOpacity(0.3),
+            color: const Color(0xFF7C3AED).withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -372,7 +369,7 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: const Icon(Icons.chevron_left, color: Color(0xFF7C4DFF)),
+            icon: const Icon(Icons.chevron_left, color: Color(0xFF7C3AED)),
             onPressed: _previousWeek,
           ),
           Text(
@@ -384,7 +381,7 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.chevron_right, color: Color(0xFF7C4DFF)),
+            icon: const Icon(Icons.chevron_right, color: Color(0xFF7C3AED)),
             onPressed: _nextWeek,
           ),
         ],
@@ -416,7 +413,7 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: isToday ? Border.all(color: const Color(0xFF7C4DFF), width: 2) : null,
+        border: isToday ? Border.all(color: const Color(0xFF7C3AED), width: 2) : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -431,7 +428,7 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isToday ? const Color(0xFF7C4DFF) : Colors.grey[100],
+              color: isToday ? const Color(0xFF7C3AED) : Colors.grey[100],
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -643,7 +640,7 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF7C4DFF),
+              primary: Color(0xFF7C3AED),
               onPrimary: Colors.white,
               onSurface: Colors.black87,
             ),

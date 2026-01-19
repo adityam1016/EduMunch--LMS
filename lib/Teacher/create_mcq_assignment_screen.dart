@@ -156,7 +156,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
               });
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: const Color(0xFF7C3AED),
               foregroundColor: Colors.white,
             ),
             child: const Text('Save'),
@@ -217,7 +217,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
               icon: const Icon(Icons.save_outlined, size: 20),
               label: const Text('Save'),
               style: TextButton.styleFrom(
-                foregroundColor: Colors.blueAccent,
+                foregroundColor: const Color(0xFF7C3AED),
               ),
             ),
         ],
@@ -231,7 +231,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
             child: Row(
               children: [
                 Icon(Icons.question_answer_outlined,
-                    color: Colors.blueAccent, size: 20),
+                    color: const Color(0xFF7C3AED), size: 20),
                 const SizedBox(width: 8),
                 Text(
                   '${_savedQuestions.length} Questions Added',
@@ -318,7 +318,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
               onPressed: _addQuestion,
               icon: const Icon(Icons.add),
               label: const Text('Add Question'),
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: const Color(0xFF7C3AED),
               foregroundColor: Colors.white,
             )
           : null,
@@ -341,11 +341,11 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.blueAccent.withOpacity(0.1),
+                      color: const Color(0xFF7C3AED).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(Icons.edit_outlined,
-                        color: Colors.blueAccent, size: 20),
+                        color: const Color(0xFF7C3AED), size: 20),
                   ),
                   const SizedBox(width: 12),
                   const Text(
@@ -449,7 +449,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
                   _correctAnswerIndex = value;
                 });
               },
-              activeColor: Colors.blueAccent,
+              activeColor: const Color(0xFF7C3AED),
             ),
             Expanded(
               child: TextFormField(
@@ -462,7 +462,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
                     margin: const EdgeInsets.only(right: 12),
                     decoration: BoxDecoration(
                       color: _correctAnswerIndex == index
-                          ? Colors.blueAccent
+                          ? const Color(0xFF7C3AED)
                           : Colors.grey[300],
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -501,11 +501,11 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           leading: CircleAvatar(
-            backgroundColor: Colors.blueAccent.withOpacity(0.1),
+            backgroundColor: const Color(0xFF7C3AED).withOpacity(0.1),
             child: Text(
               '${index + 1}',
               style: const TextStyle(
-                color: Colors.blueAccent,
+                color: const Color(0xFF7C3AED),
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -535,7 +535,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
             children: [
               IconButton(
                 icon: const Icon(Icons.edit_outlined, size: 20),
-                color: Colors.blueAccent,
+                color: const Color(0xFF7C3AED),
                 onPressed: () => _editQuestion(index),
                 tooltip: 'Edit',
               ),
@@ -636,7 +636,7 @@ class _CreateMcqAssignmentScreenState extends State<CreateMcqAssignmentScreen>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+        borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),

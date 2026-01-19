@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'parent_app_drawer.dart';
 
 class ParentPerformanceScreen extends StatefulWidget {
   const ParentPerformanceScreen({super.key});
@@ -14,7 +14,7 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
     {
       'name': 'Physics',
       'icon': Icons.science_outlined,
-      'color': const Color(0xFF4FC3F7),
+      'color': const Color(0xFFBA68C8),
       'score': 85,
       'maxScore': 100,
       'rank': 12,
@@ -128,11 +128,12 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const ParentAppDrawer(),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Student Performance'),
         elevation: 0,
-        backgroundColor: Colors.blue[700],
+        backgroundColor: const Color(0xFF7C3AED),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -173,12 +174,12 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.blue[700]!, Colors.blue[500]!],
+          colors: [const Color(0xFF7C3AED), const Color(0xFF8B5CF6)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
+            color: const Color(0xFF7C3AED).withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -375,7 +376,7 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isCurrentStudent
-                        ? Colors.blue[50]
+                        ? const Color(0xFFF5F3FF)
                         : Colors.transparent,
                     borderRadius: isLast
                         ? const BorderRadius.only(
@@ -417,7 +418,7 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
                                     color: isCurrentStudent
-                                        ? Colors.blue[700]
+                                        ? const Color(0xFF7C3AED)
                                         : Colors.black87,
                                   ),
                                 ),
@@ -429,7 +430,7 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.blue[700],
+                                      color: const Color(0xFF7C3AED),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: const Text(
@@ -461,7 +462,7 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: isCurrentStudent
-                              ? Colors.blue[700]
+                              ? const Color(0xFF7C3AED)
                               : Colors.black87,
                         ),
                       ),
@@ -481,7 +482,7 @@ class _ParentPerformanceScreenState extends State<ParentPerformanceScreen> {
     if (rank == 1) return const Color(0xFFFFD700); // Gold
     if (rank == 2) return const Color(0xFFC0C0C0); // Silver
     if (rank == 3) return const Color(0xFFCD7F32); // Bronze
-    return Colors.blue[700]!;
+    return const Color(0xFF7C3AED);
   }
 
   void _showSubjectDetails(Map<String, dynamic> subject) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:get/get.dart';
+import 'teacher_app_drawer.dart';
 
 class ManageAttendanceScreen extends StatefulWidget {
   const ManageAttendanceScreen({super.key});
@@ -94,7 +94,7 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.blueAccent,
+              primary: const Color(0xFF7C3AED),
               onPrimary: Colors.white,
               onSurface: Colors.black87,
             ),
@@ -114,6 +114,7 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const TeacherAppDrawer(),
       backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
         title: const Text(
@@ -123,10 +124,6 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Get.back(),
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.black54),
@@ -295,7 +292,7 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildSummaryCard('Late', _lateCount, Colors.orange),
-            _buildSummaryCard('Half Day', _halfDayCount, Colors.purple),
+            _buildSummaryCard('Half Day', _halfDayCount, const Color(0xFF7C3AED)),
             // Empty card for balance
             Expanded(
               child: Container(
@@ -358,12 +355,12 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          side: BorderSide(color: Colors.blue.shade200),
+          side: BorderSide(color: const Color(0xFFDDD6FE)),
         ),
         child: const Text(
           'Mark All Present',
           style: TextStyle(
-            color: Colors.blueAccent,
+            color: const Color(0xFF7C3AED),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -393,11 +390,11 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: Colors.blueAccent.withOpacity(0.1),
+                backgroundColor: const Color(0xFF7C3AED).withOpacity(0.1),
                 child: Text(
                   student.name[0].toUpperCase(),
                   style: const TextStyle(
-                    color: Colors.blueAccent,
+                    color: const Color(0xFF7C3AED),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -426,7 +423,7 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
               _buildStatusButton('P', student, Colors.green),
               _buildStatusButton('A', student, Colors.red),
               _buildStatusButton('L', student, Colors.orange),
-              _buildStatusButton('H', student, Colors.purple),
+              _buildStatusButton('H', student, const Color(0xFF7C3AED)),
             ],
           ),
         ],
@@ -482,7 +479,7 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
           style: const TextStyle(fontSize: 18, color: Colors.white),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blueAccent,
+          backgroundColor: const Color(0xFF7C3AED),
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

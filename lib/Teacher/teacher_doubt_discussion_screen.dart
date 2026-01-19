@@ -34,7 +34,6 @@ class _TeacherDoubtDiscussionScreenState
   bool _isSending = false;
   bool _isUploading = false;
   bool _isRecording = false;
-  String? _recordingPath;
   Timer? _recordingTimer;
   int _recordingDuration = 0;
 
@@ -338,7 +337,6 @@ class _TeacherDoubtDiscussionScreenState
 
         setState(() {
           _isRecording = true;
-          _recordingPath = filePath;
           _recordingDuration = 0;
         });
 
@@ -396,7 +394,6 @@ class _TeacherDoubtDiscussionScreenState
         );
 
         setState(() {
-          _recordingPath = null;
           _recordingDuration = 0;
         });
       }
@@ -404,7 +401,6 @@ class _TeacherDoubtDiscussionScreenState
       print('❌ Error stopping recording: $e');
       setState(() {
         _isRecording = false;
-        _recordingPath = null;
         _recordingDuration = 0;
       });
     }
@@ -532,22 +528,6 @@ class _TeacherDoubtDiscussionScreenState
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.videocam, color: Colors.white),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Video call feature coming soon')),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.call, color: Colors.white),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Voice call feature coming soon')),
-              );
-            },
-          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.white),
             onSelected: (value) {
@@ -795,7 +775,7 @@ class _TeacherDoubtDiscussionScreenState
                 Icon(
                   Icons.done_all,
                   size: 14,
-                  color: Colors.blue[700],
+                  color: const Color(0xFF7C3AED),
                 ),
               ],
             ],
@@ -819,7 +799,7 @@ class _TeacherDoubtDiscussionScreenState
           children: [
             Icon(
               Icons.play_circle_filled,
-              color: isTeacher ? const Color(0xFF075E54) : Colors.blue[700],
+              color: isTeacher ? const Color(0xFF075E54) : const Color(0xFF7C3AED),
               size: 36,
             ),
             const SizedBox(width: 8),
@@ -843,7 +823,7 @@ class _TeacherDoubtDiscussionScreenState
                           decoration: BoxDecoration(
                             color: isTeacher
                                 ? const Color(0xFF075E54)
-                                : Colors.blue[700],
+                                : const Color(0xFF7C3AED),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -966,15 +946,7 @@ class _TeacherDoubtDiscussionScreenState
                     ),
                     child: Row(
                       children: [
-                        IconButton(
-                          icon: const Icon(Icons.emoji_emotions_outlined),
-                          color: Colors.grey[600],
-                          onPressed: isDisabled
-                              ? null
-                              : () {
-                                  // Emoji picker placeholder
-                                },
-                        ),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: TextField(
                             controller: _textController,

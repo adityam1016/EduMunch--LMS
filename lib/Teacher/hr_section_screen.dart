@@ -317,7 +317,7 @@ class _HRSectionScreenState extends State<HRSectionScreen> {
         onPressed: _showApplyLeaveModal,
         label: const Text('Apply for Leave'),
         icon: const Icon(Icons.add),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: const Color(0xFF7C3AED),
         foregroundColor: Colors.white,
       ),
     );
@@ -359,7 +359,7 @@ class _HRSectionScreenState extends State<HRSectionScreen> {
                 Text('ID: 123456', style: TextStyle(color: Colors.grey[600])),
                 const SizedBox(height: 4),
                 Text('Mathematics Teacher',
-                    style: TextStyle(color: Colors.blueAccent[700])),
+                    style: TextStyle(color: const Color(0xFF6D28D9))),
               ],
             ),
           ),
@@ -383,10 +383,10 @@ class _HRSectionScreenState extends State<HRSectionScreen> {
                 'Sick Leave', _sickLeavesTaken, _totalSickLeaves, Colors.red)),
         Flexible(
             child: _buildLeaveIndicator('Casual Leave', _casualLeavesTaken,
-                _totalCasualLeaves, Colors.blue)),
+                _totalCasualLeaves, const Color(0xFF7C3AED))),
         Flexible(
             child: _buildLeaveIndicator('Unpaid Leave', _unpaidLeavesTaken,
-                _totalUnpaidLeaves, Colors.purple)),
+                _totalUnpaidLeaves, const Color(0xFF7C3AED))),
       ],
     );
   }
@@ -667,7 +667,7 @@ class _ApplyLeaveModalState extends State<ApplyLeaveModal> {
                   child: ElevatedButton(
                     onPressed: _isSubmitting ? null : _submitLeaveApplication,
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: const Color(0xFF7C3AED),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
@@ -739,7 +739,7 @@ class _ApplyLeaveModalState extends State<ApplyLeaveModal> {
                   borderSide: BorderSide(color: Colors.grey.shade300)),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.blueAccent)),
+                  borderSide: const BorderSide(color: const Color(0xFF7C3AED))),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 14, horizontal: 12))),
     ]);
@@ -764,7 +764,7 @@ class _ApplyLeaveModalState extends State<ApplyLeaveModal> {
                   borderSide: BorderSide(color: Colors.grey.shade300)),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.blueAccent)),
+                  borderSide: const BorderSide(color: const Color(0xFF7C3AED))),
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 14, horizontal: 12))),
     ]);

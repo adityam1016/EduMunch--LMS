@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:async';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
 import 'app_drawer.dart';
 import 'doubt_discussion_screen.dart';
 
@@ -80,6 +83,10 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
   TextEditingController _descriptionController = TextEditingController();
   List<Map<String, String>> attachments = [];
   final ImagePicker _imagePicker = ImagePicker();
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  bool _isRecording = false;
+  Timer? _recordingTimer;
+  int _recordingDuration = 0;
 
   List<String> subjects = ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'History', 'English'];
   List<String> faculties = ['Prof. Sharma', 'Prof. Gupta', 'Prof. Singh', 'Prof. Kumar', 'Prof. Patel'];
@@ -89,6 +96,8 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
   @override
   void dispose() {
     _descriptionController.dispose();
+    _recordingTimer?.cancel();
+    _audioRecorder.dispose();
     super.dispose();
   }
 
@@ -223,14 +232,14 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
         backgroundColor: Colors.white,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Color(0xFF42A5F5)),
+            icon: const Icon(Icons.menu, color: Color(0xFF8B5CF6)),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
         title: const Text(
           'My Doubts',
           style: TextStyle(
-            color: Color(0xFF42A5F5),
+            color: Color(0xFF8B5CF6),
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -295,9 +304,9 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                                 height: 50,
                                 decoration: BoxDecoration(
                                   color: doubt['subject'] == 'Mathematics'
-                                      ? Colors.blue.withOpacity(0.15)
+                                      ? const Color(0xFF7C3AED).withOpacity(0.15)
                                       : doubt['subject'] == 'Physics'
-                                          ? Colors.purple.withOpacity(0.15)
+                                          ? const Color(0xFF7C3AED).withOpacity(0.15)
                                           : doubt['subject'] == 'Chemistry'
                                               ? Colors.orange.withOpacity(0.15)
                                               : doubt['subject'] == 'Biology'
@@ -320,9 +329,9 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                                                       ? Icons.history
                                                       : Icons.language,
                                   color: doubt['subject'] == 'Mathematics'
-                                      ? Colors.blue
+                                      ? const Color(0xFF7C3AED)
                                       : doubt['subject'] == 'Physics'
-                                          ? Colors.purple
+                                          ? const Color(0xFF7C3AED)
                                           : doubt['subject'] == 'Chemistry'
                                               ? Colors.orange
                                               : doubt['subject'] == 'Biology'
@@ -403,10 +412,16 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                     _currentIndex = 1;
                   });
                 },
-                icon: const Icon(Icons.add_circle_outline),
-                label: const Text('Upload Doubt'),
+                icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+                label: const Text(
+                  'Upload Doubt',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF42A5F5),
+                  backgroundColor: const Color(0xFF8B5CF6),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -426,7 +441,7 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF42A5F5)),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF8B5CF6)),
           onPressed: () {
             setState(() {
               _currentIndex = 0;
@@ -436,7 +451,7 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
         title: const Text(
           'Ask a Doubt',
           style: TextStyle(
-            color: Color(0xFF42A5F5),
+            color: Color(0xFF8B5CF6),
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -618,7 +633,7 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Color(0xFF42A5F5)),
+                  borderSide: const BorderSide(color: Color(0xFF8B5CF6)),
                 ),
               ),
             ),
@@ -644,12 +659,12 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.1),
+                          color: const Color(0xFF7C3AED).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.camera_alt,
-                          color: Colors.blue,
+                          color: const Color(0xFF7C3AED),
                           size: 28,
                         ),
                       ),
@@ -671,12 +686,12 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.1),
+                          color: const Color(0xFF7C3AED).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.image,
-                          color: Colors.purple,
+                          color: const Color(0xFF7C3AED),
                           size: 28,
                         ),
                       ),
@@ -692,22 +707,7 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Voice recording for 3 seconds...'),
-                        duration: Duration(seconds: 3),
-                        backgroundColor: Colors.orange,
-                      ),
-                    );
-                    setState(() {
-                      attachments.add({
-                        'name': 'voice_message_${DateTime.now().millisecondsSinceEpoch}.wav',
-                        'type': 'Voice',
-                        'path': 'voice_message',
-                      });
-                    });
-                  },
+                  onTap: _startVoiceRecording,
                   child: Column(
                     children: [
                       Container(
@@ -757,7 +757,7 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.image, size: 16, color: Colors.blue),
+                            const Icon(Icons.image, size: 16, color: const Color(0xFF7C3AED)),
                             const SizedBox(width: 6),
                             Text(
                               attachment['name']!.length > 15
@@ -785,7 +785,7 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
               child: ElevatedButton(
                 onPressed: _submitDoubt,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF42A5F5),
+                  backgroundColor: const Color(0xFF8B5CF6),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -805,5 +805,261 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _startVoiceRecording() async {
+    if (await _audioRecorder.hasPermission()) {
+      _showRecordingDialog();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Microphone permission required'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _showRecordingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF7C3AED).withOpacity(0.1),
+                      const Color(0xFFEDE9FE),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Animated microphone icon
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0.8, end: 1.2),
+                      duration: const Duration(milliseconds: 800),
+                      curve: Curves.easeInOut,
+                      builder: (context, scale, child) {
+                        return Transform.scale(
+                          scale: _isRecording ? scale : 1.0,
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: _isRecording ? Colors.red : Colors.orange,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: (_isRecording ? Colors.red : Colors.orange)
+                                      .withOpacity(0.3),
+                                  blurRadius: 20,
+                                  spreadRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              _isRecording ? Icons.stop : Icons.mic,
+                              color: Colors.white,
+                              size: 50,
+                            ),
+                          ),
+                        );
+                      },
+                      onEnd: () {
+                        if (_isRecording && mounted) {
+                          setDialogState(() {});
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    // Status text
+                    Text(
+                      _isRecording ? 'Recording...' : 'Ready to Record',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF7C3AED),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Timer
+                    if (_isRecording)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          _formatDuration(_recordingDuration),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 24),
+                    // Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // Cancel button
+                        if (_isRecording)
+                          OutlinedButton.icon(
+                            onPressed: () async {
+                              await _cancelRecording();
+                              Navigator.pop(dialogContext);
+                            },
+                            icon: const Icon(Icons.close),
+                            label: const Text('Cancel'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.grey[700],
+                              side: BorderSide(color: Colors.grey[400]!),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                        // Record/Stop button
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            if (_isRecording) {
+                              await _stopRecording();
+                              Navigator.pop(dialogContext);
+                            } else {
+                              await _startRecordingAudio(setDialogState);
+                            }
+                          },
+                          icon: Icon(_isRecording ? Icons.stop : Icons.mic),
+                          label: Text(_isRecording ? 'Stop' : 'Start'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                _isRecording ? Colors.red : Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _startRecordingAudio(Function setDialogState) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final path =
+          '${directory.path}/voice_${DateTime.now().millisecondsSinceEpoch}.m4a';
+
+      await _audioRecorder.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc),
+        path: path,
+      );
+
+      setState(() {
+        _isRecording = true;
+        _recordingDuration = 0;
+      });
+
+      _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (mounted) {
+          setState(() {
+            _recordingDuration++;
+          });
+          setDialogState(() {});
+        }
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to start recording: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    try {
+      final path = await _audioRecorder.stop();
+      _recordingTimer?.cancel();
+
+      if (path != null) {
+        setState(() {
+          attachments.add({
+            'name': 'voice_${_formatDuration(_recordingDuration)}.m4a',
+            'type': 'Voice',
+            'path': path,
+          });
+          _isRecording = false;
+          _recordingDuration = 0;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Voice recorded successfully'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isRecording = false;
+        _recordingDuration = 0;
+      });
+    }
+  }
+
+  Future<void> _cancelRecording() async {
+    await _audioRecorder.stop();
+    _recordingTimer?.cancel();
+    setState(() {
+      _isRecording = false;
+      _recordingDuration = 0;
+    });
+  }
+
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 }

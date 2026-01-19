@@ -97,7 +97,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         ),
                         child: const Icon(
                           Icons.menu,
-                          color: Color(0xFF1A237E),
+                          color: Color(0xFF5B21B6),
                           size: 24,
                         ),
                       ),
@@ -111,7 +111,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1A237E),
+                        color: Color(0xFF5B21B6),
                       ),
                     ),
                   ),
@@ -194,7 +194,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               child: const Icon(
                 Icons.arrow_back,
                 size: 20,
-                color: Color(0xFF42A5F5),
+                color: Color(0xFF8B5CF6),
               ),
             ),
           ),
@@ -217,7 +217,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     const Icon(
                       Icons.calendar_today,
                       size: 18,
-                      color: Color(0xFF42A5F5),
+                      color: Color(0xFF8B5CF6),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -248,7 +248,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               child: const Icon(
                 Icons.arrow_forward,
                 size: 20,
-                color: Color(0xFF42A5F5),
+                color: Color(0xFF8B5CF6),
               ),
             ),
           ),
@@ -380,7 +380,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD),
+              color: const Color(0xFFF5F3FF),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

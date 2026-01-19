@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'parent_grievance_chat_screen.dart';
+import 'parent_app_drawer.dart';
 
 class ParentGrievanceScreen extends StatefulWidget {
   const ParentGrievanceScreen({super.key});
@@ -156,12 +157,12 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFF7C3AED).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
                       Icons.camera_alt,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFF7C3AED),
                     ),
                   ),
                   title: const Text('Camera'),
@@ -176,12 +177,12 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFF7C3AED).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
                       Icons.photo_library,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFF7C3AED),
                     ),
                   ),
                   title: const Text('Gallery'),
@@ -243,7 +244,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
       case 'Pending':
         return const Color(0xFFFF9800);
       case 'In Progress':
-        return const Color(0xFF2196F3);
+        return const Color(0xFF8B5CF6);
       case 'Resolved':
         return const Color(0xFF4CAF50);
       default:
@@ -271,14 +272,11 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
     }
 
     return Scaffold(
+      drawer: const ParentAppDrawer(),
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFF7C3AED),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
         title: const Text(
           'Grievances',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -305,7 +303,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                           _selectedFilter = filter;
                         });
                       },
-                      selectedColor: const Color(0xFF7C4DFF),
+                      selectedColor: const Color(0xFF7C3AED),
                       backgroundColor: Colors.grey[200],
                       labelStyle: TextStyle(
                         color: isSelected ? Colors.white : Colors.black87,
@@ -361,7 +359,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
             _showRaiseForm = true;
           });
         },
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFF7C3AED),
         icon: const Icon(Icons.add),
         label: const Text('Raise Grievance'),
       ),
@@ -404,12 +402,12 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.1),
+                      color: const Color(0xFF7C3AED).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       _getCategoryIcon(grievance['category']),
-                      color: const Color(0xFF7C4DFF),
+                      color: const Color(0xFF7C3AED),
                       size: 24,
                     ),
                   ),
@@ -538,7 +536,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF7C4DFF),
+        backgroundColor: const Color(0xFF7C3AED),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -565,12 +563,12 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF7C4DFF), Color(0xFF5E35B1)],
+                    colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.3),
+                      color: const Color(0xFF7C3AED).withOpacity(0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -635,7 +633,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                     border: InputBorder.none,
                     prefixIcon: Icon(
                       Icons.category_outlined,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFF7C3AED),
                     ),
                   ),
                   items: _categories.map((category) {
@@ -679,7 +677,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                   controller: _titleController,
                   decoration: const InputDecoration(
                     hintText: 'Enter grievance title',
-                    prefixIcon: Icon(Icons.title, color: Color(0xFF7C4DFF)),
+                    prefixIcon: Icon(Icons.title, color: Color(0xFF7C3AED)),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(16),
                   ),
@@ -724,7 +722,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                     hintText: 'Describe your grievance in detail',
                     prefixIcon: Icon(
                       Icons.description_outlined,
-                      color: Color(0xFF7C4DFF),
+                      color: Color(0xFF7C3AED),
                     ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(16),
@@ -861,7 +859,7 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                             if (states.contains(WidgetState.disabled)) {
                               return Colors.grey;
                             }
-                            return const Color(0xFF7C4DFF);
+                            return const Color(0xFF7C3AED);
                           },
                         ),
                       ),

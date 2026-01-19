@@ -270,7 +270,7 @@ class _CreateAssignmentTemplateScreenState
               child: _buildTypeCard(
                 type: 'MCQ',
                 icon: Icons.quiz,
-                color: Colors.purple,
+                color: const Color(0xFF7C3AED),
               ),
             ),
           ],
@@ -389,7 +389,7 @@ class _CreateAssignmentTemplateScreenState
             style: const TextStyle(color: Colors.white),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
+            backgroundColor: const Color(0xFF7C3AED),
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -467,7 +467,7 @@ class _CreateAssignmentTemplateScreenState
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.blueAccent, width: 2),
+        borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

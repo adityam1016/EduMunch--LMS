@@ -17,6 +17,17 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+    
+    afterEvaluate {
+        if (project.hasProperty("android")) {
+            (project.property("android") as com.android.build.gradle.BaseExtension).apply {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_1_8
+                    targetCompatibility = JavaVersion.VERSION_1_8
+                }
+            }
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {

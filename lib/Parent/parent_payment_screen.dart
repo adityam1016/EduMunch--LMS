@@ -5,6 +5,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_file/open_file.dart';
+import 'parent_app_drawer.dart';
 
 class ParentPaymentScreen extends StatefulWidget {
   const ParentPaymentScreen({super.key});
@@ -76,6 +77,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const ParentAppDrawer(),
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Payments'),
@@ -154,14 +156,14 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.blue[300]!,
-                          Colors.blue[400]!,
+                          const Color(0xFFC4B5FD),
+                          const Color(0xFF8B5CF6),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blue.withOpacity(0.3),
+                          color: const Color(0xFF7C3AED).withOpacity(0.3),
                           blurRadius: 15,
                           offset: const Offset(0, 8),
                         ),
@@ -206,7 +208,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                                     onPressed: () {},
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.white,
-                                      foregroundColor: Colors.blue[700],
+                                      foregroundColor: const Color(0xFF7C3AED),
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 8,
@@ -275,7 +277,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                                         ElevatedButton(
                                           onPressed: () => _showPaymentDialog(context, 100000, 2),
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.blue[700],
+                                            backgroundColor: const Color(0xFF7C3AED),
                                             foregroundColor: Colors.white,
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 20,
@@ -326,7 +328,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                     icon: Icon(Icons.filter_alt_outlined, size: 18),
                     label: const Text('Filter'),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.blue[700],
+                      foregroundColor: const Color(0xFF7C3AED),
                     ),
                   ),
                 ],
@@ -527,12 +529,12 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                                 width: 48,
                                 height: 48,
                                 decoration: BoxDecoration(
-                                  color: Colors.blue[50],
+                                  color: const Color(0xFFF5F3FF),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(
                                   Icons.receipt,
-                                  color: Colors.blue[700],
+                                  color: const Color(0xFF7C3AED),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -591,14 +593,14 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                                       Icon(
                                         Icons.download,
                                         size: 14,
-                                        color: Colors.blue[700],
+                                        color: const Color(0xFF7C3AED),
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
                                         'Download',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Colors.blue[700],
+                                          color: const Color(0xFF7C3AED),
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -664,12 +666,12 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.blue[50],
+                      color: const Color(0xFFF5F3FF),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       Icons.payment,
-                      color: Colors.blue[700],
+                      color: const Color(0xFF7C3AED),
                       size: 28,
                     ),
                   ),
@@ -712,12 +714,12 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.blue[600]!, Colors.blue[800]!],
+                  colors: [const Color(0xFF7C3AED), const Color(0xFF6D28D9)],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.blue.withOpacity(0.3),
+                    color: const Color(0xFF7C3AED).withOpacity(0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -768,7 +770,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                       icon: Icons.qr_code_scanner,
                       title: 'UPI Payment',
                       subtitle: 'Pay using UPI apps',
-                      color: Colors.purple,
+                      color: const Color(0xFF7C3AED),
                     ),
                     
                     // Card Payment
@@ -777,7 +779,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                       icon: Icons.credit_card,
                       title: 'Credit/Debit Card',
                       subtitle: 'Pay using card',
-                      color: Colors.blue,
+                      color: const Color(0xFF7C3AED),
                     ),
                     
                     // Net Banking
@@ -828,13 +830,13 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: const Text('Payment gateway will be integrated soon'),
-                          backgroundColor: Colors.blue[700],
+                          backgroundColor: const Color(0xFF7C3AED),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[700],
+                      backgroundColor: const Color(0xFF7C3AED),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -907,7 +909,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('$title selected. Gateway integration pending.'),
-              backgroundColor: Colors.blue[700],
+              backgroundColor: const Color(0xFF7C3AED),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -968,7 +970,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                 pw.Container(
                   padding: const pw.EdgeInsets.all(20),
                   decoration: pw.BoxDecoration(
-                    color: PdfColors.blue700,
+                    color: PdfColors.purple700,
                     borderRadius: pw.BorderRadius.circular(10),
                   ),
                   child: pw.Column(
@@ -1107,7 +1109,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                             style: pw.TextStyle(
                               fontSize: 20,
                               fontWeight: pw.FontWeight.bold,
-                              color: PdfColors.blue700,
+                              color: PdfColors.purple700,
                             ),
                           ),
                         ],
@@ -1227,7 +1229,7 @@ class _ParentPaymentScreenState extends State<ParentPaymentScreen> {
                           await OpenFile.open(filePath);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[700],
+                          backgroundColor: const Color(0xFF7C3AED),
                           foregroundColor: Colors.white,
                         ),
                         child: const Text('Open'),

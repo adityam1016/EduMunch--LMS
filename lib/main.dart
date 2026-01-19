@@ -17,9 +17,12 @@ import 'student/result.dart';
 import 'student/feedback_screen.dart';
 import 'parent/parent_dashboard.dart';
 import 'parent/parent_notification_screen.dart';
+import 'parent/parent_child_controller.dart';
 import 'Teacher/teacher_dashboard_screen.dart';
 
 void main() {
+  // Initialize ParentChildController globally
+  Get.put(ParentChildController());
   runApp(const MyApp());
 }
 
@@ -35,8 +38,27 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+          seedColor: const Color(0xFF7C3AED),
           brightness: Brightness.light,
+          primary: const Color(0xFF7C3AED),
+        ),
+        primaryColor: const Color(0xFF7C3AED),
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: -0.5),
+          displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: -0.5),
+          displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: -0.25),
+          headlineLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, letterSpacing: 0.15),
+          titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
+          titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.1),
+          bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5),
+          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.25),
+          bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.4),
+          labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 1.25),
+          labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.25),
+          labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, letterSpacing: 1.5),
         ),
       ),
       home: const SplashScreen(),

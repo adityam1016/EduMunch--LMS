@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'parent_app_drawer.dart';
 
 class ParentTimetableScreen extends StatefulWidget {
   const ParentTimetableScreen({super.key});
@@ -34,7 +35,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Dr. Rajesh Kumar',
         'room': 'Room 201',
         'type': 'Theory',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFBA68C8),
       },
       {
         'subject': 'Mathematics',
@@ -84,7 +85,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Dr. Rajesh Kumar',
         'room': 'Lab 201',
         'type': 'Lab',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFBA68C8),
       },
       {
         'subject': 'Break',
@@ -100,7 +101,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Mr. Arun Patel',
         'room': 'Computer Lab',
         'type': 'Practical',
-        'color': const Color(0xFF42A5F5),
+        'color': const Color(0xFF8B5CF6),
       },
       {
         'subject': 'Chemistry',
@@ -150,7 +151,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Dr. Rajesh Kumar',
         'room': 'Room 201',
         'type': 'Theory',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFBA68C8),
       },
     ],
     'Thursday': [
@@ -160,7 +161,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Dr. Rajesh Kumar',
         'room': 'Room 201',
         'type': 'Theory',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFBA68C8),
       },
       {
         'subject': 'Chemistry',
@@ -192,7 +193,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Mr. Arun Patel',
         'room': 'Computer Lab',
         'type': 'Practical',
-        'color': const Color(0xFF42A5F5),
+        'color': const Color(0xFF8B5CF6),
       },
     ],
     'Friday': [
@@ -226,7 +227,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Dr. Rajesh Kumar',
         'room': 'Lab 201',
         'type': 'Lab',
-        'color': const Color(0xFF4FC3F7),
+        'color': const Color(0xFFBA68C8),
       },
       {
         'subject': 'Chemistry',
@@ -252,7 +253,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         'teacher': 'Exam Coordinator',
         'room': 'Exam Hall',
         'type': 'Test',
-        'color': const Color(0xFF9C27B0),
+        'color': const Color(0xFF8B5CF6),
       },
       {
         'subject': 'Break',
@@ -289,11 +290,12 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const ParentAppDrawer(),
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Timetable'),
         elevation: 0,
-        backgroundColor: Colors.blue[700],
+        backgroundColor: const Color(0xFF7C3AED),
         foregroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
@@ -374,7 +376,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
                 },
                 icon: Icon(
                   _showCalendar ? Icons.close : Icons.calendar_month,
-                  color: Colors.blue[700],
+                  color: const Color(0xFF7C3AED),
                 ),
                 tooltip: _showCalendar ? 'Hide Calendar' : 'Show Calendar',
               ),
@@ -407,11 +409,11 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: CalendarStyle(
                 todayDecoration: BoxDecoration(
-                  color: Colors.blue[300],
+                  color: const Color(0xFFC4B5FD),
                   shape: BoxShape.circle,
                 ),
                 selectedDecoration: BoxDecoration(
-                  color: Colors.blue[700],
+                  color: const Color(0xFF7C3AED),
                   shape: BoxShape.circle,
                 ),
                 weekendTextStyle: const TextStyle(color: Colors.red),
@@ -426,11 +428,11 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
                 ),
                 leftChevronIcon: Icon(
                   Icons.chevron_left,
-                  color: Colors.blue[700],
+                  color: const Color(0xFF7C3AED),
                 ),
                 rightChevronIcon: Icon(
                   Icons.chevron_right,
-                  color: Colors.blue[700],
+                  color: const Color(0xFF7C3AED),
                 ),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
@@ -490,7 +492,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
                         Icon(
                           Icons.calendar_today,
                           size: 18,
-                          color: Colors.blue[700],
+                          color: const Color(0xFF7C3AED),
                         ),
                         const SizedBox(width: 10),
                         Text(
@@ -772,7 +774,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isToday ? Colors.blue[700]! : Colors.grey[300]!,
+          color: isToday ? const Color(0xFF7C3AED) : Colors.grey[300]!,
           width: isToday ? 2 : 1,
         ),
         boxShadow: [
@@ -789,7 +791,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isToday ? Colors.blue[700] : Colors.grey[100],
+              color: isToday ? const Color(0xFF7C3AED) : Colors.grey[100],
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -827,7 +829,7 @@ class _ParentTimetableScreenState extends State<ParentTimetableScreen>
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue[700],
+                        color: const Color(0xFF7C3AED),
                       ),
                     ),
                   ),

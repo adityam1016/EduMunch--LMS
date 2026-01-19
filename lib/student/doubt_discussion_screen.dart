@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:async';
+import 'package:record/record.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
+import 'app_drawer.dart';
 
 class DoubtDiscussionScreen extends StatefulWidget {
   final Map<String, dynamic> doubt;
@@ -18,9 +23,14 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
   late List<Map<String, dynamic>> messages;
   TextEditingController messageController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   bool showAttachmentOptions = false;
   List<Map<String, String>> selectedImages = [];
   bool isRecordingVoice = false;
+  Timer? _recordingTimer;
+  int _recordingDuration = 0;
+
 
   @override
   void initState() {
@@ -31,6 +41,9 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
   @override
   void dispose() {
     messageController.dispose();
+    _recordingTimer?.cancel();
+    _audioRecorder.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -152,45 +165,124 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
     });
   }
 
-  void _startVoiceRecording() {
-    setState(() {
-      isRecordingVoice = !isRecordingVoice;
-    });
-
+  void _startVoiceRecording() async {
     if (isRecordingVoice) {
-      // Simulate 3 second voice recording
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted && isRecordingVoice) {
-          setState(() {
-            messages.add({
-              'sender': 'You',
-              'text': 'Voice Message',
-              'time': 'Just now',
-              'isStudent': true,
-              'type': 'voice',
-              'duration': '0:15',
-            });
-            isRecordingVoice = false;
-            showAttachmentOptions = false;
-          });
+      // Stop recording
+      await _stopRecording();
+    } else {
+      // Start recording
+      await _startRecording();
+    }
+  }
 
-          // Simulate faculty reply
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) {
-              setState(() {
-                messages.add({
-                  'sender': widget.doubt['faculty'],
-                  'text': 'I received your voice message!',
-                  'time': 'Just now',
-                  'isStudent': false,
-                  'type': 'text',
-                });
-              });
-            }
+  Future<void> _startRecording() async {
+    try {
+      if (await _audioRecorder.hasPermission()) {
+        final directory = await getApplicationDocumentsDirectory();
+        final path = '${directory.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
+        
+        await _audioRecorder.start(
+          const RecordConfig(encoder: AudioEncoder.aacLc),
+          path: path,
+        );
+        
+        setState(() {
+          isRecordingVoice = true;
+          _recordingDuration = 0;
+        });
+
+        // Start timer
+        _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          if (mounted) {
+            setState(() {
+              _recordingDuration++;
+            });
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Microphone permission required'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error starting recording: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to start recording: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    try {
+      final path = await _audioRecorder.stop();
+      _recordingTimer?.cancel();
+      
+      if (path != null) {
+        setState(() {
+          messages.add({
+            'sender': 'You',
+            'text': 'Voice Message',
+            'time': 'Just now',
+            'isStudent': true,
+            'type': 'voice',
+            'duration': _formatDuration(_recordingDuration),
+            'voicePath': path,
           });
-        }
+          isRecordingVoice = false;
+          _recordingDuration = 0;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Voice message sent'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 1),
+          ),
+        );
+
+        // Simulate faculty reply
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            setState(() {
+              messages.add({
+                'sender': widget.doubt['faculty'],
+                'text': 'I received your voice message!',
+                'time': 'Just now',
+                'isStudent': false,
+                'type': 'text',
+              });
+            });
+          }
+        });
+      }
+    } catch (e) {
+      print('Error stopping recording: $e');
+      setState(() {
+        isRecordingVoice = false;
+        _recordingDuration = 0;
       });
     }
+  }
+
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  void _cancelRecording() async {
+    await _audioRecorder.stop();
+    _recordingTimer?.cancel();
+    setState(() {
+      isRecordingVoice = false;
+      _recordingDuration = 0;
+    });
   }
 
   @override
@@ -201,42 +293,82 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
         return false;
       },
       child: Scaffold(
+        drawer: const AppDrawer(),
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Color(0xFF42A5F5)),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          backgroundColor: const Color(0xFF075E54),
+          leading: Row(
             children: [
-              const Text(
-                'Discussion',
-                style: TextStyle(
-                  color: Color(0xFF42A5F5),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          leadingWidth: 56,
+          title: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                radius: 18,
+                child: Icon(
+                  Icons.person,
+                  color: Colors.grey[600],
+                  size: 20,
                 ),
               ),
-              Text(
-                widget.doubt['faculty'],
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.doubt['faculty'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      widget.doubt['subject'],
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
+          actions: [
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: Colors.white),
+              onSelected: (value) {
+                if (value == 'clear') {
+                  setState(() {
+                    messages.clear();
+                  });
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(value: 'clear', child: Text('Clear Chat')),
+              ],
+            ),
+          ],
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
+        body: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFECE5DD),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
                   final message = messages[index];
@@ -255,8 +387,13 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                               decoration: BoxDecoration(
-                                color: isStudent ? const Color(0xFF42A5F5) : Colors.grey[200],
-                                borderRadius: BorderRadius.circular(12),
+                                color: isStudent ? const Color(0xFFDCF8C6) : Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: const Radius.circular(12),
+                                  topRight: const Radius.circular(12),
+                                  bottomLeft: isStudent ? const Radius.circular(12) : const Radius.circular(0),
+                                  bottomRight: isStudent ? const Radius.circular(0) : const Radius.circular(12),
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.1),
@@ -269,8 +406,8 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                               ),
                               child: Text(
                                 message['text'],
-                                style: TextStyle(
-                                  color: isStudent ? Colors.white : Colors.black87,
+                                style: const TextStyle(
+                                  color: Colors.black87,
                                   fontSize: 14,
                                 ),
                               ),
@@ -309,8 +446,13 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                               decoration: BoxDecoration(
-                                color: isStudent ? const Color(0xFF42A5F5) : Colors.grey[200],
-                                borderRadius: BorderRadius.circular(12),
+                                color: isStudent ? const Color(0xFFDCF8C6) : Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: const Radius.circular(12),
+                                  topRight: const Radius.circular(12),
+                                  bottomLeft: isStudent ? const Radius.circular(12) : const Radius.circular(0),
+                                  bottomRight: isStudent ? const Radius.circular(0) : const Radius.circular(12),
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.grey.withOpacity(0.1),
@@ -414,9 +556,9 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color(0xFFF0F0F0),
                 border: Border(
-                  top: BorderSide(color: Colors.grey[200]!),
+                  top: BorderSide(color: Colors.grey[300]!),
                 ),
               ),
               child: Column(
@@ -436,12 +578,12 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Colors.blue.withOpacity(0.1),
+                                    color: const Color(0xFF7C3AED).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                   child: const Icon(
                                     Icons.camera_alt,
-                                    color: Colors.blue,
+                                    color: const Color(0xFF7C3AED),
                                     size: 24,
                                   ),
                                 ),
@@ -465,12 +607,12 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: Colors.purple.withOpacity(0.1),
+                                    color: const Color(0xFF7C3AED).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                   child: const Icon(
                                     Icons.image,
-                                    color: Colors.purple,
+                                    color: const Color(0xFF7C3AED),
                                     size: 24,
                                   ),
                                 ),
@@ -534,16 +676,12 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: showAttachmentOptions
-                                ? const Color(0xFF42A5F5).withOpacity(0.1)
-                                : Colors.grey[100],
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: Icon(
-                            showAttachmentOptions ? Icons.close : Icons.add,
-                            color: showAttachmentOptions
-                                ? const Color(0xFF42A5F5)
-                                : Colors.grey[600],
+                            showAttachmentOptions ? Icons.close : Icons.attach_file,
+                            color: Colors.grey[700],
                             size: 20,
                           ),
                         ),
@@ -556,20 +694,28 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                           controller: messageController,
                           maxLines: null,
                           minLines: 1,
+                          enabled: !isRecordingVoice,
                           decoration: InputDecoration(
-                            hintText: 'Type a message...',
-                            hintStyle: TextStyle(color: Colors.grey[400]),
+                            hintText: isRecordingVoice 
+                                ? 'Recording... ${_formatDuration(_recordingDuration)}' 
+                                : 'Type a message...',
+                            hintStyle: TextStyle(
+                              color: isRecordingVoice ? Colors.red : Colors.grey[400],
+                              fontWeight: isRecordingVoice ? FontWeight.w600 : FontWeight.normal,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
+                              borderSide: BorderSide.none,
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
+                              borderSide: BorderSide.none,
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(color: Color(0xFF42A5F5)),
+                              borderSide: BorderSide.none,
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -580,17 +726,57 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                       ),
                       const SizedBox(width: 8),
 
-                      // Send Button
+                      // Microphone Button (when not recording and text is empty)
+                      if (!isRecordingVoice && messageController.text.isEmpty)
+                        GestureDetector(
+                          onTap: _startVoiceRecording,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.orange, width: 2),
+                            ),
+                            child: const Icon(
+                              Icons.mic,
+                              color: Colors.orange,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+
+                      // Cancel Recording Button
+                      if (isRecordingVoice)
+                        GestureDetector(
+                          onTap: _cancelRecording,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.black87,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+
+                      if (isRecordingVoice)
+                        const SizedBox(width: 8),
+
+                      // Send/Stop Button
                       GestureDetector(
-                        onTap: _sendMessage,
+                        onTap: isRecordingVoice ? _stopRecording : _sendMessage,
                         child: Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF42A5F5),
+                          decoration: BoxDecoration(
+                            color: isRecordingVoice ? Colors.red : const Color(0xFF075E54),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
-                            Icons.send,
+                          child: Icon(
+                            isRecordingVoice ? Icons.stop : Icons.send,
                             color: Colors.white,
                             size: 18,
                           ),
@@ -599,9 +785,10 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                     ],
                   ),
                 ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

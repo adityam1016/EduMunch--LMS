@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:get/get.dart';
+import 'teacher_app_drawer.dart';
 
 class TimetableEntry {
   final String time;
@@ -53,9 +53,6 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
 
   // Sample timetable data
   List<TimetableEntry> get _allEntries {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    
     List<TimetableEntry> entries = [];
 
     // Generate entries for the week
@@ -195,6 +192,7 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const TeacherAppDrawer(),
       backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
         title: const Text(
@@ -206,10 +204,6 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         elevation: 1,
         shadowColor: Colors.grey.withOpacity(0.2),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Get.back(),
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.black54),
@@ -226,9 +220,9 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
             Tab(text: "Daily"),
             Tab(text: "Weekly"),
           ],
-          labelColor: Colors.blueAccent,
+          labelColor: const Color.fromARGB(255, 200, 54, 222),
           unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.blueAccent,
+          indicatorColor: const Color(0xFF7C3AED),
           indicatorWeight: 3.0,
         ),
       ),
@@ -347,7 +341,7 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: isToday
-            ? const BorderSide(color: Colors.blueAccent, width: 2)
+            ? const BorderSide(color: Color(0xFF7C3AED), width: 2)
             : BorderSide.none,
       ),
       child: Theme(
@@ -358,7 +352,7 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: isToday ? Colors.blueAccent : Colors.grey.shade200,
+              color: isToday ? const Color(0xFF7C3AED) : Colors.grey.shade200,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -436,7 +430,7 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         break;
       case 'class':
       default:
-        cardColor = Colors.blue.shade50;
+        cardColor = const Color(0xFFF5F3FF);
         icon = Icons.class_outlined;
     }
 
@@ -509,7 +503,7 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         break;
       case 'class':
       default:
-        cardColor = Colors.blue.shade50;
+        cardColor = const Color(0xFFF5F3FF);
         icon = Icons.class_outlined;
     }
 

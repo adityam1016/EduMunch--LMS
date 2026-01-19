@@ -124,12 +124,12 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.blue[400]!, Colors.blue[700]!],
+          colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
+            color: const Color(0xFF7C3AED).withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -200,16 +200,16 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.blue : Colors.white,
+              color: isSelected ? const Color(0xFF7C3AED) : Colors.white,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isSelected ? Colors.blue : Colors.grey[300]!,
+                color: isSelected ? const Color(0xFF7C3AED) : Colors.grey[300]!,
                 width: 1.5,
               ),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: Colors.blue.withOpacity(0.3),
+                        color: const Color(0xFF7C3AED).withOpacity(0.3),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),
@@ -362,7 +362,7 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.blue[400]!, Colors.blue[600]!],
+                colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
