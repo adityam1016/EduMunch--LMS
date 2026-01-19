@@ -137,12 +137,6 @@ class _ParentAppDrawerState extends State<ParentAppDrawer> {
                   ),
                   _buildMenuItem(
                     context,
-                    icon: Icons.emoji_events_outlined,
-                    title: 'Results',
-                    route: '/parent-results',
-                  ),
-                  _buildMenuItem(
-                    context,
                     icon: Icons.schedule,
                     title: 'Timetable',
                     route: '/parent-timetable',
