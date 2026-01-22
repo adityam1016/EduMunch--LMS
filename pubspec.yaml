@@ -23,6 +23,8 @@ dependencies:
   intl: ^0.18.1
   youtube_player_flutter: ^9.0.3
   provider: ^6.1.2
+  supabase_flutter: ^2.5.8
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

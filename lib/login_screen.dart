@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth_controller.dart';
 import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  final String role;
-  
-  const LoginScreen({super.key, this.role = 'Student'});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _userIdController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isFormFilled = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -74,24 +75,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             offset: const Offset(2, 2),
                             blurRadius: 4,
                             color: Colors.black.withOpacity(0.5),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    
-                    // Role Text
-                    Text(
-                      'Login as ${widget.role}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        shadows: [
-                          Shadow(
-                            offset: const Offset(1, 1),
-                            blurRadius: 3,
-                            color: Colors.black.withOpacity(0.4),
                           ),
                         ],
                       ),
@@ -184,26 +167,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.infinity,
                             height: 52,
                             child: ElevatedButton(
-                              onPressed: _isFormFilled ? () {
-                                // Navigate to appropriate dashboard based on role
-                                if (widget.role == 'Parent') {
-                                  Get.offAllNamed('/parent-dashboard');
-                                } else if (widget.role == 'Teacher') {
-                                  Get.offAllNamed('/teacher-dashboard');
-                                } else {
-                                  Get.offAllNamed('/dashboard');
-                                }
-                              } : null,
+                              onPressed: _isFormFilled && !_isLoading ? _handleLogin : null,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: _isFormFilled ? const Color(0xFF7C3AED) : Colors.grey[400],
+                                backgroundColor:
+                                    _isFormFilled && !_isLoading ? const Color(0xFF7C3AED) : Colors.grey[400],
                                 disabledBackgroundColor: Colors.grey[400],
                               ),
                               child: Text(
-                                'Login',
+                                _isLoading ? 'Logging in...' : 'Login',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color: _isFormFilled ? Colors.white : Colors.grey[600],
+                                  color: _isFormFilled && !_isLoading ? Colors.white : Colors.grey[600],
                                 ),
                               ),
                             ),
@@ -231,5 +206,79 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleLogin() async {
+    final username = _userIdController.text.trim();
+    final password = _passwordController.text.trim();
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // 1. Try Supabase authentication first
+    try {
+      final supabase = Supabase.instance.client;
+      final response = await supabase.auth.signInWithPassword(
+        email: username,
+        password: password,
+      );
+
+      final email = (response.user?.email ?? username).toLowerCase();
+
+      String? routeFromEmail;
+      String? roleFromEmail;
+      if (email.startsWith('student')) {
+        // e.g. student@edumunch...
+        routeFromEmail = '/dashboard';
+        roleFromEmail = 'Student';
+      } else if (email.startsWith('teacher')) {
+        routeFromEmail = '/teacher-dashboard';
+        roleFromEmail = 'Teacher';
+      }
+
+      if (routeFromEmail != null && roleFromEmail != null) {
+        final authController = Get.find<AuthController>();
+        authController.setSession(email: email, role: roleFromEmail);
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        Get.offAllNamed(routeFromEmail);
+        Get.snackbar(
+          'Login Successful',
+          'Logged in as $email',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade900,
+        );
+        return;
+      }
+    } on AuthException catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      Get.snackbar(
+        'Login Failed',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      Get.snackbar(
+        'Login Failed',
+        'An error occurred during login',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+      );
+    }
   }
 }

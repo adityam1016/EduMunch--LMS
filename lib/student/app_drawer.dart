@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../auth_controller.dart';
+import '../widgets/parent_pin_dialog.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -152,6 +154,43 @@ class AppDrawer extends StatelessWidget {
                     route: '/feedback',
                   ),
                   const Divider(height: 32),
+                  
+                  // Switch to Parent Option
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF7C3AED).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.supervised_user_circle_outlined,
+                        color: Color(0xFF7C3AED),
+                        size: 24,
+                      ),
+                    ),
+                    title: Text(
+                      'Switch to Parent',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF7C3AED),
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'View as Parent',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Color(0xFF7C3AED),
+                    ),
+                    onTap: () => _showParentPinDialog(context),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  ),
                 ],
               ),
             ),
@@ -188,6 +227,36 @@ class AppDrawer extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showParentPinDialog(BuildContext context) async {
+    Get.back(); // Close drawer first
+    
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const ParentPinDialog(),
+    );
+
+    if (result == true) {
+      // PIN verified successfully, switch to parent dashboard
+      final authController = Get.find<AuthController>();
+      authController.setSession(
+        email: authController.email ?? 'parent@edumunch.com',
+        role: 'Parent',
+      );
+      
+      Get.offAllNamed('/parent-dashboard');
+      
+      Get.snackbar(
+        'Access Granted',
+        'Switched to Parent view',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.shade100,
+        colorText: Colors.green.shade900,
+        duration: const Duration(seconds: 2),
+      );
+    }
   }
 
   Widget _buildMenuItem(
@@ -246,8 +315,10 @@ class AppDrawer extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
+              final authController = Get.find<AuthController>();
+              authController.clearSession();
               Get.back(); // Close dialog
-              Get.offAllNamed('/role-selection');
+              Get.offAllNamed('/login');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF5350),

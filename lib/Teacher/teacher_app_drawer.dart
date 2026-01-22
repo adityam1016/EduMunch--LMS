@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../auth_controller.dart';
 import 'teacher_dashboard_screen.dart';
 import 'manage_attendance_screen.dart';
 import 'assignments_list_screen.dart';
@@ -260,8 +261,10 @@ class TeacherAppDrawer extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
+              final authController = Get.find<AuthController>();
+              authController.clearSession();
               Get.back(); // Close dialog
-              Get.offAllNamed('/role-selection');
+              Get.offAllNamed('/login');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF5350),

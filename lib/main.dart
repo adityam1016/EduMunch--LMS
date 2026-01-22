@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'auth_controller.dart';
 import 'splash_screen.dart';
-import 'role_selection_screen.dart';
 import 'login_screen.dart';
 import 'forgot_password_screen.dart';
 import 'student/student_dashboard.dart';
@@ -19,10 +20,20 @@ import 'parent/parent_dashboard.dart';
 import 'parent/parent_notification_screen.dart';
 import 'parent/parent_child_controller.dart';
 import 'Teacher/teacher_dashboard_screen.dart';
+import 'middleware/auth_middleware.dart';
 
-void main() {
-  // Initialize ParentChildController globally
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://lzfgntruyknjolliyzoz.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZmdudHJ1eWtuam9sbGl5em96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5Njk4MjIsImV4cCI6MjA4MzU0NTgyMn0.7QYW0-qizmnTv_ZLiVEVHIYcoDPPSJ39SfNJxGdZ4dQ',
+  );
+  // Initialize controllers globally
   Get.put(ParentChildController());
+  final authController = Get.put(AuthController(), permanent: true);
+  await authController.initFromSupabase();
   runApp(const MyApp());
 }
 
@@ -65,28 +76,84 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/login',
-          page: () {
-            final role = Get.arguments as String? ?? 'Student';
-            return LoginScreen(role: role);
-          },
+          page: () => const LoginScreen(),
         ),
         GetPage(name: '/forgot-password', page: () => const ForgotPasswordScreen()),
-        GetPage(name: '/role-selection', page: () => const RoleSelectionScreen()),
-        GetPage(name: '/dashboard', page: () => const StudentDashboard()),
-        GetPage(name: '/parent-dashboard', page: () => const ParentDashboard()),
-        GetPage(name: '/teacher-dashboard', page: () => const TeacherDashboardScreen()),
-        GetPage(name: '/notifications', page: () => const NotificationScreen()),
-        GetPage(name: '/attendance', page: () => const AttendanceScreen()),
-        GetPage(name: '/courses', page: () => const CoursesScreen()),
-        GetPage(name: '/timetable', page: () => const TimetableScreen()),
-        GetPage(name: '/doubt-lecture', page: () => const DoubtLectureScreen()),
-        GetPage(name: '/assignments', page: () => const AssignmentsScreen()),
-        GetPage(name: '/doubts', page: () => const DoubtsScreen()),
-        GetPage(name: '/test-portal', page: () => const TestPortalScreen()),
-        GetPage(name: '/academic-performance', page: () => const AcademicPerformanceScreen()),
-        GetPage(name: '/result', page: () => const AcademicPerformanceScreen()),
-        GetPage(name: '/feedback', page: () => const FeedbackScreen()),
-        GetPage(name: '/parent-notification', page: () => const ParentNotificationScreen()),
+        GetPage(
+          name: '/dashboard',
+          page: () => const StudentDashboard(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/parent-dashboard',
+          page: () => const ParentDashboard(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/teacher-dashboard',
+          page: () => const TeacherDashboardScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/notifications',
+          page: () => const NotificationScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/attendance',
+          page: () => const AttendanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/courses',
+          page: () => const CoursesScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/timetable',
+          page: () => const TimetableScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/doubt-lecture',
+          page: () => const DoubtLectureScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/assignments',
+          page: () => const AssignmentsScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/doubts',
+          page: () => const DoubtsScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/test-portal',
+          page: () => const TestPortalScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/academic-performance',
+          page: () => const AcademicPerformanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/result',
+          page: () => const AcademicPerformanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/feedback',
+          page: () => const FeedbackScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/parent-notification',
+          page: () => const ParentNotificationScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
         GetPage(name: '/home', page: () => const MyHomePage(title: 'EduMunch')),
       ],
     );

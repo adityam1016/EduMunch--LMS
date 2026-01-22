@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'auth_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,12 +33,41 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _animationController.forward();
+    _initializeApp();
+  }
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Get.offNamed('/role-selection');
+  Future<void> _initializeApp() async {
+    // Wait for animations and session validation
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    final authController = Get.find<AuthController>();
+    
+    // Validate session
+    final isValid = await authController.validateSession();
+
+    if (!mounted) return;
+
+    if (isValid && authController.isLoggedIn) {
+      // Session is valid, navigate to appropriate dashboard
+      String route;
+      switch (authController.role) {
+        case 'Parent':
+          route = '/parent-dashboard';
+          break;
+        case 'Teacher':
+          route = '/teacher-dashboard';
+          break;
+        default:
+          route = '/dashboard';
+          break;
       }
-    });
+      Get.offNamed(route);
+    } else {
+      // No valid session, go to login
+      Get.offNamed('/login');
+    }
   }
 
   @override
