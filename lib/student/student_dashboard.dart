@@ -20,26 +20,40 @@ class _StudentDashboardState extends State<StudentDashboard> {
     'studentId': '202400123',
   };
 
-  final List<Map<String, dynamic>> _todaySessions = [
+  final List<Map<String, dynamic>> _performanceData = [
     {
-      'title': 'Complete Calculus Revision',
-      'subtitle': 'Live with your mentor',
-      'duration': '45 min',
-      'rating': 4.8,
+      'subject': 'Mathematics',
+      'score': 85,
+      'total': 100,
+      'trend': 'up',
+      'percentage': 85.0,
+      'color': const Color(0xFF7C3AED),
     },
     {
-      'title': 'Physics: Laws of Motion',
-      'subtitle': 'Practice problem solving',
-      'duration': '60 min',
-      'rating': 4.6,
+      'subject': 'Physics',
+      'score': 78,
+      'total': 100,
+      'trend': 'up',
+      'percentage': 78.0,
+      'color': const Color(0xFF26A69A),
     },
     {
-      'title': 'Chemistry: Organic Basics',
-      'subtitle': 'Quick concept recap',
-      'duration': '40 min',
-      'rating': 4.7,
+      'subject': 'Chemistry',
+      'score': 92,
+      'total': 100,
+      'trend': 'down',
+      'percentage': 92.0,
+      'color': const Color(0xFFFFB74D),
     },
   ];
+
+  final Map<String, dynamic> _overallPerformance = {
+    'averageScore': 85.0,
+    'rank': 12,
+    'totalStudents': 150,
+    'testsCompleted': 24,
+    'attendance': 94.5,
+  };
 
   final List<Map<String, dynamic>> _categories = [
     {
@@ -68,19 +82,15 @@ class _StudentDashboardState extends State<StudentDashboard> {
     },
   ];
 
-  late final PageController _sessionPageController;
-  int _currentSessionIndex = 0;
   bool _isProfileExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    _sessionPageController = PageController(viewportFraction: 0.9);
   }
 
   @override
   void dispose() {
-    _sessionPageController.dispose();
     super.dispose();
   }
 
@@ -108,11 +118,11 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     const SizedBox(height: 24),
                     _buildSectionHeader(
                       context,
-                      'Your Today Session',
-                      onSeeMore: () => Get.toNamed('/timetable'),
+                      'Your Performance Analytics',
+                      onSeeMore: () => Get.toNamed('/academic-performance'),
                     ),
                     const SizedBox(height: 12),
-                    _buildTodaySessionList(context),
+                    _buildPerformanceAnalytics(context),
                     const SizedBox(height: 24),
                     _buildSectionHeader(
                       context,
@@ -512,114 +522,250 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 
-  Widget _buildTodaySessionList(BuildContext context) {
+  Widget _buildPerformanceAnalytics(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 170,
-          child: PageView.builder(
-            controller: _sessionPageController,
-            itemCount: _todaySessions.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentSessionIndex = index;
-              });
-            },
-            itemBuilder: (context, index) {
-              final session = _todaySessions[index];
-              return Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: GestureDetector(
-                  onTap: () {
-                    Get.snackbar(
-                      'Session selected',
-                      session['title'] as String,
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 6),
+        // Overall Performance Card
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF7C3AED).withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Overall Performance',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          session['title'] as String,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${_overallPerformance['averageScore'].toStringAsFixed(1)}%',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          session['subtitle'] as String,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.grey[600]),
+                      ),
+                      const Text(
+                        'Average Score',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
                         ),
-                        const Spacer(),
-                        Row(
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
                           children: [
-                            const Icon(Icons.star,
-                                size: 16, color: Color(0xFFFFB300)),
-                            const SizedBox(width: 4),
-                            Text(
-                              (session['rating'] as double)
-                                  .toStringAsFixed(1),
-                              style:
-                                  Theme.of(context).textTheme.bodySmall,
+                            const Icon(
+                              Icons.trending_up,
+                              color: Colors.white,
+                              size: 16,
                             ),
-                            const Spacer(),
-                            const Icon(Icons.timer_outlined,
-                                size: 16, color: Colors.grey),
                             const SizedBox(width: 4),
                             Text(
-                              session['duration'] as String,
-                              style:
-                                  Theme.of(context).textTheme.bodySmall,
+                              'Rank ${_overallPerformance['rank']}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
                             ),
                           ],
                         ),
-                      ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'of ${_overallPerformance['totalStudents']} students',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildStatItem(
+                      context,
+                      'Tests',
+                      '${_overallPerformance['testsCompleted']}',
+                      Icons.assignment_turned_in_outlined,
                     ),
                   ),
-                ),
-              );
-            },
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.white.withOpacity(0.2),
+                  ),
+                  Expanded(
+                    child: _buildStatItem(
+                      context,
+                      'Attendance',
+                      '${_overallPerformance['attendance']}%',
+                      Icons.check_circle_outline,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_todaySessions.length, (index) {
-            final bool isActive = index == _currentSessionIndex;
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              height: 6,
-              width: isActive ? 18 : 8,
+        const SizedBox(height: 16),
+        // Subject-wise Performance
+        ..._performanceData.map((subject) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Container(
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color:
-                    isActive ? const Color(0xFF7C3AED) : Colors.grey[300],
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-            );
-          }),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: subject['color'] as Color,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            subject['subject'] as String,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            subject['trend'] == 'up'
+                                ? Icons.arrow_upward
+                                : Icons.arrow_downward,
+                            size: 16,
+                            color: subject['trend'] == 'up'
+                                ? Colors.green
+                                : Colors.red,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${subject['score']}/${subject['total']}',
+                            style:
+                                Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: subject['percentage'] / 100,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        subject['color'] as Color,
+                      ),
+                      minHeight: 8,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${subject['percentage'].toStringAsFixed(0)}% completed',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ],
+    );
+  }
+
+  Widget _buildStatItem(
+      BuildContext context, String label, String value, IconData icon) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white, size: 20),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 12,
+          ),
         ),
       ],
     );
