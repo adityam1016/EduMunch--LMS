@@ -65,8 +65,6 @@ class _ParentDashboardState extends State<ParentDashboard> {
                   children: [
                     const SizedBox(height: 20),
                     _buildProfileCard(context),
-                    const SizedBox(height: 20),
-                    _buildSearchBar(context),
                     const SizedBox(height: 24),
                     _buildHighlightCard(context),
                     const SizedBox(height: 24),
@@ -135,6 +133,20 @@ class _ParentDashboardState extends State<ParentDashboard> {
                     ),
               ),
             ),
+            GestureDetector(
+              onTap: () => Get.toNamed('/parent-attendance'),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.search, color: Colors.white, size: 24),
+              ),
+            ),
+            const SizedBox(width: 8),
             GestureDetector(
               onTap: () => Get.to(() => const ParentNotificationScreen()),
               child: Container(

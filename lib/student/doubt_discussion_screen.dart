@@ -30,6 +30,8 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
   bool isRecordingVoice = false;
   Timer? _recordingTimer;
   int _recordingDuration = 0;
+  String? _currentlyPlayingAudio;
+  bool _isPlaying = false;
 
 
   @override
@@ -43,6 +45,7 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
     messageController.dispose();
     _recordingTimer?.cancel();
     _audioRecorder.dispose();
+    _audioPlayer.stop();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -276,6 +279,47 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
     return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
+  Future<void> _playVoiceMessage(String path) async {
+    try {
+      if (_isPlaying && _currentlyPlayingAudio == path) {
+        // Stop if already playing this audio
+        await _audioPlayer.stop();
+        setState(() {
+          _isPlaying = false;
+          _currentlyPlayingAudio = null;
+        });
+      } else {
+        // Stop any currently playing audio
+        await _audioPlayer.stop();
+        
+        // Play the selected audio
+        await _audioPlayer.play(DeviceFileSource(path));
+        setState(() {
+          _isPlaying = true;
+          _currentlyPlayingAudio = path;
+        });
+
+        // Listen for completion
+        _audioPlayer.onPlayerComplete.listen((event) {
+          if (mounted) {
+            setState(() {
+              _isPlaying = false;
+              _currentlyPlayingAudio = null;
+            });
+          }
+        });
+      }
+    } catch (e) {
+      print('Error playing audio: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to play audio: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   void _cancelRecording() async {
     await _audioRecorder.stop();
     _recordingTimer?.cancel();
@@ -443,41 +487,56 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
                               ),
                             )
                           else if (messageType == 'voice')
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: isStudent ? const Color(0xFFDCF8C6) : Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: const Radius.circular(12),
-                                  topRight: const Radius.circular(12),
-                                  bottomLeft: isStudent ? const Radius.circular(12) : const Radius.circular(0),
-                                  bottomRight: isStudent ? const Radius.circular(0) : const Radius.circular(12),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.1),
-                                    blurRadius: 4,
+                            GestureDetector(
+                              onTap: () {
+                                if (message['voicePath'] != null) {
+                                  _playVoiceMessage(message['voicePath']);
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: isStudent ? const Color(0xFFDCF8C6) : Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: const Radius.circular(12),
+                                    topRight: const Radius.circular(12),
+                                    bottomLeft: isStudent ? const Radius.circular(12) : const Radius.circular(0),
+                                    bottomRight: isStudent ? const Radius.circular(0) : const Radius.circular(12),
                                   ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.play_arrow,
-                                    color: isStudent ? Colors.white : Colors.black87,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    message['duration'] ?? '0:15',
-                                    style: TextStyle(
-                                      color: isStudent ? Colors.white : Colors.black87,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      blurRadius: 4,
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      (_isPlaying && _currentlyPlayingAudio == message['voicePath'])
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      color: isStudent ? Colors.white : const Color(0xFF7C3AED),
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Icon(
+                                      Icons.mic,
+                                      color: isStudent ? Colors.white70 : Colors.grey[600],
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      message['duration'] ?? '0:15',
+                                      style: TextStyle(
+                                        color: isStudent ? Colors.white : Colors.black87,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
 

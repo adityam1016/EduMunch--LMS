@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:io';
 import 'auth_controller.dart';
 import 'forgot_password_screen.dart';
+import 'profile_selection_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -216,44 +218,156 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // 1. Try Supabase authentication first
+    // Test internet connectivity first
+    try {
+      final result = await InternetAddress.lookup('google.com').timeout(
+        const Duration(seconds: 5),
+      );
+      if (result.isEmpty || result[0].rawAddress.isEmpty) {
+        throw SocketException('No internet connection');
+      }
+    } on SocketException catch (_) {
+      setState(() {
+        _isLoading = false;
+      });
+      Get.snackbar(
+        'No Internet',
+        'Please check your internet connection and try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        duration: const Duration(seconds: 5),
+      );
+      return;
+    } catch (e) {
+      print('Connectivity check error: $e');
+    }
+
     try {
       final supabase = Supabase.instance.client;
+      print('Attempting login for: $username');
+      
+      // 1. Authenticate with Supabase
       final response = await supabase.auth.signInWithPassword(
         email: username,
         password: password,
       );
 
+      final userId = response.user?.id;
       final email = (response.user?.email ?? username).toLowerCase();
 
-      String? routeFromEmail;
-      String? roleFromEmail;
-      if (email.startsWith('student')) {
-        // e.g. student@edumunch...
-        routeFromEmail = '/dashboard';
-        roleFromEmail = 'Student';
-      } else if (email.startsWith('teacher')) {
-        routeFromEmail = '/teacher-dashboard';
-        roleFromEmail = 'Teacher';
+      if (userId == null) {
+        throw Exception('User ID not found');
       }
 
-      if (routeFromEmail != null && roleFromEmail != null) {
+      // 2. Fetch user role from database
+      String? userRole;
+      
+      try {
+        // Fetch from 'user_profiles' table
+        final userResponse = await supabase
+            .from('user_profiles')
+            .select('role')
+            .eq('id', userId)
+            .maybeSingle();
+
+        userRole = userResponse?['role']?.toString();
+        print('Fetched role from database: $userRole');
+      } catch (e) {
+        print('Could not fetch from user_profiles table: $e');
+        
+        // Fallback: try 'profiles' table
+        try {
+          final profileResponse = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', userId)
+              .maybeSingle();
+
+          userRole = profileResponse?['role']?.toString();
+          print('Fetched role from profiles table: $userRole');
+        } catch (e2) {
+          print('Could not fetch from profiles table: $e2');
+        }
+      }
+
+      // 3. If role not found in database, fallback to email-based detection
+      if (userRole == null || userRole.isEmpty) {
+        if (email.startsWith('student')) {
+          userRole = 'student';
+        } else if (email.startsWith('teacher')) {
+          userRole = 'teacher';
+        } else if (email.startsWith('parent')) {
+          userRole = 'parent';
+        }
+      }
+
+      // Normalize role to lowercase for comparison
+      final roleLower = userRole?.toLowerCase() ?? '';
+
+      // 4. Route based on role
+      if (roleLower == 'student') {
+        // Show profile selection dialog for student role
+        setState(() {
+          _isLoading = false;
+        });
+        
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => ProfileSelectionDialog(email: email),
+            );
+          }
+        });
+        return;
+      } else if (roleLower == 'teacher') {
         final authController = Get.find<AuthController>();
-        authController.setSession(email: email, role: roleFromEmail);
+        await authController.setSession(email: email, role: 'Teacher');
 
         setState(() {
           _isLoading = false;
         });
 
-        Get.offAllNamed(routeFromEmail);
+        Get.offAllNamed('/teacher-dashboard');
         Get.snackbar(
           'Login Successful',
-          'Logged in as $email',
+          'Welcome Teacher!',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green.shade100,
           colorText: Colors.green.shade900,
         );
         return;
+      } else if (roleLower == 'parent') {
+        final authController = Get.find<AuthController>();
+        await authController.setSession(email: email, role: 'Parent');
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        Get.offAllNamed('/parent-dashboard');
+        Get.snackbar(
+          'Login Successful',
+          'Welcome Parent!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade900,
+        );
+        return;
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        
+        Get.snackbar(
+          'Login Failed',
+          'User role not recognized. Please contact administrator.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange.shade100,
+          colorText: Colors.orange.shade900,
+        );
       }
     } on AuthException catch (e) {
       setState(() {
@@ -266,7 +380,22 @@ class _LoginScreenState extends State<LoginScreen> {
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
+        duration: const Duration(seconds: 5),
       );
+    } on SocketException catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      Get.snackbar(
+        'Network Error',
+        'Please check your internet connection and try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        duration: const Duration(seconds: 5),
+      );
+      print('Network error: $e');
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -274,11 +403,13 @@ class _LoginScreenState extends State<LoginScreen> {
       
       Get.snackbar(
         'Login Failed',
-        'An error occurred during login',
+        'An error occurred. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
+        duration: const Duration(seconds: 5),
       );
+      print('Login error: $e');
     }
   }
 }

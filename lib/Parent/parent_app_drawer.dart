@@ -122,6 +122,29 @@ class ParentAppDrawer extends StatelessWidget {
                     route: '/parent-timetable',
                   ),
                   const Divider(height: 32),
+                  // Switch to Student Mode
+                  ListTile(
+                    leading: const Icon(
+                      Icons.school,
+                      color: Color(0xFF2196F3),
+                      size: 24,
+                    ),
+                    title: Text(
+                      'Switch to Student Mode',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF2196F3),
+                      ),
+                    ),
+                    onTap: () {
+                      _showStudentPinDialog(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                  ),
+                  const Divider(height: 16),
                 ],
               ),
             ),
@@ -157,6 +180,31 @@ class ParentAppDrawer extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showStudentPinDialog(BuildContext context) async {
+    Get.back(); // Close drawer first
+    
+    final authController = Get.find<AuthController>();
+    final userEmail = authController.email ?? 'student@edumunch.com';
+    
+    // Navigate to student dashboard
+    Get.offAllNamed('/dashboard');
+    
+    Get.snackbar(
+      'Access Granted',
+      'Switched to Student view',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green.shade100,
+      colorText: Colors.green.shade900,
+      duration: const Duration(seconds: 2),
+    );
+    
+    // Update the session role
+    authController.setSession(
+      email: userEmail,
+      role: 'Student',
     );
   }
 

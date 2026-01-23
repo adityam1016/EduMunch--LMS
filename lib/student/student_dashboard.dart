@@ -112,7 +112,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     const SizedBox(height: 20),
                     _buildProfileCard(context),
                     const SizedBox(height: 20),
-                    _buildSearchBar(context),
+                    _buildCurrentLectureSlider(context),
                     const SizedBox(height: 24),
                     _buildHighlightCard(context),
                     const SizedBox(height: 24),
@@ -192,6 +192,24 @@ class _StudentDashboardState extends State<StudentDashboard> {
                     ),
               ),
             ),
+            GestureDetector(
+              onTap: () => Get.toNamed('/courses'),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.1)
+                      : Colors.white.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.search,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
             GestureDetector(
               onTap: () => Get.to(() => const NotificationScreen()),
               child: Container(
@@ -357,35 +375,205 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Get.toNamed('/courses'),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
+  Widget _buildCurrentLectureSlider(BuildContext context) {
+    // Sample current and upcoming lectures
+    final lectures = [
+      {
+        'subject': 'Physics',
+        'faculty': 'Dr. Rajesh Kumar',
+        'time': '11:00 - 12:00',
+        'type': 'Theory',
+        'attended': 11,
+        'total': 13,
+        'color': const Color(0xFF26A69A),
+        'isCurrent': true,
+      },
+      {
+        'subject': 'Mathematics',
+        'faculty': 'Prof. Amit Sharma',
+        'time': '12:00 - 13:00',
+        'type': 'Practical',
+        'attended': 9,
+        'total': 12,
+        'color': const Color(0xFF7C3AED),
+        'isCurrent': false,
+      },
+      {
+        'subject': 'Chemistry',
+        'faculty': 'Dr. Priya Singh',
+        'time': '14:00 - 15:00',
+        'type': 'Theory',
+        'attended': 10,
+        'total': 11,
+        'color': const Color(0xFFFFB74D),
+        'isCurrent': false,
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Today\'s Schedule',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
         ),
-        child: Row(
-          children: [
-            Icon(Icons.search, color: Colors.grey[600]),
-            const SizedBox(width: 8),
-            Text(
-              'Search courses, tests, doubts...',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[500],
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 130,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: lectures.length,
+            itemBuilder: (context, index) {
+              final lecture = lectures[index];
+              final isCurrent = lecture['isCurrent'] as bool;
+              
+              return Container(
+                width: 280,
+                margin: EdgeInsets.only(
+                  right: index < lectures.length - 1 ? 12 : 0,
+                ),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      (lecture['color'] as Color).withOpacity(isCurrent ? 1.0 : 0.8),
+                      (lecture['color'] as Color).withOpacity(isCurrent ? 0.8 : 0.6),
+                    ],
                   ),
-            ),
-          ],
+                  borderRadius: BorderRadius.circular(16),
+                  border: isCurrent
+                      ? Border.all(color: Colors.white, width: 2)
+                      : null,
+                  boxShadow: [
+                    BoxShadow(
+                      color: (lecture['color'] as Color).withOpacity(0.3),
+                      blurRadius: isCurrent ? 12 : 8,
+                      offset: Offset(0, isCurrent ? 6 : 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            lecture['subject'] as String,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        if (isCurrent)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'NOW',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      lecture['faculty'] as String,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 12,
+                      ),
+                    ),
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  lecture['time'] as String,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                lecture['type'] as String,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${lecture['attended']}/${lecture['total']}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
-      ),
+      ],
     );
   }
 
