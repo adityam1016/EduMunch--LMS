@@ -5,6 +5,8 @@ import 'auth_controller.dart';
 import 'splash_screen.dart';
 import 'login_screen.dart';
 import 'forgot_password_screen.dart';
+
+// Student screens
 import 'student/student_dashboard.dart';
 import 'student/notification_screen.dart';
 import 'student/attendance_screen.dart';
@@ -16,24 +18,54 @@ import 'student/doubts_screen.dart';
 import 'student/test_portal_screen.dart';
 import 'student/result.dart';
 import 'student/feedback_screen.dart';
-import 'parent/parent_dashboard.dart';
-import 'parent/parent_notification_screen.dart';
-import 'parent/parent_child_controller.dart';
+
+// Parent screens
+import 'Parent/parent_dashboard.dart';
+import 'Parent/parent_notification_screen.dart';
+import 'Parent/parent_attendance_screen.dart';
+import 'Parent/parent_performance_screen.dart';
+import 'Parent/parent_payment_screen.dart';
+import 'Parent/parent_grievance_screen.dart';
+import 'Parent/parent_ptm_screen.dart';
+import 'Parent/parent_timetable_screen.dart';
+import 'Parent/parent_child_controller.dart';
+
+// Teacher screens
 import 'Teacher/teacher_dashboard_screen.dart';
+import 'Teacher/teacher_notification_screen.dart';
+import 'Teacher/manage_attendance_screen.dart';
+import 'Teacher/assignments_list_screen.dart';
+import 'Teacher/create_assignment_template_screen.dart';
+import 'Teacher/syllabus_tracking_screen.dart';
+import 'Teacher/teacher_doubts_screen.dart';
+import 'Teacher/teacher_timetable_screen.dart';
+import 'Teacher/student_performance_screen.dart';
+import 'Teacher/hr_section_screen.dart';
+import 'Teacher/upload_assignment_screen.dart';
+
 import 'middleware/auth_middleware.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: 'https://lzfgntruyknjolliyzoz.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZmdudHJ1eWtuam9sbGl5em96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5Njk4MjIsImV4cCI6MjA4MzU0NTgyMn0.7QYW0-qizmnTv_ZLiVEVHIYcoDPPSJ39SfNJxGdZ4dQ',
-  );
+  try {
+    await Supabase.initialize(
+      url: 'https://lzfgntruyknjolliyzoz.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZmdudHJ1eWtuam9sbGl5em96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5Njk4MjIsImV4cCI6MjA4MzU0NTgyMn0.7QYW0-qizmnTv_ZLiVEVHIYcoDPPSJ39SfNJxGdZ4dQ',
+    );
+  } catch (e) {
+    print('Supabase initialization skipped/failed (offline/demo mode): $e');
+  }
+
   // Initialize controllers globally
   Get.put(ParentChildController());
   final authController = Get.put(AuthController(), permanent: true);
-  await authController.initFromSupabase();
+  try {
+    await authController.initFromSupabase();
+  } catch (e) {
+    print('Auth init warning: $e');
+  }
   runApp(const MyApp());
 }
 
@@ -79,19 +111,11 @@ class MyApp extends StatelessWidget {
           page: () => const LoginScreen(),
         ),
         GetPage(name: '/forgot-password', page: () => const ForgotPasswordScreen()),
+
+        // Student Pages
         GetPage(
           name: '/dashboard',
           page: () => const StudentDashboard(),
-          middlewares: [AuthMiddleware()],
-        ),
-        GetPage(
-          name: '/parent-dashboard',
-          page: () => const ParentDashboard(),
-          middlewares: [AuthMiddleware()],
-        ),
-        GetPage(
-          name: '/teacher-dashboard',
-          page: () => const TeacherDashboardScreen(),
           middlewares: [AuthMiddleware()],
         ),
         GetPage(
@@ -149,11 +173,111 @@ class MyApp extends StatelessWidget {
           page: () => const FeedbackScreen(),
           middlewares: [AuthMiddleware()],
         ),
+
+        // Parent Pages
+        GetPage(
+          name: '/parent-dashboard',
+          page: () => const ParentDashboard(),
+          middlewares: [AuthMiddleware()],
+        ),
         GetPage(
           name: '/parent-notification',
           page: () => const ParentNotificationScreen(),
           middlewares: [AuthMiddleware()],
         ),
+        GetPage(
+          name: '/parent-attendance',
+          page: () => const ParentAttendanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/parent-performance',
+          page: () => const ParentPerformanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/payments',
+          page: () => const ParentPaymentScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/parent-grievance',
+          page: () => const ParentGrievanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/ptm',
+          page: () => const ParentPTMScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/parent-timetable',
+          page: () => const ParentTimetableScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+
+        // Teacher Pages
+        GetPage(
+          name: '/teacher-dashboard',
+          page: () => const TeacherDashboardScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/teacher-notification',
+          page: () => const TeacherNotificationScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/manage-attendance',
+          page: () => const ManageAttendanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/assignments-list',
+          page: () => const AssignmentsListScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/create-assignment-template',
+          page: () => const CreateAssignmentTemplateScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/syllabus-tracking',
+          page: () => const SyllabusTrackingScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/teacher-doubts',
+          page: () => const TeacherDoubtsScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/teacher-timetable',
+          page: () => const TeacherTimetableScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/teacher-performance',
+          page: () => const StudentPerformanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/student-performance',
+          page: () => const StudentPerformanceScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/hr-section',
+          page: () => const HRSectionScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+        GetPage(
+          name: '/upload-assignment',
+          page: () => const UploadAssignmentScreen(),
+          middlewares: [AuthMiddleware()],
+        ),
+
         GetPage(name: '/home', page: () => const MyHomePage(title: 'EduMunch')),
       ],
     );

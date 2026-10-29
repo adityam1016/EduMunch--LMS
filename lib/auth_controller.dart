@@ -38,15 +38,19 @@ class AuthController extends GetxController {
       _isLoading.value = true;
       
       // Check if there's an active Supabase session
-      final supabaseSession = Supabase.instance.client.auth.currentSession;
-      
-      if (supabaseSession != null) {
-        // Validate Supabase session
-        await _loadFromSupabase();
-      } else {
-        // Try to restore from local storage
-        await _loadFromLocalStorage();
+      try {
+        final supabaseSession = Supabase.instance.client.auth.currentSession;
+        if (supabaseSession != null) {
+          // Validate Supabase session
+          await _loadFromSupabase();
+          return;
+        }
+      } catch (e) {
+        print('Supabase not available, using local session: $e');
       }
+
+      // Try to restore from local storage
+      await _loadFromLocalStorage();
     } catch (e) {
       print('Error initializing session: $e');
       await clearSession();
@@ -57,25 +61,31 @@ class AuthController extends GetxController {
 
   /// Load session from Supabase
   Future<void> _loadFromSupabase() async {
-    final session = Supabase.instance.client.auth.currentSession;
-    final userEmail = session?.user.email;
-    
-    if (userEmail == null) {
-      await clearSession();
-      return;
-    }
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      final userEmail = session?.user.email;
+      
+      if (userEmail == null) {
+        await clearSession();
+        return;
+      }
 
-    final lower = userEmail.toLowerCase();
-    String? detectedRole;
-    
-    if (lower.startsWith('student')) {
-      detectedRole = 'Student';
-    } else if (lower.startsWith('teacher')) {
-      detectedRole = 'Teacher';
-    }
+      final lower = userEmail.toLowerCase();
+      String? detectedRole;
+      
+      if (lower.startsWith('student')) {
+        detectedRole = 'Student';
+      } else if (lower.startsWith('teacher')) {
+        detectedRole = 'Teacher';
+      } else if (lower.startsWith('parent')) {
+        detectedRole = 'Parent';
+      }
 
-    if (detectedRole != null) {
-      await setSession(email: lower, role: detectedRole);
+      if (detectedRole != null) {
+        await setSession(email: lower, role: detectedRole);
+      }
+    } catch (e) {
+      print('Error loading from Supabase: $e');
     }
   }
 
@@ -130,8 +140,10 @@ class AuthController extends GetxController {
     try {
       _isLoading.value = true;
       
-      // Sign out from Supabase
-      await Supabase.instance.client.auth.signOut();
+      // Sign out from Supabase if active
+      try {
+        await Supabase.instance.client.auth.signOut();
+      } catch (_) {}
       
       // Clear local storage
       final prefs = await SharedPreferences.getInstance();
@@ -154,22 +166,25 @@ class AuthController extends GetxController {
   /// Validate current session
   Future<bool> validateSession() async {
     try {
-      final supabaseSession = Supabase.instance.client.auth.currentSession;
+      try {
+        final supabaseSession = Supabase.instance.client.auth.currentSession;
+        if (supabaseSession != null) {
+          return true;
+        }
+      } catch (_) {}
       
-      if (supabaseSession == null) {
-        // Check local storage validity
-        final prefs = await SharedPreferences.getInstance();
-        final timestamp = prefs.getInt(_keySessionTimestamp);
+      // Check local storage validity
+      final prefs = await SharedPreferences.getInstance();
+      final timestamp = prefs.getInt(_keySessionTimestamp);
+      
+      if (timestamp != null) {
+        final sessionTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+        final now = DateTime.now();
+        final difference = now.difference(sessionTime).inHours;
         
-        if (timestamp != null) {
-          final sessionTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-          final now = DateTime.now();
-          final difference = now.difference(sessionTime).inHours;
-          
-          if (difference >= _sessionTimeoutHours) {
-            await clearSession();
-            return false;
-          }
+        if (difference >= _sessionTimeoutHours) {
+          await clearSession();
+          return false;
         }
       }
       
