@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
+import '../services/attendance_service.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -15,6 +16,30 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   void initState() {
     super.initState();
     selectedDate = DateTime.now();
+    _loadAttendance();
+  }
+
+  Future<void> _loadAttendance() async {
+    final live = await AttendanceService.getAttendanceForDate(selectedDate);
+    if (live.isNotEmpty && mounted) {
+      setState(() {
+        todaysLectures.clear();
+        todaysLectures.addAll(live.map((a) {
+          String icon = '⚡';
+          final subLower = a.subject.toLowerCase();
+          if (subLower.contains('chem')) icon = '🧪';
+          if (subLower.contains('math')) icon = '📊';
+          if (subLower.contains('bio')) icon = '🔬';
+
+          return {
+            'subject': a.subject,
+            'time': a.timeSlot,
+            'status': a.status,
+            'icon': icon,
+          };
+        }));
+      });
+    }
   }
 
   final List<Map<String, String>> todaysLectures = [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
+import '../services/notification_service.dart';
 
 class Notification {
   final String id;
@@ -29,6 +30,29 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    final live = await NotificationService.getNotifications(role: 'student');
+    if (live.isNotEmpty && mounted) {
+      setState(() {
+        notifications.clear();
+        notifications.addAll(live.map((n) => Notification(
+              id: n.id,
+              title: n.title,
+              message: n.message,
+              description: n.description,
+              timestamp: n.createdAt,
+              category: n.category,
+              isRead: n.isRead,
+            )));
+      });
+    }
+  }
   final List<Notification> notifications = [
     Notification(
       id: '1',

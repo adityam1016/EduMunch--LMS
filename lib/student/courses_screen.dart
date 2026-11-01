@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'app_drawer.dart';
+import '../services/course_service.dart';
 
 class CoursesScreen extends StatefulWidget {
   const CoursesScreen({super.key});
@@ -22,6 +23,41 @@ class _CoursesScreenState extends State<CoursesScreen> {
     _currentScreen = 'subjects';
     _selectedSubject = '';
     _selectedCourse = '';
+    _loadCoursesFromSupabase();
+  }
+
+  Future<void> _loadCoursesFromSupabase() async {
+    final liveCourses = await CourseService.getCourses();
+    if (liveCourses.isNotEmpty && mounted) {
+      setState(() {
+        final Map<String, List<Map<String, dynamic>>> grouped = {};
+        final List<Map<String, dynamic>> subjectList = [];
+        final Set<String> seenSubjects = {};
+
+        for (final c in liveCourses) {
+          if (!seenSubjects.contains(c.subject)) {
+            seenSubjects.add(c.subject);
+            subjectList.add({
+              'name': c.subject,
+              'icon': c.icon,
+              'color': c.color,
+            });
+          }
+          grouped.putIfAbsent(c.subject, () => []).add({
+            'name': c.name,
+            'status': c.status,
+            'progress': c.progress,
+            'statusColor': c.status == 'Completed'
+                ? Colors.green
+                : (c.status == 'In Progress' ? const Color(0xFF7C3AED) : Colors.grey),
+          });
+        }
+        subjects.clear();
+        subjects.addAll(subjectList);
+        coursesBySubject.clear();
+        coursesBySubject.addAll(grouped);
+      });
+    }
   }
 
   final List<Map<String, dynamic>> subjects = [

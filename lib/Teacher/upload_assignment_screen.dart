@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'create_mcq_assignment_screen.dart';
 import 'teacher_app_drawer.dart';
+import '../services/assignment_service.dart';
 
 enum AssignmentType { theory, mcq }
 
@@ -142,7 +143,16 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         );
       } else {
         // For theory type, show success and go back
-        _showSnackbar('Theory assignment created successfully!');
+        // Persist to Supabase
+        AssignmentService.createAssignment(
+          title: _titleController.text.trim(),
+          subject: _subjectController.text.trim(),
+          description: _instructionsController.text.trim(),
+          dueDate: _dueDate!,
+          totalMarks: int.tryParse(_maxMarksController.text.trim()) ?? 100,
+          createdBy: 'Teacher',
+        );
+        _showSnackbar('Theory assignment created and saved to Supabase!');
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) Get.back();
         });

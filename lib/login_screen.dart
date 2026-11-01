@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'auth_controller.dart';
 import 'forgot_password_screen.dart';
-import 'profile_selection_dialog.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -195,6 +195,29 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Forgot Password?',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Sign Up Link
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Don't have an account? ",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              GestureDetector(
+                                onTap: () => Get.to(() => const SignupScreen()),
+                                child: const Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF7C3AED),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
 
                           const SizedBox(height: 20),
@@ -393,19 +416,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // 4. Route based on role
       if (roleLower == 'student') {
+        final authController = Get.find<AuthController>();
+        await authController.setSession(email: email, role: 'Student');
+
         setState(() {
           _isLoading = false;
         });
-        
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => ProfileSelectionDialog(email: email),
-            );
-          }
-        });
+
+        Get.offAllNamed('/dashboard');
+        Get.snackbar(
+          'Login Successful',
+          'Welcome Student!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade900,
+        );
         return;
       } else if (roleLower == 'teacher') {
         final authController = Get.find<AuthController>();
@@ -444,18 +469,30 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         await _loginAsDemo('Student');
       }
-    } catch (e) {
-      print('Supabase login failed ($e), falling back to demo mode');
-      // Graceful fallback to demo mode so user is never blocked
+    } on AuthException catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       Get.snackbar(
-        'Notice',
-        'Backend unavailable ($e). Continuing with Dummy Data.',
+        'Login Failed',
+        e.message,
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.amber.shade100,
-        colorText: Colors.amber.shade900,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
         duration: const Duration(seconds: 4),
       );
-      await _loginAsDemo('Student');
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      Get.snackbar(
+        'Login Error',
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        duration: const Duration(seconds: 4),
+      );
     }
   }
 }

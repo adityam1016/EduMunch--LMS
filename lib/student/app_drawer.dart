@@ -8,6 +8,14 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authController = Get.find<AuthController>();
+    final userEmail = authController.email ?? 'student@edumunch.com';
+    final usernamePart = userEmail.split('@').first;
+    final displayName = usernamePart
+        .split('.')
+        .map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
+        .join(' ');
+
     return Drawer(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -56,18 +64,18 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Aditya Mishra',
-                    style: TextStyle(
+                  Text(
+                    displayName.isNotEmpty ? displayName : 'Student',
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'ID: 202400123',
-                    style: TextStyle(
+                  Text(
+                    userEmail,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: Colors.white70,
                     ),
@@ -178,7 +186,7 @@ class AppDrawer extends StatelessWidget {
                     ),
                     subtitle: const Text(
                       'View as Parent',
-                      style: TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                     ),
                     trailing: const Icon(
                       Icons.arrow_forward_ios,
@@ -207,7 +215,7 @@ class AppDrawer extends StatelessWidget {
                   icon: const Icon(Icons.logout),
                   label: const Text(
                     'Logout',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'app_drawer.dart';
+import '../services/assignment_service.dart';
+import 'package:get/get.dart';
+import '../auth_controller.dart';
 
 class AssignmentsScreen extends StatefulWidget {
   const AssignmentsScreen({super.key});
@@ -10,6 +13,40 @@ class AssignmentsScreen extends StatefulWidget {
 }
 
 class _AssignmentsScreenState extends State<AssignmentsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loadAssignments();
+  }
+
+  Future<void> _loadAssignments() async {
+    final live = await AssignmentService.getAssignments();
+    if (live.isNotEmpty && mounted) {
+      setState(() {
+        assignments.clear();
+        int idx = 1;
+        assignments.addAll(live.map((a) => {
+              'id': a.id,
+              'title': a.title,
+              'type': 'Text',
+              'icon': Icons.description,
+              'status': 'Pending',
+              'statusColor': const Color(0xFFFFB74D),
+              'dueDate': '${a.dueDate.day}/${a.dueDate.month}/${a.dueDate.year}',
+              'timeStatus': 'Upcoming',
+              'assignmentType': 'file',
+              'description': a.description,
+              'instructions': [
+                {
+                  'question': 'Overview',
+                  'details': a.description,
+                }
+              ],
+              'submissions': [],
+            }));
+      });
+    }
+  }
   int selectedFilterIndex = 0;
   final List<String> filters = ['All', 'Pending', 'Submitted', 'Graded'];
 
@@ -959,7 +996,19 @@ class _AssignmentDetailsScreenState extends State<AssignmentDetailsScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Assignment submitted with ${uploadedFiles.length} file(s)',
+                                () {
+                                  final authController = Get.find<AuthController>();
+                                  final email = authController.email ?? 'student@edumunch.com';
+                                  final aId = widget.assignment['id']?.toString() ?? '';
+                                  if (aId.isNotEmpty) {
+                                    AssignmentService.submitAssignment(
+                                      assignmentId: aId,
+                                      studentEmail: email,
+                                      fileUrl: uploadedFiles.isNotEmpty ? uploadedFiles.first['path'] : null,
+                                    );
+                                  }
+                                  return 'Assignment submitted with ${uploadedFiles.length} file(s) to Supabase';
+                                }(),
                               ),
                               duration: const Duration(seconds: 1),
                               backgroundColor: Colors.green,

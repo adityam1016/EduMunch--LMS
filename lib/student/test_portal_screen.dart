@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
 import 'app_drawer.dart';
+import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../auth_controller.dart';
 
 // Enum for view states
 enum PortalView { portalHome, mcqView, theoryView }
@@ -267,6 +270,18 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
   }
 
   void _submitMCQExam() {
+    try {
+      final authController = Get.find<AuthController>();
+      final email = authController.email ?? 'student@edumunch.com';
+      Supabase.instance.client.from('notifications').insert({
+        'title': 'Test Completed',
+        'message': 'Test submitted by $email - Physics MCQ Practice Test!',
+        'description':
+            'Score logged to your academic record.',
+        'category': 'Exam',
+        'target_role': 'student',
+      });
+    } catch (_) {}
     mcqScore = 0;
     for (int i = 0; i < mcqQuestions.length; i++) {
       if (selectedAnswers[i] == mcqQuestions[i].correctIndex) {

@@ -6,6 +6,7 @@ import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'app_drawer.dart';
+import '../services/doubt_service.dart';
 
 class DoubtDiscussionScreen extends StatefulWidget {
   final Map<String, dynamic> doubt;
@@ -119,6 +120,16 @@ class _DoubtDiscussionScreenState extends State<DoubtDiscussionScreen> {
   }
 
   void _sendMessage() {
+    final textToSend = messageController.text;
+    final doubtId = widget.doubt['id']?.toString() ?? '';
+    if (textToSend.isNotEmpty && doubtId.isNotEmpty) {
+      DoubtService.sendMessage(
+        doubtId: doubtId,
+        senderName: 'You',
+        senderRole: 'student',
+        message: textToSend,
+      );
+    }
     if (messageController.text.isEmpty && selectedImages.isEmpty) {
       return;
     }

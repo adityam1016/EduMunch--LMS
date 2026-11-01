@@ -72,18 +72,54 @@ class AuthController extends GetxController {
 
       final lower = userEmail.toLowerCase();
       String? detectedRole;
-      
-      if (lower.startsWith('student')) {
-        detectedRole = 'Student';
-      } else if (lower.startsWith('teacher')) {
-        detectedRole = 'Teacher';
-      } else if (lower.startsWith('parent')) {
-        detectedRole = 'Parent';
+
+      // Try to read role from user_profiles table
+      final userId = session?.user.id;
+      if (userId != null) {
+        try {
+          final profile = await Supabase.instance.client
+              .from('user_profiles')
+              .select('role')
+              .eq('id', userId)
+              .maybeSingle();
+
+          if (profile != null && profile['role'] != null) {
+            final dbRole = profile['role'].toString().toLowerCase();
+            if (dbRole == 'teacher') {
+              detectedRole = 'Teacher';
+            } else if (dbRole == 'parent') {
+              detectedRole = 'Parent';
+            } else {
+              detectedRole = 'Student';
+            }
+          }
+        } catch (_) {}
       }
 
-      if (detectedRole != null) {
-        await setSession(email: lower, role: detectedRole);
+      // Check user metadata if DB didn't return
+      if (detectedRole == null && session?.user.userMetadata != null) {
+        final metaRole = session?.user.userMetadata?['role']?.toString().toLowerCase();
+        if (metaRole == 'teacher') {
+          detectedRole = 'Teacher';
+        } else if (metaRole == 'parent') {
+          detectedRole = 'Parent';
+        } else if (metaRole == 'student') {
+          detectedRole = 'Student';
+        }
       }
+
+      // Fallback to email prefix or default to Student
+      if (detectedRole == null) {
+        if (lower.startsWith('teacher')) {
+          detectedRole = 'Teacher';
+        } else if (lower.startsWith('parent')) {
+          detectedRole = 'Parent';
+        } else {
+          detectedRole = 'Student';
+        }
+      }
+
+      await setSession(email: lower, role: detectedRole);
     } catch (e) {
       print('Error loading from Supabase: $e');
     }

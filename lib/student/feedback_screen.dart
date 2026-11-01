@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
+import 'package:get/get.dart';
+import '../auth_controller.dart';
+import '../services/feedback_service.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -46,6 +49,18 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   void _submitFeedback() {
+    final authController = Get.find<AuthController>();
+    final email = authController.email ?? 'student@edumunch.com';
+    if (selectedFaculty != null) {
+      FeedbackService.submitFeedback(
+        studentEmail: email,
+        facultyName: selectedFaculty!,
+        clarityRating: clarityRating,
+        engagementRating: engagementRating,
+        approachabilityRating: approachabilityRating,
+        additionalComments: additionalFeedbackController.text.trim(),
+      );
+    }
     if (selectedFaculty == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select a faculty member')),

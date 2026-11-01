@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
+import '../services/timetable_service.dart';
 
 class DoubtLectureScreen extends StatefulWidget {
   const DoubtLectureScreen({super.key});
@@ -10,6 +11,36 @@ class DoubtLectureScreen extends StatefulWidget {
 
 class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
   int selectedTabIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDoubtLectures();
+  }
+
+  Future<void> _loadDoubtLectures() async {
+    try {
+      final items = await TimetableService.getAllTimetables();
+      if (items.isNotEmpty && mounted) {
+        setState(() {
+          int id = 1;
+          doubtLectures.clear();
+          doubtLectures.addAll(items.map((t) => {
+                'id': id++,
+                'subject': t.subject,
+                'topic': '${t.subject} Discussion & Problem Solving',
+                'date': t.dayOfWeek,
+                'time': '${t.startTime} - ${t.endTime}',
+                'professor': t.professor ?? 'Faculty',
+                'students': 35 + (id * 3),
+                'status': id == 1 ? 'Ongoing' : 'Upcoming',
+                'mode': 'Online',
+                'link': 'https://meet.google.com/edumunch-class',
+              }));
+        });
+      }
+    } catch (_) {}
+  }
 
   final List<Map<String, dynamic>> doubtLectures = [
     {

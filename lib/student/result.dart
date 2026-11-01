@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
+import 'package:get/get.dart';
+import '../auth_controller.dart';
 
 class SubjectPerformance {
   final String name;
@@ -61,6 +63,19 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
   }
 
   void _initializeData() {
+    String currentUserName = 'You';
+    try {
+      final authController = Get.find<AuthController>();
+      final email = authController.email;
+      if (email != null && email.isNotEmpty) {
+        final part = email.split('@').first;
+        currentUserName = part
+            .split('.')
+            .map((w) =>
+                w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
+            .join(' ');
+      }
+    } catch (_) {}
     subjectPerformances = [
       SubjectPerformance(
         name: 'Physics',
@@ -113,7 +128,7 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
         isCurrentUser: false,
       ),
       LeaderboardEntry(
-        name: 'Ethan Carter (You)',
+        name: '$currentUserName (You)',
         rank: 3,
         percentage: 85,
         subject: 'Physics',

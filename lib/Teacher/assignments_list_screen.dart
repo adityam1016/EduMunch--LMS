@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'create_assignment_template_screen.dart';
 import 'teacher_app_drawer.dart';
+import '../services/assignment_service.dart';
 
 class AssignmentsListScreen extends StatefulWidget {
   const AssignmentsListScreen({super.key});
@@ -12,6 +13,31 @@ class AssignmentsListScreen extends StatefulWidget {
 }
 
 class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _loadAssignments();
+  }
+
+  Future<void> _loadAssignments() async {
+    final live = await AssignmentService.getAssignments();
+    if (live.isNotEmpty && mounted) {
+      setState(() {
+        _assignmentTemplates.clear();
+        int idx = 1;
+        _assignmentTemplates.addAll(live.map((a) => {
+              'id': idx++,
+              'title': a.title,
+              'subject': a.subject,
+              'type': 'Theory',
+              'totalMarks': a.totalMarks,
+              'description': a.description,
+              'createdDate': a.dueDate,
+              'assignedTo': ['All Batches'],
+            }));
+      });
+    }
+  }
   // Sample assignment templates - Replace with actual data from API
   final List<Map<String, dynamic>> _assignmentTemplates = [
     {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
+import '../services/timetable_service.dart';
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
@@ -16,6 +17,33 @@ class _TimetableScreenState extends State<TimetableScreen> {
   void initState() {
     super.initState();
     selectedDate = DateTime.now();
+    _loadTimetable();
+  }
+
+  Future<void> _loadTimetable() async {
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+    final currentDay = days[selectedDate.weekday - 1];
+    final live = await TimetableService.getTimetableForDay(currentDay);
+    if (live.isNotEmpty && mounted) {
+      setState(() {
+        dailyTimetableData.clear();
+        dailyTimetableData.addAll(live.map((t) => {
+              'time': t.startTime,
+              'endTime': t.endTime,
+              'subject': t.subject,
+              'professor': t.professor ?? '',
+              'type': t.type,
+            }));
+      });
+    }
   }
 
   final List<Map<String, dynamic>> dailyTimetableData = [

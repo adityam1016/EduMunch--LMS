@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'services/auth_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -12,10 +14,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _userIdController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // Track the current step of the password reset flow
-  int currentStep = 0; // 0: Enter User ID, 1: Verify OTP, 2: Reset Password
+  int currentStep = 0; // 0: Enter User ID / Email, 1: Verify OTP, 2: Reset Password
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -26,33 +30,84 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  void _handleVerifyUser() {
-    if (_userIdController.text.isEmpty) {
+  Future<void> _handleVerifyUser() async {
+    final email = _userIdController.text.trim();
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your User ID')),
+        const SnackBar(content: Text('Please enter your email address')),
       );
       return;
     }
-    // Here you would typically make an API call to verify the user
-    setState(() {
-      currentStep = 1;
-    });
+
+    setState(() => _isLoading = true);
+
+    try {
+      await AuthService.sendPasswordResetEmail(email);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          currentStep = 1;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Password reset instructions sent to $email'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Error: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
   }
 
-  void _handleVerifyOTP() {
-    if (_otpController.text.isEmpty) {
+  Future<void> _handleVerifyOTP() async {
+    final token = _otpController.text.trim();
+    final email = _userIdController.text.trim();
+    if (token.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter the OTP')),
       );
       return;
     }
-    // Here you would typically verify the OTP with backend
-    setState(() {
-      currentStep = 2;
-    });
+
+    setState(() => _isLoading = true);
+
+    try {
+      await Supabase.instance.client.auth.verifyOTP(
+        email: email,
+        token: token,
+        type: OtpType.recovery,
+      );
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          currentStep = 2;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Invalid OTP: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
   }
 
-  void _handleResetPassword() {
+  Future<void> _handleResetPassword() async {
     if (_newPasswordController.text.isEmpty ||
         _confirmPasswordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,15 +131,34 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    // Here you would typically update the password via API
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password reset successfully!')),
-    );
+    setState(() => _isLoading = true);
 
-    // Navigate back to login
-    Future.delayed(const Duration(seconds: 1), () {
-      Get.back();
-    });
+    try {
+      await AuthService.updatePassword(_newPasswordController.text);
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password reset successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          Get.back();
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'Error: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -159,23 +233,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    // Step 0: Enter User ID
+                    // Step 0: Enter User ID / Email
                     if (currentStep == 0) ...[
                       TextField(
                         controller: _userIdController,
+                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          hintText: 'Enter your User ID',
-                          prefixIcon: const Icon(Icons.person),
+                          hintText: 'Enter your email address',
+                          prefixIcon: const Icon(Icons.email_outlined),
                           filled: true,
                           fillColor: Colors.grey[100],
                           hintStyle: const TextStyle(color: Color(0xFF999999)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFDDDDDD)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFFDDDDDD)),
+                            borderSide:
+                                const BorderSide(color: Color(0xFFDDDDDD)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -195,7 +272,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: _handleVerifyUser,
+                          onPressed: _isLoading ? null : _handleVerifyUser,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF8B5CF6),
                             elevation: 2,
@@ -203,14 +280,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'Send OTP',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : const Text(
+                                  'Send OTP / Reset Link',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                     ],
@@ -224,11 +310,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'OTP has been sent to the registered email associated with User ID: ${_userIdController.text}',
+                          'OTP has been sent to the registered email: ${_userIdController.text}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 14,
-                            color: const Color(0xFF7C3AED),
+                            color: Color(0xFF7C3AED),
                           ),
                         ),
                       ),
@@ -265,7 +351,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                               width: 1.5,
                             ),
                           ),
@@ -279,18 +365,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('OTP resent to your email'),
-                              ),
-                            );
-                          },
+                          onTap: _handleVerifyUser,
                           child: const Text(
                             'Resend OTP',
                             style: TextStyle(
                               fontSize: 14,
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -301,7 +381,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: _handleVerifyOTP,
+                          onPressed: _isLoading ? null : _handleVerifyOTP,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF8B5CF6),
                             elevation: 2,
@@ -309,14 +389,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'Verify OTP',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : const Text(
+                                  'Verify OTP',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -331,7 +420,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           },
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                               width: 1.5,
                             ),
                             shape: RoundedRectangleBorder(
@@ -343,7 +432,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                             ),
                           ),
                         ),
@@ -384,7 +473,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                               width: 1.5,
                             ),
                           ),
@@ -427,7 +516,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                               width: 1.5,
                             ),
                           ),
@@ -442,7 +531,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: _handleResetPassword,
+                          onPressed: _isLoading ? null : _handleResetPassword,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF8B5CF6),
                             elevation: 2,
@@ -450,14 +539,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text(
-                            'Reset Password',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.5,
+                                  ),
+                                )
+                              : const Text(
+                                  'Reset Password',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -472,7 +570,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           },
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                               width: 1.5,
                             ),
                             shape: RoundedRectangleBorder(
@@ -484,7 +582,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF7C3AED),
+                              color: Color(0xFF7C3AED),
                             ),
                           ),
                         ),
@@ -503,7 +601,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   String _getSubtitle() {
     switch (currentStep) {
       case 0:
-        return 'Please enter your User ID to receive an OTP.';
+        return 'Please enter your registered email to receive an OTP.';
       case 1:
         return 'Enter the OTP sent to your registered email.';
       case 2:

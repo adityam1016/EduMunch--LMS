@@ -5,6 +5,9 @@ import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'app_drawer.dart';
 import 'doubt_discussion_screen.dart';
+import 'package:get/get.dart';
+import '../auth_controller.dart';
+import '../services/doubt_service.dart';
 
 class DoubtsScreen extends StatefulWidget {
   const DoubtsScreen({Key? key}) : super(key: key);
@@ -15,6 +18,49 @@ class DoubtsScreen extends StatefulWidget {
 
 class _DoubtsScreenState extends State<DoubtsScreen> {
   int _currentIndex = 0; // 0 = My Doubts, 1 = Ask Doubt
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLiveDoubts();
+  }
+
+  Future<void> _loadLiveDoubts() async {
+    try {
+      final authController = Get.find<AuthController>();
+      final email = authController.email;
+      final liveList = await DoubtService.getDoubts(studentEmail: email);
+      if (liveList.isNotEmpty && mounted) {
+        setState(() {
+          doubts = liveList.map((d) {
+            return {
+              'id': d.id,
+              'title': d.title,
+              'status': d.status == 'open'
+                  ? 'Pending'
+                  : (d.status == 'resolved' ? 'Resolved' : 'In Progress'),
+              'submittedTime':
+                  '${d.createdAt.day}/${d.createdAt.month}/${d.createdAt.year}',
+              'subject': d.subject,
+              'faculty': 'Faculty Support',
+              'description': d.question,
+              'messages': d.messages
+                  .map((m) => {
+                        'sender': m.senderName,
+                        'text': m.message,
+                        'time':
+                            '${m.createdAt.hour}:${m.createdAt.minute.toString().padLeft(2, '0')}',
+                        'isStudent': m.senderRole == 'student',
+                      })
+                  .toList(),
+            };
+          }).toList();
+        });
+      }
+    } catch (e) {
+      print('Load doubts notice: $e');
+    }
+  }
   
   List<Map<String, dynamic>> doubts = [
     {
@@ -166,6 +212,14 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
   }
 
   void _submitDoubt() {
+    final authController = Get.find<AuthController>();
+    final email = authController.email ?? 'student@edumunch.com';
+    DoubtService.createDoubt(
+      studentEmail: email,
+      subject: _selectedSubject ?? 'General',
+      title: _descriptionController.text.split('\n').first,
+      question: _descriptionController.text,
+    );
     if (_selectedSubject == null || _selectedFaculty == null || _descriptionController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

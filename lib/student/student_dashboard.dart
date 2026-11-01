@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import 'app_drawer.dart';
 import 'notification_screen.dart';
+import '../auth_controller.dart';
+import '../services/services.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({super.key});
@@ -12,7 +14,7 @@ class StudentDashboard extends StatefulWidget {
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
-  final Map<String, String> studentData = const {
+  Map<String, String> studentData = {
     'name': 'Aditya Mishra',
     'batch': '11th JEE MAINS',
     'center': 'Kota Main Center',
@@ -87,6 +89,67 @@ class _StudentDashboardState extends State<StudentDashboard> {
   @override
   void initState() {
     super.initState();
+    _loadDashboardData();
+  }
+
+  Future<void> _loadDashboardData() async {
+    try {
+      final authController = Get.find<AuthController>();
+      final email = authController.email;
+      final user = AuthService.currentUser;
+
+      String name = 'Student';
+      String studentId = 'EDUMUNCH';
+
+      if (user != null) {
+        studentId = user.id.substring(0, 8).toUpperCase();
+        final profile = await AuthService.getUserProfile(user.id);
+        if (profile != null && profile.fullName.isNotEmpty) {
+          name = profile.fullName;
+        }
+      }
+
+      if (name == 'Student' && email != null && email.isNotEmpty) {
+        final usernamePart = email.split('@').first;
+        name = usernamePart
+            .split('.')
+            .map((w) =>
+                w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
+            .join(' ');
+      }
+
+      if (mounted) {
+        setState(() {
+          studentData = {
+            'name': name.isNotEmpty ? name : 'Student',
+            'batch': 'Science Batch - 2026',
+            'center': 'Main Campus',
+            'branch': 'Science',
+            'studentId': studentId,
+          };
+        });
+      }
+
+      // Load live courses for performance analytics
+      final courses = await CourseService.getCourses();
+      if (courses.isNotEmpty && mounted) {
+        setState(() {
+          _performanceData.clear();
+          for (var c in courses.take(4)) {
+            _performanceData.add({
+              'subject': c.name,
+              'score': (c.progress * 100).toInt(),
+              'total': 100,
+              'trend': c.progress > 0.5 ? 'up' : 'down',
+              'percentage': c.progress * 100,
+              'color': c.color,
+            });
+          }
+        });
+      }
+    } catch (e) {
+      print('Dashboard load warning: $e');
+    }
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'teacher_app_drawer.dart';
+import '../services/attendance_service.dart';
 
 class ManageAttendanceScreen extends StatefulWidget {
   const ManageAttendanceScreen({super.key});
@@ -65,7 +66,28 @@ class _ManageAttendanceScreenState extends State<ManageAttendanceScreen> {
     setState(() => _isSubmitting = true);
 
     // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final sessionParts = (_selectedSession ?? 'General - 09:00 AM').split(' - ');
+      final subject = sessionParts.first;
+      final timeSlot = sessionParts.length > 1 ? sessionParts[1] : '09:00 AM';
+
+      for (var student in _students) {
+        String fullStatus = 'Present';
+        if (student.status == 'A') fullStatus = 'Absent';
+        if (student.status == 'L') fullStatus = 'Late';
+        if (student.status == 'H') fullStatus = 'Excused';
+
+        final email = '${student.name.toLowerCase().replaceAll(' ', '.')}@student.edumunch.com';
+
+        await AttendanceService.markAttendance(
+          studentEmail: email,
+          subject: subject,
+          status: fullStatus,
+          timeSlot: timeSlot,
+          markedBy: 'Teacher',
+        );
+      }
+    } catch (_) {}
 
     if (mounted) {
       setState(() => _isSubmitting = false);

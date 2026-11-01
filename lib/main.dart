@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'supabase_config.dart';
 import 'auth_controller.dart';
 import 'splash_screen.dart';
 import 'login_screen.dart';
+import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
 
 // Student screens
@@ -48,14 +50,18 @@ import 'middleware/auth_middleware.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Supabase.initialize(
-      url: 'https://lzfgntruyknjolliyzoz.supabase.co',
-      anonKey:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZmdudHJ1eWtuam9sbGl5em96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc5Njk4MjIsImV4cCI6MjA4MzU0NTgyMn0.7QYW0-qizmnTv_ZLiVEVHIYcoDPPSJ39SfNJxGdZ4dQ',
-    );
-  } catch (e) {
-    print('Supabase initialization skipped/failed (offline/demo mode): $e');
+  if (SupabaseConfig.isConfigured) {
+    try {
+      await Supabase.initialize(
+        url: SupabaseConfig.url,
+        anonKey: SupabaseConfig.anonKey,
+      );
+      print('Supabase initialized successfully with project URL: ${SupabaseConfig.url}');
+    } catch (e) {
+      print('Supabase initialization failed: $e');
+    }
+  } else {
+    print('Supabase credentials not configured in lib/supabase_config.dart. Running in offline/demo mode.');
   }
 
   // Initialize controllers globally
@@ -110,6 +116,7 @@ class MyApp extends StatelessWidget {
           name: '/login',
           page: () => const LoginScreen(),
         ),
+        GetPage(name: '/signup', page: () => const SignupScreen()),
         GetPage(name: '/forgot-password', page: () => const ForgotPasswordScreen()),
 
         // Student Pages
