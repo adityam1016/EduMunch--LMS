@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'teacher_app_drawer.dart';
 import 'teacher_doubt_discussion_screen.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class TeacherDoubtsScreen extends StatefulWidget {
   const TeacherDoubtsScreen({super.key});
@@ -12,15 +14,14 @@ class TeacherDoubtsScreen extends StatefulWidget {
 }
 
 class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
-  // Sample data - Replace with API data
-  List<Map<String, dynamic>> _doubts = [
+  final List<Map<String, dynamic>> _doubts = [
     {
       'id': 1,
       'studentName': 'Rahul Sharma',
       'studentInitials': 'RS',
       'subject': 'Mathematics',
       'topic': 'Quadratic Equations',
-      'question': 'How do I solve complex quadratic equations using the discriminant method?',
+      'question': 'How do I solve complex quadratic equations using the discriminant method when roots are imaginary?',
       'status': 'New',
       'timestamp': DateTime.now().subtract(const Duration(hours: 2)),
       'isResolved': false,
@@ -30,8 +31,8 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
       'studentName': 'Priya Verma',
       'studentInitials': 'PV',
       'subject': 'Physics',
-      'topic': 'Newton\'s Laws',
-      'question': 'Can you explain the difference between Newton\'s second and third law?',
+      'topic': "Newton's Laws",
+      'question': 'Can you clarify why action and reaction pairs never cancel each other out in equilibrium?',
       'status': 'In Progress',
       'timestamp': DateTime.now().subtract(const Duration(hours: 5)),
       'isResolved': false,
@@ -42,7 +43,7 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
       'studentInitials': 'AK',
       'subject': 'Chemistry',
       'topic': 'Chemical Bonding',
-      'question': 'What is the difference between ionic and covalent bonds?',
+      'question': 'What causes the difference in bond angle between water (104.5°) and ammonia (107°)?',
       'status': 'Resolved',
       'timestamp': DateTime.now().subtract(const Duration(days: 1)),
       'isResolved': true,
@@ -50,17 +51,14 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
   ];
 
   bool _isLoading = false;
-  String? _errorMessage;
   String _selectedFilter = 'All'; // All, New, In Progress, Resolved
 
-  // Real-time polling
   Timer? _pollingTimer;
-  static const Duration _pollingInterval = Duration(seconds: 5);
+  static const Duration _pollingInterval = Duration(seconds: 15);
 
   @override
   void initState() {
     super.initState();
-    _fetchDoubts();
     _startPolling();
   }
 
@@ -71,47 +69,24 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
   }
 
   Future<void> _fetchDoubts() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   void _startPolling() {
     _pollingTimer = Timer.periodic(_pollingInterval, (timer) {
       if (mounted && !_isLoading) {
-        _refreshDoubts();
+        // silent refresh
       }
     });
   }
 
-  Future<void> _refreshDoubts() async {
-    // Silent refresh - no loading indicator
-    await Future.delayed(const Duration(milliseconds: 500));
-    print('🔄 Doubts refreshed');
-  }
-
   List<Map<String, dynamic>> get _filteredDoubts {
     if (_selectedFilter == 'All') return _doubts;
-    return _doubts.where((doubt) {
-      switch (_selectedFilter) {
-        case 'New':
-          return doubt['status'] == 'New';
-        case 'In Progress':
-          return doubt['status'] == 'In Progress';
-        case 'Resolved':
-          return doubt['status'] == 'Resolved';
-        default:
-          return true;
-      }
-    }).toList();
+    return _doubts.where((doubt) => doubt['status'] == _selectedFilter).toList();
   }
 
   String _getRelativeTime(DateTime timestamp) {
@@ -129,118 +104,81 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const TeacherAppDrawer(),
-      backgroundColor: const Color(0xFFF0F4F8),
-      appBar: AppBar(
-        title: const Text(
-          'Student Doubts',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black54),
-            onPressed: _fetchDoubts,
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
-              ? _buildErrorWidget()
-              : Column(
-                  children: [
-                    _buildFilterChips(),
-                    Expanded(
-                      child: _filteredDoubts.isEmpty
-                          ? _buildEmptyWidget()
-                          : RefreshIndicator(
-                              onRefresh: _fetchDoubts,
-                              child: ListView.builder(
-                                padding: const EdgeInsets.all(16.0),
-                                itemCount: _filteredDoubts.length,
-                                itemBuilder: (context, index) {
-                                  return _buildDoubtCard(
-                                      context, _filteredDoubts[index]);
-                                },
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
-    );
-  }
-
-  Widget _buildFilterChips() {
-    final filters = ['All', 'New', 'In Progress', 'Resolved'];
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: Colors.white,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: filters.map((filter) {
-            final isSelected = _selectedFilter == filter;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Text(filter),
-                selected: isSelected,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedFilter = filter;
-                  });
-                },
-                backgroundColor: Colors.white,
-                selectedColor: const Color(0xFF7C3AED),
-                labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black87,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-                side: BorderSide(
-                  color: isSelected ? const Color(0xFF7C3AED) : Colors.grey.shade300,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 60, color: Colors.red),
-            const SizedBox(height: 16),
-            const Text(
-              'Failed to load doubts',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            NMAppBar(
+              title: 'Student Doubts',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
-            const SizedBox(height: 8),
-            Text(
-              _errorMessage ?? 'Unknown error',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _fetchDoubts,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7C3AED),
-                foregroundColor: Colors.white,
-              ),
+            _buildFilterPills(),
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator(color: NMTheme.primaryPurple))
+                  : _filteredDoubts.isEmpty
+                      ? _buildEmptyWidget()
+                      : RefreshIndicator(
+                          onRefresh: _fetchDoubts,
+                          color: NMTheme.primaryPurple,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                            itemCount: _filteredDoubts.length,
+                            itemBuilder: (context, index) {
+                              return _buildDoubtCard(context, _filteredDoubts[index]);
+                            },
+                          ),
+                        ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFilterPills() {
+    final filters = ['All', 'New', 'In Progress', 'Resolved'];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: filters.map((filter) {
+          final isSelected = _selectedFilter == filter;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _selectedFilter = filter),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                padding: const EdgeInsets.symmetric(vertical: 9),
+                decoration: BoxDecoration(
+                  color: isSelected ? NMTheme.primaryPurple : NMTheme.cardBg,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: NMTheme.primaryPurple.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]
+                      : NMTheme.cardShadows,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  filter,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : NMTheme.textDark,
+                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -250,22 +188,28 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.check_circle_outline, size: 80, color: Colors.grey[400]),
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: NMTheme.surface,
+              shape: BoxShape.circle,
+              boxShadow: NMTheme.cardShadows,
+            ),
+            child: const Icon(Icons.check_circle_outline_rounded, size: 54, color: NMTheme.accentTeal),
+          ),
           const SizedBox(height: 16),
           Text(
             'No ${_selectedFilter.toLowerCase()} doubts',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[700],
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+              color: NMTheme.textDark,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            _selectedFilter == 'All'
-                ? 'No student doubts assigned yet'
-                : 'Try selecting a different filter',
-            style: TextStyle(color: Colors.grey[600]),
+          const SizedBox(height: 6),
+          const Text(
+            'All doubts under this category are cleared.',
+            style: TextStyle(color: NMTheme.textSecondary, fontSize: 13),
           ),
         ],
       ),
@@ -274,46 +218,45 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
 
   Widget _buildDoubtCard(BuildContext context, Map<String, dynamic> doubt) {
     Color statusColor;
-    Color statusBgColor;
-
     if (doubt['status'] == 'New') {
-      statusColor = Colors.green;
-      statusBgColor = Colors.green.shade50;
+      statusColor = const Color(0xFFE53935);
     } else if (doubt['status'] == 'Resolved') {
-      statusColor = Colors.grey;
-      statusBgColor = Colors.grey.shade200;
+      statusColor = NMTheme.accentTeal;
     } else {
-      statusColor = Colors.orange;
-      statusBgColor = Colors.orange.shade50;
+      statusColor = const Color(0xFFFB8C00);
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          Get.to(() => TeacherDoubtDiscussionScreen(doubt: doubt));
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: NMCard(
+        padding: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () {
+            Get.to(() => TeacherDoubtDiscussionScreen(doubt: doubt));
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: const Color(0xFF7C3AED),
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: NMTheme.surface,
+                      shape: BoxShape.circle,
+                      boxShadow: NMTheme.cardShadows,
+                    ),
+                    alignment: Alignment.center,
                     child: Text(
                       doubt['studentInitials'],
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        color: NMTheme.primaryPurple,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
                       ),
                     ),
                   ),
@@ -324,22 +267,25 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
                       children: [
                         Text(
                           doubt['studentName'],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                            color: NMTheme.textDark,
+                          ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 3),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF5F3FF),
+                            color: NMTheme.primaryPurple.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             doubt['subject'],
-                            style: TextStyle(
-                              color: const Color(0xFF6D28D9),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
+                            style: const TextStyle(
+                              color: NMTheme.primaryPurple,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
@@ -348,79 +294,69 @@ class _TeacherDoubtsScreenState extends State<TeacherDoubtsScreen> {
                   ),
                   Text(
                     _getRelativeTime(doubt['timestamp']),
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    style: const TextStyle(color: NMTheme.textSecondary, fontSize: 11.5, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.only(left: 52.0),
+              NMInsetContainer(
+                padding: const EdgeInsets.all(12),
+                borderRadius: BorderRadius.circular(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Topic: ${doubt['topic']}',
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
+                      style: const TextStyle(
+                        color: NMTheme.primaryPurple,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       doubt['question'],
-                      style: TextStyle(color: Colors.grey[700], height: 1.4),
+                      style: const TextStyle(color: NMTheme.textDark, height: 1.35, fontSize: 13),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: statusBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            doubt['status'],
-                            style: TextStyle(
-                              color: statusColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                        if (doubt['status'] == 'New') ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.circle, size: 8, color: Colors.red),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Needs Response',
-                                  style: TextStyle(
-                                    color: Colors.red.shade700,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      doubt['status'],
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 11.5,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: const [
+                      Text(
+                        'Open Discussion',
+                        style: TextStyle(
+                          color: NMTheme.primaryPurple,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Icon(Icons.arrow_forward_ios_rounded, size: 12, color: NMTheme.primaryPurple),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

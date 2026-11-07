@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'create_mcq_questions_screen.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class CreateAssignmentTemplateScreen extends StatefulWidget {
   const CreateAssignmentTemplateScreen({super.key});
@@ -28,7 +30,6 @@ class _CreateAssignmentTemplateScreenState
     'Chemistry',
     'Biology',
     'English',
-    'Hindi',
     'Computer Science',
   ];
 
@@ -56,7 +57,6 @@ class _CreateAssignmentTemplateScreenState
     if (result != null && result is List<Map<String, dynamic>>) {
       setState(() {
         _mcqQuestions = result;
-        // Auto-calculate total marks based on questions
         if (_mcqQuestions.isNotEmpty) {
           int totalMarks = _mcqQuestions.fold(
               0, (sum, q) => sum + (q['marks'] as int? ?? 0));
@@ -80,9 +80,7 @@ class _CreateAssignmentTemplateScreenState
     }
 
     setState(() => _isSaving = true);
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 600));
 
     final template = {
       'id': DateTime.now().millisecondsSinceEpoch,
@@ -101,8 +99,6 @@ class _CreateAssignmentTemplateScreenState
     };
 
     setState(() => _isSaving = false);
-
-    // Return the template to the previous screen
     Get.back(result: template);
   }
 
@@ -110,8 +106,9 @@ class _CreateAssignmentTemplateScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Colors.red : Colors.green,
+        backgroundColor: isError ? const Color(0xFFE53935) : NMTheme.accentTeal,
         behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -119,129 +116,98 @@ class _CreateAssignmentTemplateScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F4F8),
-      appBar: AppBar(
-        title: const Text(
-          'Create Assignment Template',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Get.back(),
-        ),
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
           children: [
-            _buildTypeSelector(),
-            const SizedBox(height: 20),
-            _buildSubjectDropdown(),
-            const SizedBox(height: 16),
-            _buildTextField(
-              label: 'Assignment Title',
-              hint: 'e.g., Quadratic Equations Practice',
-              controller: _titleController,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter assignment title';
-                }
-                return null;
-              },
+            NMAppBar(
+              title: 'New Template',
+              isRoot: false,
+              onLeadingTap: () => Get.back(),
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
-            const SizedBox(height: 16),
-            _buildTextField(
-              label: 'Description',
-              hint: 'Brief description of the assignment...',
-              controller: _descriptionController,
-              maxLines: 3,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter description';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTextField(
-                    label: 'Total Marks',
-                    hint: '50',
-                    controller: _totalMarksController,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Required';
-                      }
-                      if (int.tryParse(value) == null) {
-                        return 'Invalid';
-                      }
-                      return null;
-                    },
-                  ),
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  children: [
+                    _buildTypeSelector(),
+                    const SizedBox(height: 20),
+                    _buildSubjectDropdown(),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      label: 'Assignment Title',
+                      hint: 'e.g., Quadratic Equations Practice',
+                      controller: _titleController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter assignment title';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      label: 'Description',
+                      hint: 'Brief description of learning objectives...',
+                      controller: _descriptionController,
+                      maxLines: 3,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter description';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(
+                            label: 'Total Marks',
+                            hint: '50',
+                            controller: _totalMarksController,
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Required';
+                              }
+                              if (int.tryParse(value) == null) {
+                                return 'Invalid';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildTextField(
+                            label: 'Duration',
+                            hint: '60 mins',
+                            controller: _durationController,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    if (_selectedType == 'MCQ') ...[
+                      _buildMcqSection(),
+                    ],
+                    const SizedBox(height: 24),
+                    _buildSubmitButton(),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildTextField(
-                    label: 'Duration',
-                    hint: '60 mins',
-                    controller: _durationController,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Required';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ],
+              ),
             ),
-            const SizedBox(height: 24),
-            if (_selectedType == 'MCQ') ...[
-              _buildMcqSection(),
-              const SizedBox(height: 100),
-            ] else ...[
-              const SizedBox(height: 80),
-            ],
           ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-        ),
-        child: ElevatedButton.icon(
-          onPressed: _isSaving ? null : _saveTemplate,
-          icon: _isSaving
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 3,
-                  ),
-                )
-              : const Icon(Icons.check, color: Colors.white),
-          label: Text(
-            _isSaving ? 'Creating...' : 'Create Template',
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            disabledBackgroundColor: Colors.grey.shade400,
-          ),
         ),
       ),
     );
@@ -252,25 +218,25 @@ class _CreateAssignmentTemplateScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Assignment Type',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          'Assignment Format',
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5, color: NMTheme.textDark),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
               child: _buildTypeCard(
                 type: 'Theory',
-                icon: Icons.description,
-                color: Colors.orange,
+                icon: Icons.description_outlined,
+                accentColor: const Color(0xFFFB8C00),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildTypeCard(
                 type: 'MCQ',
-                icon: Icons.quiz,
-                color: const Color(0xFF7C3AED),
+                icon: Icons.quiz_outlined,
+                accentColor: NMTheme.primaryPurple,
               ),
             ),
           ],
@@ -282,7 +248,7 @@ class _CreateAssignmentTemplateScreenState
   Widget _buildTypeCard({
     required String type,
     required IconData icon,
-    required Color color,
+    required Color accentColor,
   }) {
     final isSelected = _selectedType == type;
     return GestureDetector(
@@ -294,25 +260,38 @@ class _CreateAssignmentTemplateScreenState
           }
         });
       },
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          color: isSelected ? color.withOpacity(0.1) : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? color : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
-          ),
+          color: isSelected ? NMTheme.surface : NMTheme.cardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    offset: const Offset(2, 2),
+                    blurRadius: 4,
+                  ),
+                  const BoxShadow(
+                    color: Colors.white,
+                    offset: const Offset(-2, -2),
+                    blurRadius: 4,
+                  ),
+                ]
+              : NMTheme.cardShadows,
+          border: isSelected ? Border.all(color: accentColor, width: 2) : Border.all(color: Colors.transparent),
         ),
         child: Column(
           children: [
-            Icon(icon, size: 32, color: isSelected ? color : Colors.grey),
+            Icon(icon, size: 28, color: isSelected ? accentColor : NMTheme.textSecondary),
             const SizedBox(height: 8),
             Text(
               type,
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isSelected ? color : Colors.grey,
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: isSelected ? accentColor : NMTheme.textSecondary,
               ),
             ),
           ],
@@ -327,100 +306,112 @@ class _CreateAssignmentTemplateScreenState
       children: [
         const Text(
           'Subject',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5, color: NMTheme.textDark),
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          value: _selectedSubject,
-          hint: const Text('Select Subject'),
-          isExpanded: true,
-          decoration: _inputDecoration(),
-          items: _subjects
-              .map((subject) => DropdownMenuItem(
-                    value: subject,
-                    child: Text(subject),
-                  ))
-              .toList(),
-          onChanged: (value) {
-            setState(() {
-              _selectedSubject = value;
-            });
-          },
-          validator: (value) {
-            if (value == null) {
-              return 'Please select a subject';
-            }
-            return null;
-          },
+        NMCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          borderRadius: BorderRadius.circular(14),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<String>(
+              value: _selectedSubject,
+              hint: const Text('Select Subject', style: TextStyle(color: NMTheme.textSecondary)),
+              isExpanded: true,
+              decoration: const InputDecoration(border: InputBorder.none),
+              items: _subjects
+                  .map((subject) => DropdownMenuItem(
+                        value: subject,
+                        child: Text(
+                          subject,
+                          style: const TextStyle(fontWeight: FontWeight.w600, color: NMTheme.textDark),
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedSubject = value;
+                });
+              },
+              validator: (value) {
+                if (value == null) {
+                  return 'Please select a subject';
+                }
+                return null;
+              },
+            ),
+          ),
         ),
       ],
     );
   }
 
   Widget _buildMcqSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'MCQ Questions',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            Text(
-              '${_mcqQuestions.length} Questions',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
+    return NMCard(
+      padding: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'MCQ Questions Pool',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: NMTheme.textDark),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton.icon(
-          onPressed: _createMcqQuestions,
-          icon: Icon(
-            _mcqQuestions.isEmpty ? Icons.add : Icons.edit,
-            color: Colors.white,
-          ),
-          label: Text(
-            _mcqQuestions.isEmpty ? 'Add MCQ Questions' : 'Edit Questions',
-            style: const TextStyle(color: Colors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF7C3AED),
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        if (_mcqQuestions.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.green.withOpacity(0.3)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  '${_mcqQuestions.length} questions added',
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: NMTheme.primaryPurple.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '${_mcqQuestions.length} added',
                   style: const TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.w600,
+                    color: NMTheme.primaryPurple,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          GestureDetector(
+            onTap: _createMcqQuestions,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: NMTheme.surface,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: NMTheme.cardShadows,
+                border: Border.all(color: NMTheme.primaryPurple.withOpacity(0.3)),
+              ),
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _mcqQuestions.isEmpty ? Icons.add_circle_outline_rounded : Icons.edit_note_rounded,
+                    color: NMTheme.primaryPurple,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _mcqQuestions.isEmpty ? 'Configure MCQ Questions' : 'Edit MCQ Questions',
+                    style: const TextStyle(
+                      color: NMTheme.primaryPurple,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
-      ],
+      ),
     );
   }
 
@@ -437,45 +428,73 @@ class _CreateAssignmentTemplateScreenState
       children: [
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: NMTheme.textDark),
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          decoration: _inputDecoration(hint: hint),
-          validator: validator,
+        NMCard(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          borderRadius: BorderRadius.circular(14),
+          child: TextFormField(
+            controller: controller,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NMTheme.textDark),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: const TextStyle(color: NMTheme.textSecondary, fontSize: 13, fontWeight: FontWeight.normal),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            validator: validator,
+          ),
         ),
       ],
     );
   }
 
-  InputDecoration _inputDecoration({String hint = ''}) {
-    return InputDecoration(
-      hintText: hint,
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+  Widget _buildSubmitButton() {
+    return Container(
+      height: 52,
+      decoration: BoxDecoration(
+        gradient: NMTheme.primaryGradient,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: NMTheme.primaryPurple.withOpacity(0.35),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 1),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 2),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isSaving ? null : _saveTemplate,
+          borderRadius: BorderRadius.circular(16),
+          child: Center(
+            child: _isSaving
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                  )
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.check_rounded, color: Colors.white, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Save Template',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ),
       ),
     );
   }

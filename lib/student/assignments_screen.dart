@@ -4,6 +4,8 @@ import 'app_drawer.dart';
 import '../services/assignment_service.dart';
 import 'package:get/get.dart';
 import '../auth_controller.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class AssignmentsScreen extends StatefulWidget {
   const AssignmentsScreen({super.key});
@@ -202,57 +204,26 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
     final filteredAssignments = getFilteredAssignments();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            // App Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.menu,
-                          color: Color(0xFF5B21B6),
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'Assignments',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF5B21B6),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            NMAppBar(
+              title: 'Assignments',
+              isRoot: false,
             ),
+            const SizedBox(height: 8),
 
-            // Filter Chips
+            // Neumorphic Filter Chips
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
                 child: Row(
                   children: List.generate(filters.length, (index) {
+                    final isSelected = selectedFilterIndex == index;
                     return Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: GestureDetector(
@@ -261,28 +232,29 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                             selectedFilterIndex = index;
                           });
                         },
-                        child: Container(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
+                            horizontal: 18,
+                            vertical: 9,
                           ),
                           decoration: BoxDecoration(
-                            color: selectedFilterIndex == index
-                                ? const Color(0xFF8B5CF6)
-                                : Colors.grey[100],
+                            color: isSelected ? NMTheme.surface : NMTheme.cardBg,
                             borderRadius: BorderRadius.circular(20),
-                            border: selectedFilterIndex == index
-                                ? null
-                                : Border.all(color: Colors.grey[300]!),
+                            border: Border.all(
+                              color: isSelected ? const Color(0xFF7C3AED) : Colors.white.withOpacity(0.8),
+                              width: isSelected ? 1.5 : 1,
+                            ),
+                            boxShadow: isSelected
+                                ? NMTheme.raisedShadow(offset: 2, blur: 4)
+                                : NMTheme.raisedShadow(offset: 3, blur: 6),
                           ),
                           child: Text(
                             filters[index],
                             style: TextStyle(
                               fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: selectedFilterIndex == index
-                                  ? Colors.white
-                                  : Colors.grey[700],
+                              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                              color: isSelected ? const Color(0xFF7C3AED) : NMTheme.textSecondary,
                             ),
                           ),
                         ),
@@ -292,10 +264,12 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 8),
 
             // Assignments List
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: filteredAssignments.map((assignment) {
@@ -304,7 +278,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -312,32 +286,23 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
   }
 
   Widget _buildAssignmentCard(Map<String, dynamic> assignment) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AssignmentDetailsScreen(
-              assignment: assignment,
-            ),
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
+    final typeColor = _getTypeColor(assignment['type']);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: NMCard(
+        radius: 22,
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[200]!, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AssignmentDetailsScreen(
+                assignment: assignment,
+              ),
             ),
-          ],
-        ),
+          );
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -346,15 +311,15 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _getTypeColor(assignment['type']).withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(10),
+                    color: typeColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
                     assignment['icon'],
-                    size: 24,
-                    color: _getTypeColor(assignment['type']),
+                    size: 22,
+                    color: typeColor,
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -365,20 +330,20 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                       Text(
                         assignment['title'],
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 15.5,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: NMTheme.textPrimary,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Text(
                         assignment['type'],
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[500],
-                          fontWeight: FontWeight.w500,
+                          color: NMTheme.textSecondary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -388,17 +353,17 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
-                    vertical: 8,
+                    vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: assignment['statusColor'].withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
+                    color: (assignment['statusColor'] as Color).withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     assignment['status'],
                     style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800,
                       color: assignment['statusColor'],
                     ),
                   ),
@@ -406,26 +371,26 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
               ],
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
             // Due Date and Time Status Row
             Row(
               children: [
-                Icon(
-                  Icons.calendar_today,
+                const Icon(
+                  Icons.calendar_today_rounded,
                   size: 14,
-                  color: Colors.grey[400],
+                  color: NMTheme.textMuted,
                 ),
                 const SizedBox(width: 6),
                 Text(
                   'Due: ${assignment['dueDate']}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
+                    color: NMTheme.textSecondary,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -433,22 +398,22 @@ class _AssignmentsScreenState extends State<AssignmentsScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: assignment['timeStatus'].contains('Overdue')
-                        ? const Color(0xFFEF5350).withOpacity(0.1)
+                        ? const Color(0xFFEF5350).withOpacity(0.12)
                         : assignment['timeStatus'].contains('Upcoming')
-                            ? const Color(0xFFFFB74D).withOpacity(0.1)
-                            : const Color(0xFF66BB6A).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(6),
+                            ? const Color(0xFFFFB74D).withOpacity(0.15)
+                            : const Color(0xFF10B981).withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     assignment['timeStatus'],
                     style: TextStyle(
                       fontSize: 11,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                       color: assignment['timeStatus'].contains('Overdue')
                           ? const Color(0xFFEF5350)
                           : assignment['timeStatus'].contains('Upcoming')
-                              ? const Color(0xFFFFB74D)
-                              : const Color(0xFF66BB6A),
+                              ? const Color(0xFFD97706)
+                              : const Color(0xFF10B981),
                     ),
                   ),
                 ),

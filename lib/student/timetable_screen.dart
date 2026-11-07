@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import '../services/timetable_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class TimetableScreen extends StatefulWidget {
   const TimetableScreen({super.key});
@@ -49,24 +51,21 @@ class _TimetableScreenState extends State<TimetableScreen> {
   final List<Map<String, dynamic>> dailyTimetableData = [
     {
       'time': '09:00 AM',
-      'endTime': '11:00 AM',
+      'endTime': '10:30 AM',
       'subject': 'Physics',
-      'professor': 'Prof. Sharma',
+      'professor': 'Dr. Rajesh Kumar',
       'type': 'class',
+      'room': 'Lab 2',
+      'colors': [Color(0xFF0C6E5A), Color(0xFF074F40)],
     },
     {
-      'time': '10:00 AM',
-      'endTime': '11:00 AM',
-      'subject': 'Doubt Lecture',
-      'professor': 'Chemistry',
-      'type': 'class',
-    },
-    {
-      'time': '11:00 AM',
+      'time': '10:45 AM',
       'endTime': '12:00 PM',
-      'subject': 'Biology',
-      'professor': 'Prof. Singh',
+      'subject': 'Mathematics',
+      'professor': 'Prof. Amit Sharma',
       'type': 'class',
+      'room': 'Room 104',
+      'colors': [Color(0xFF1B7696), Color(0xFF135B74)],
     },
     {
       'time': '12:00 PM',
@@ -74,127 +73,60 @@ class _TimetableScreenState extends State<TimetableScreen> {
       'subject': 'Lunch Break',
       'professor': '',
       'type': 'break',
+      'room': 'Cafeteria',
     },
     {
       'time': '01:00 PM',
-      'endTime': '02:00 PM',
-      'subject': 'Physics',
-      'professor': 'Prof. Sharma',
+      'endTime': '02:30 PM',
+      'subject': 'Chemistry',
+      'professor': 'Dr. Priya Singh',
       'type': 'class',
+      'room': 'Chem Hall',
+      'colors': [Color(0xFFC46513), Color(0xFFA04E09)],
     },
     {
-      'time': '02:00 PM',
-      'endTime': '03:00 PM',
-      'subject': 'Chemistry',
-      'professor': 'Prof. Gupta',
+      'time': '03:00 PM',
+      'endTime': '04:30 PM',
+      'subject': 'Calculus Revision',
+      'professor': 'Mentor Session',
       'type': 'class',
+      'room': 'Online Live',
+      'colors': [Color(0xFF381868), Color(0xFF4C218E)],
     },
   ];
 
   final Map<String, List<Map<String, dynamic>>> weeklyTimetableData = {
     'Monday': [
-      {
-        'time': '09:00 AM - 11:00 AM',
-        'subject': 'Physics',
-        'professor': 'Prof. Sharma',
-      },
-      {
-        'time': '11:00 AM - 12:30 PM',
-        'subject': 'Mathematics',
-        'professor': 'Prof. Kumar',
-      },
-      {
-        'time': '01:00 PM - 02:30 PM',
-        'subject': 'Chemistry',
-        'professor': 'Prof. Gupta',
-      },
+      {'time': '09:00 AM - 10:30 AM', 'subject': 'Physics', 'professor': 'Dr. Rajesh Kumar'},
+      {'time': '10:45 AM - 12:00 PM', 'subject': 'Mathematics', 'professor': 'Prof. Amit Sharma'},
+      {'time': '01:00 PM - 02:30 PM', 'subject': 'Chemistry', 'professor': 'Dr. Priya Singh'},
     ],
     'Tuesday': [
-      {
-        'time': '09:00 AM - 10:30 AM',
-        'subject': 'Biology',
-        'professor': 'Prof. Singh',
-      },
-      {
-        'time': '10:30 AM - 12:00 PM',
-        'subject': 'English',
-        'professor': 'Prof. Desai',
-      },
-      {
-        'time': '01:00 PM - 02:30 PM',
-        'subject': 'Physics Lab',
-        'professor': 'Prof. Sharma',
-      },
+      {'time': '09:00 AM - 10:30 AM', 'subject': 'Mathematics', 'professor': 'Prof. Amit Sharma'},
+      {'time': '11:00 AM - 12:30 PM', 'subject': 'Physics Lab', 'professor': 'Dr. Rajesh Kumar'},
+      {'time': '01:30 PM - 03:00 PM', 'subject': 'Doubt Session', 'professor': 'Faculty Group'},
     ],
     'Wednesday': [
-      {
-        'time': '09:00 AM - 11:00 AM',
-        'subject': 'Chemistry',
-        'professor': 'Prof. Gupta',
-      },
-      {
-        'time': '11:00 AM - 12:30 PM',
-        'subject': 'History',
-        'professor': 'Prof. Verma',
-      },
-      {
-        'time': '01:00 PM - 02:30 PM',
-        'subject': 'Mathematics',
-        'professor': 'Prof. Kumar',
-      },
+      {'time': '09:00 AM - 10:30 AM', 'subject': 'Chemistry', 'professor': 'Dr. Priya Singh'},
+      {'time': '11:00 AM - 12:30 PM', 'subject': 'Biology', 'professor': 'Dr. Singh'},
+      {'time': '01:00 PM - 02:30 PM', 'subject': 'Computer Science', 'professor': 'Prof. Patel'},
     ],
     'Thursday': [
-      {
-        'time': '09:00 AM - 10:30 AM',
-        'subject': 'Physics',
-        'professor': 'Prof. Sharma',
-      },
-      {
-        'time': '10:30 AM - 12:00 PM',
-        'subject': 'Biology',
-        'professor': 'Prof. Singh',
-      },
-      {
-        'time': '01:00 PM - 02:30 PM',
-        'subject': 'Computer Science',
-        'professor': 'Prof. Patel',
-      },
+      {'time': '09:00 AM - 10:30 AM', 'subject': 'Physics', 'professor': 'Dr. Rajesh Kumar'},
+      {'time': '10:45 AM - 12:00 PM', 'subject': 'Mathematics', 'professor': 'Prof. Amit Sharma'},
+      {'time': '01:00 PM - 02:30 PM', 'subject': 'Chemistry Lab', 'professor': 'Dr. Priya Singh'},
     ],
     'Friday': [
-      {
-        'time': '09:00 AM - 11:00 AM',
-        'subject': 'Mathematics',
-        'professor': 'Prof. Kumar',
-      },
-      {
-        'time': '11:00 AM - 12:30 PM',
-        'subject': 'Chemistry Lab',
-        'professor': 'Prof. Gupta',
-      },
-      {
-        'time': '01:00 PM - 02:30 PM',
-        'subject': 'General Science',
-        'professor': 'Prof. Reddy',
-      },
+      {'time': '09:00 AM - 10:30 AM', 'subject': 'Mathematics', 'professor': 'Prof. Amit Sharma'},
+      {'time': '11:00 AM - 12:30 PM', 'subject': 'Mock Test 1', 'professor': 'Exam Cell'},
+      {'time': '01:30 PM - 03:00 PM', 'subject': 'Paper Discussion', 'professor': 'All Mentors'},
     ],
     'Saturday': [
-      {
-        'time': '09:00 AM - 10:30 AM',
-        'subject': 'Revision - Physics',
-        'professor': 'Prof. Sharma',
-      },
-      {
-        'time': '10:30 AM - 12:00 PM',
-        'subject': 'Revision - Chemistry',
-        'professor': 'Prof. Gupta',
-      },
+      {'time': '09:00 AM - 11:00 AM', 'subject': 'Revision - Physics', 'professor': 'Dr. Rajesh Kumar'},
+      {'time': '11:30 AM - 01:00 PM', 'subject': 'Revision - Chemistry', 'professor': 'Dr. Priya Singh'},
     ],
     'Sunday': [
-      {
-        'time': 'Weekend',
-        'subject': 'No Classes - Self Study',
-        'professor': 'Self Paced',
-      },
+      {'time': 'Self-Study', 'subject': 'Weekly Self Review', 'professor': 'Self Paced'},
     ],
   };
 
@@ -203,140 +135,74 @@ class _TimetableScreenState extends State<TimetableScreen> {
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2024),
-      lastDate: DateTime.now().add(const Duration(days: 30)),
+      lastDate: DateTime.now().add(const Duration(days: 60)),
     );
     if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
+      setState(() => selectedDate = picked);
+      _loadTimetable();
     }
   }
 
   void _previousDate() {
-    setState(() {
-      selectedDate = selectedDate.subtract(const Duration(days: 1));
-    });
+    setState(() => selectedDate = selectedDate.subtract(const Duration(days: 1)));
+    _loadTimetable();
   }
 
   void _nextDate() {
-    setState(() {
-      selectedDate = selectedDate.add(const Duration(days: 1));
-    });
+    setState(() => selectedDate = selectedDate.add(const Duration(days: 1)));
+    _loadTimetable();
   }
 
   String _getDayName(DateTime date) {
-    const days = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday'
-    ];
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     return days[date.weekday - 1];
   }
 
   String _getMonthName(int month) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[month - 1];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            // App Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.menu,
-                          color: Color(0xFF5B21B6),
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'Timetable',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF5B21B6),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            NMAppBar(
+              title: 'Timetable',
+              isRoot: false,
             ),
+            const SizedBox(height: 10),
 
-            // View Toggle
+            // Daily / Weekly Inset Toggle Pill
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(10),
-                ),
                 padding: const EdgeInsets.all(4),
+                decoration: NMTheme.insetDecoration(radius: 18),
                 child: Row(
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isWeeklyView = false;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        onTap: () => setState(() => isWeeklyView = false),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
                           decoration: BoxDecoration(
-                            color: !isWeeklyView
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
+                            color: !isWeeklyView ? NMTheme.surface : Colors.transparent,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: !isWeeklyView ? NMTheme.raisedShadow(offset: 2.5, blur: 5) : [],
                           ),
                           child: Text(
-                            'Daily',
+                            'Daily Schedule',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: !isWeeklyView
-                                  ? const Color(0xFF8B5CF6)
-                                  : Colors.grey[600],
+                              fontSize: 13.5,
+                              fontWeight: !isWeeklyView ? FontWeight.w800 : FontWeight.w600,
+                              color: !isWeeklyView ? NMTheme.primaryPurple : NMTheme.textMuted,
                             ),
                           ),
                         ),
@@ -344,28 +210,22 @@ class _TimetableScreenState extends State<TimetableScreen> {
                     ),
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isWeeklyView = true;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        onTap: () => setState(() => isWeeklyView = true),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
                           decoration: BoxDecoration(
-                            color: isWeeklyView
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
+                            color: isWeeklyView ? NMTheme.surface : Colors.transparent,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: isWeeklyView ? NMTheme.raisedShadow(offset: 2.5, blur: 5) : [],
                           ),
                           child: Text(
-                            'Weekly',
+                            'Weekly Overview',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: isWeeklyView
-                                  ? const Color(0xFF8B5CF6)
-                                  : Colors.grey[600],
+                              fontSize: 13.5,
+                              fontWeight: isWeeklyView ? FontWeight.w800 : FontWeight.w600,
+                              color: isWeeklyView ? NMTheme.primaryPurple : NMTheme.textMuted,
                             ),
                           ),
                         ),
@@ -375,295 +235,271 @@ class _TimetableScreenState extends State<TimetableScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
             // Content
-            if (!isWeeklyView) ...[
-              // Date Selector for Daily View
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[300]!, width: 1),
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: _previousDate,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back,
-                            size: 20,
-                            color: Color(0xFF8B5CF6),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _selectDate(context),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.calendar_today,
-                                  size: 18,
-                                  color: Color(0xFF8B5CF6),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  '${_getDayName(selectedDate)}, ${selectedDate.day} ${_getMonthName(selectedDate.month)}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: _nextDate,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward,
-                            size: 20,
-                            color: Color(0xFF8B5CF6),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: dailyTimetableData.map((item) {
-                      return _buildDailyCard(item);
-                    }).toList(),
-                  ),
-                ),
-              ),
-            ] else ...[
-              // Weekly View - Horizontal Cards
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: weeklyTimetableData.entries.map((entry) {
-                        return _buildWeeklyDayCard(entry.key, entry.value);
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-            const SizedBox(height: 20),
+            Expanded(
+              child: !isWeeklyView ? _buildDailyView() : _buildWeeklyView(),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDailyCard(Map<String, dynamic> item) {
-    bool isBreak = item['type'] == 'break';
-
-    if (isBreak) {
-      return Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: Text(
-            item['subject'],
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[500],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
+  Widget _buildDailyView() {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 4,
-            height: 100,
-            decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-              ),
+          // Date Picker Card
+          NMCard(
+            radius: 20,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                NMIconButton(
+                  icon: Icons.chevron_left_rounded,
+                  size: 38,
+                  iconSize: 22,
+                  onTap: _previousDate,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 12),
+                      decoration: NMTheme.insetDecoration(radius: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.calendar_today_rounded, size: 16, color: Color(0xFF7C3AED)),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${_getDayName(selectedDate)}, ${selectedDate.day} ${_getMonthName(selectedDate.month)}',
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w700,
+                              color: NMTheme.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                NMIconButton(
+                  icon: Icons.chevron_right_rounded,
+                  size: 38,
+                  iconSize: 22,
+                  onTap: _nextDate,
+                ),
+              ],
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${item['time']} - ${item['endTime']}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w500,
-                    ),
+          const SizedBox(height: 18),
+
+          // Daily lecture list
+          ...dailyTimetableData.map((item) {
+            final isBreak = item['type'] == 'break';
+            if (isBreak) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: NMTheme.insetDecoration(radius: 14),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.restaurant_rounded, size: 16, color: NMTheme.textMuted),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${item['subject']} (${item['time']} - ${item['endTime']})',
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: NMTheme.textMuted,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    item['subject'],
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                ),
+              );
+            }
+
+            final colors = (item['colors'] as List<Color>?) ?? [const Color(0xFF1B7696), const Color(0xFF135B74)];
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: colors,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    item['professor'],
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w500,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: NMTheme.coloredCardShadow(colors[0], opacity: 0.35),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item['subject'] as String,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            item['room'] ?? 'Lab',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      item['professor'] as String,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.access_time_rounded, color: Colors.white, size: 15),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${item['time']} - ${item['endTime']}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        NMWhitePillBadge(
+                          text: item['room'] != null ? 'Active' : 'Scheduled',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          }).toList(),
+          const SizedBox(height: 30),
         ],
       ),
     );
   }
 
-  Widget _buildWeeklyDayCard(
-    String day,
-    List<Map<String, dynamic>> classes,
-  ) {
-    return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 12, bottom: 16),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Day Header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              day,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF8B5CF6),
-              ),
+  Widget _buildWeeklyView() {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      itemCount: weeklyTimetableData.entries.length,
+      itemBuilder: (context, index) {
+        final entry = weeklyTimetableData.entries.elementAt(index);
+        final day = entry.key;
+        final classes = entry.value;
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: NMCard(
+            radius: 20,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      day,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: NMTheme.primaryPurple,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: NMTheme.insetDecoration(radius: 8),
+                      child: Text(
+                        '${classes.length} Slots',
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: NMTheme.textSecondary),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ...classes.map((c) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(10),
+                    decoration: NMTheme.insetDecoration(radius: 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF7C3AED),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                c['subject'] as String,
+                                style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold, color: NMTheme.textPrimary),
+                              ),
+                              Text(
+                                '${c['time']} · ${c['professor']}',
+                                style: const TextStyle(fontSize: 11.5, color: NMTheme.textSecondary),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-
-          // Classes List
-          ...classes.map((classItem) {
-            return Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    classItem['subject'],
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    classItem['time'],
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    classItem['professor'],
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Colors.black54,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
+        );
+      },
     );
   }
 }

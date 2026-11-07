@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../auth_controller.dart';
 import '../widgets/parent_pin_dialog.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -9,7 +11,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
-    final userEmail = authController.email ?? 'student@edumunch.com';
+    final userEmail = authController.email ?? 'aditya.mishra@edumunch.com';
     final usernamePart = userEmail.split('@').first;
     final displayName = usernamePart
         .split('.')
@@ -17,216 +19,174 @@ class AppDrawer extends StatelessWidget {
         .join(' ');
 
     return Drawer(
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: NMTheme.bg,
+      child: SafeArea(
         child: Column(
           children: [
-            // Drawer Header with Gradient
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(top: 50, bottom: 24, left: 20, right: 20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    const Color(0xFF7C3AED),
-                    const Color(0xFF8B5CF6),
+            // Header Profile Card
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: NMCard(
+                radius: 22,
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 54,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        boxShadow: NMTheme.raisedShadow(offset: 2, blur: 4),
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/profile.png',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.person, color: NMTheme.textSecondary),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            displayName.isNotEmpty ? displayName : 'Aditya Mishra',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: NMTheme.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            userEmail,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: NMTheme.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+
+            // Navigation Items List
+            Expanded(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 children: [
-                  // Profile Image
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/profile.png',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.person,
-                              size: 40,
-                              color: Colors.white,
-                            ),
-                          );
-                        },
-                      ),
+                  _buildMenuItem(context, icon: Icons.dashboard_rounded, title: 'Dashboard', route: '/dashboard'),
+                  _buildMenuItem(context, icon: Icons.notifications_rounded, title: 'Notifications', route: '/notifications'),
+                  _buildMenuItem(context, icon: Icons.calendar_today_rounded, title: 'Attendance', route: '/attendance'),
+                  _buildMenuItem(context, icon: Icons.school_rounded, title: 'Courses', route: '/courses'),
+                  _buildMenuItem(context, icon: Icons.access_time_filled_rounded, title: 'Timetable', route: '/timetable'),
+                  _buildMenuItem(context, icon: Icons.play_circle_fill_rounded, title: 'Doubt Lecture', route: '/doubt-lecture'),
+                  _buildMenuItem(context, icon: Icons.assignment_rounded, title: 'Assignments', route: '/assignments'),
+                  _buildMenuItem(context, icon: Icons.help_rounded, title: 'Doubts', route: '/doubts'),
+                  _buildMenuItem(context, icon: Icons.quiz_rounded, title: 'Test Portal', route: '/test-portal'),
+                  _buildMenuItem(context, icon: Icons.trending_up_rounded, title: 'Academic Performance', route: '/academic-performance'),
+                  _buildMenuItem(context, icon: Icons.emoji_events_rounded, title: 'Result', route: '/result'),
+                  _buildMenuItem(context, icon: Icons.feedback_rounded, title: 'Feedback', route: '/feedback'),
+                  const SizedBox(height: 12),
+
+                  // Switch to Parent Option in Neumorphic Card
+                  NMCard(
+                    radius: 16,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    onTap: () => _showParentPinDialog(context),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF7C3AED).withOpacity(0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.supervised_user_circle_rounded,
+                            color: Color(0xFF7C3AED),
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Switch to Parent',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF7C3AED),
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                'View as Parent',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: NMTheme.textMuted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 14,
+                          color: Color(0xFF7C3AED),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    displayName.isNotEmpty ? displayName : 'Student',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    userEmail,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Menu Items
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                children: [
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.dashboard_outlined,
-                    title: 'Dashboard',
-                    route: '/dashboard',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.notifications_outlined,
-                    title: 'Notifications',
-                    route: '/notifications',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.calendar_today_outlined,
-                    title: 'Attendance',
-                    route: '/attendance',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.school_outlined,
-                    title: 'Courses',
-                    route: '/courses',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.access_time,
-                    title: 'Timetable',
-                    route: '/timetable',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.play_circle_outline,
-                    title: 'Doubt Lecture',
-                    route: '/doubt-lecture',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.assignment_outlined,
-                    title: 'Assignments',
-                    route: '/assignments',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.help_outline,
-                    title: 'Doubts',
-                    route: '/doubts',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.quiz_outlined,
-                    title: 'Test Portal',
-                    route: '/test-portal',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.trending_up,
-                    title: 'Academic Performance',
-                    route: '/academic-performance',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.emoji_events_outlined,
-                    title: 'Result',
-                    route: '/result',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.feedback_outlined,
-                    title: 'Feedback',
-                    route: '/feedback',
-                  ),
-                  const Divider(height: 32),
-                  
-                  // Switch to Parent Option
-                  ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF7C3AED).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.supervised_user_circle_outlined,
-                        color: Color(0xFF7C3AED),
-                        size: 24,
-                      ),
-                    ),
-                    title: Text(
-                      'Switch to Parent',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF7C3AED),
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'View as Parent',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Color(0xFF7C3AED),
-                    ),
-                    onTap: () => _showParentPinDialog(context),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                  ),
                 ],
               ),
             ),
 
             // Logout Button
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    _showLogoutDialog(context);
-                  },
-                  icon: const Icon(Icons.logout),
-                  label: const Text(
-                    'Logout',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GestureDetector(
+                onTap: () => _showLogoutDialog(context),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEF4444),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFEF4444).withOpacity(0.4),
+                        offset: const Offset(0, 4),
+                        blurRadius: 10,
+                      ),
+                    ],
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEF5350),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.logout_rounded, color: Colors.white, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -238,8 +198,7 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _showParentPinDialog(BuildContext context) async {
-    Get.back(); // Close drawer first
-    
+    Get.back();
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -247,23 +206,12 @@ class AppDrawer extends StatelessWidget {
     );
 
     if (result == true) {
-      // PIN verified successfully, switch to parent dashboard
       final authController = Get.find<AuthController>();
       authController.setSession(
         email: authController.email ?? 'parent@edumunch.com',
         role: 'Parent',
       );
-      
       Get.offAllNamed('/parent-dashboard');
-      
-      Get.snackbar(
-        'Access Granted',
-        'Switched to Parent view',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green.shade100,
-        colorText: Colors.green.shade900,
-        duration: const Duration(seconds: 2),
-      );
     }
   }
 
@@ -273,27 +221,43 @@ class AppDrawer extends StatelessWidget {
     required String title,
     required String route,
   }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: Theme.of(context).colorScheme.primary,
-        size: 24,
-      ),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w500,
+    final currentRoute = Get.currentRoute;
+    final isSelected = currentRoute == route;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: GestureDetector(
+        onTap: () {
+          Get.back();
+          Get.toNamed(route);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+          decoration: BoxDecoration(
+            color: isSelected ? NMTheme.sunkenBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            border: isSelected ? Border.all(color: NMTheme.sunkenBorder, width: 1.2) : null,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? const Color(0xFF7C3AED) : NMTheme.textSecondary,
+                size: 22,
+              ),
+              const SizedBox(width: 14),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14.5,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  color: isSelected ? const Color(0xFF7C3AED) : NMTheme.textPrimary,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      onTap: () {
-        Get.back(); // Close drawer
-        // Navigate to route
-        Get.toNamed(route);
-      },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
     );
   }
 
@@ -301,39 +265,32 @@ class AppDrawer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
+        backgroundColor: NMTheme.bg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text(
           'Logout',
-          style: Theme.of(context).textTheme.headlineSmall,
+          style: TextStyle(fontWeight: FontWeight.bold, color: NMTheme.textPrimary),
         ),
-        content: Text(
+        content: const Text(
           'Are you sure you want to logout?',
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: TextStyle(color: NMTheme.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Colors.black54),
-            ),
+            child: const Text('Cancel', style: TextStyle(color: NMTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
               final authController = Get.find<AuthController>();
               authController.clearSession();
-              Get.back(); // Close dialog
+              Get.back();
               Get.offAllNamed('/login');
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF5350),
+              backgroundColor: const Color(0xFFEF4444),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text('Logout'),
           ),

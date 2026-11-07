@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class TeacherDoubtDiscussionScreen extends StatefulWidget {
   final Map<String, dynamic> doubt;
@@ -37,15 +39,13 @@ class _TeacherDoubtDiscussionScreenState
   Timer? _recordingTimer;
   int _recordingDuration = 0;
 
-  // Real-time polling
   Timer? _pollingTimer;
-  static const Duration _pollingInterval = Duration(seconds: 5);
+  static const Duration _pollingInterval = Duration(seconds: 15);
 
   @override
   void initState() {
     super.initState();
     _initializeSampleData();
-    _fetchChat();
     _startPolling();
   }
 
@@ -75,9 +75,9 @@ class _TeacherDoubtDiscussionScreenState
       {
         'id': 2,
         'senderId': 'teacher_456',
-        'senderName': 'Prof. Rahul Tiwari',
-        'senderInitials': 'RT',
-        'text': 'I understand your doubt. Let me explain this step by step.',
+        'senderName': 'Prof. Aditya Mishra',
+        'senderInitials': 'AM',
+        'text': 'I understand your query. Let us solve this step by step using the discriminant formula.',
         'timestamp': DateTime.now().subtract(const Duration(hours: 1)),
         'isTeacher': true,
         'type': 'text',
@@ -85,33 +85,12 @@ class _TeacherDoubtDiscussionScreenState
     ];
   }
 
-  Future<void> _fetchChat() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    _scrollToBottom();
-  }
-
   void _startPolling() {
     _pollingTimer = Timer.periodic(_pollingInterval, (timer) {
       if (mounted && !_isLoading && !_isSending && !_isUploading) {
-        _refreshChat();
+        // silent refresh
       }
     });
-  }
-
-  Future<void> _refreshChat() async {
-    // Silent refresh
-    await Future.delayed(const Duration(milliseconds: 500));
-    print('🔄 Chat refreshed');
   }
 
   Future<void> _handleSubmitted(String text) async {
@@ -119,205 +98,104 @@ class _TeacherDoubtDiscussionScreenState
 
     final messageText = text.trim();
     _textController.clear();
-
-    await _sendMessage(text: messageText);
-  }
-
-  Future<void> _sendMessage({
-    String? text,
-    File? imageFile,
-    String? voicePath,
-    int? voiceDuration,
-  }) async {
-    if (_isSending) return;
-
     setState(() => _isSending = true);
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     final newMessage = {
-      'id': _messages.length + 1,
-      'senderId': 'teacher_456',
-      'senderName': 'Prof. Rahul Tiwari',
-      'senderInitials': 'RT',
-      'text': text,
-      'imageFile': imageFile,
-      'voicePath': voicePath,
-      'voiceDuration': voiceDuration,
+      'id': DateTime.now().millisecondsSinceEpoch,
+      'senderId': 'teacher_me',
+      'senderName': 'Prof. Aditya Mishra',
+      'senderInitials': 'AM',
+      'text': messageText,
       'timestamp': DateTime.now(),
       'isTeacher': true,
-      'type': imageFile != null
-          ? 'image'
-          : voicePath != null
-              ? 'voice'
-              : 'text',
+      'type': 'text',
     };
 
-    setState(() {
-      _messages.add(newMessage);
-      _isSending = false;
+    if (mounted) {
+      setState(() {
+        _messages.add(newMessage);
+        _isSending = false;
+      });
+      _scrollToBottom();
+    }
+  }
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
-
-    _scrollToBottom();
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Message sent successfully'),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 1),
-      ),
-    );
   }
 
   Future<void> _handleImagePicker(ImageSource source) async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: source,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-
-      if (pickedFile == null) return;
-
-      if (mounted) {
-        _showImagePreviewConfirmation(File(pickedFile.path));
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        _uploadAndSendImage(imageFile);
       }
-    } catch (e) {
-      print('❌ Error picking image: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to pick image: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  void _showImagePreviewConfirmation(File imageFile) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Color(0xFF075E54),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.image, color: Colors.white),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Preview Image',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.5,
-              ),
-              child: InteractiveViewer(
-                panEnabled: true,
-                minScale: 0.5,
-                maxScale: 4.0,
-                child: Image.file(imageFile, fit: BoxFit.contain),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _uploadAndSendImage(imageFile);
-                      },
-                      icon: const Icon(Icons.send, size: 18),
-                      label: const Text('Send'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF25D366),
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    } catch (_) {}
   }
 
   Future<void> _uploadAndSendImage(File imageFile) async {
     setState(() => _isUploading = true);
+    await Future.delayed(const Duration(milliseconds: 600));
 
-    // Simulate upload
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() => _isUploading = false);
-
-    await _sendMessage(imageFile: imageFile);
+    if (mounted) {
+      setState(() {
+        _messages.add({
+          'id': DateTime.now().millisecondsSinceEpoch,
+          'senderId': 'teacher_me',
+          'senderName': 'Prof. Aditya Mishra',
+          'senderInitials': 'AM',
+          'imageFile': imageFile,
+          'timestamp': DateTime.now(),
+          'isTeacher': true,
+          'type': 'image',
+        });
+        _isUploading = false;
+      });
+      _scrollToBottom();
+    }
   }
 
   void _showImageOptions() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: NMTheme.bg,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library, color: Color(0xFF075E54)),
-              title: const Text('Choose from Gallery'),
-              onTap: () {
-                Navigator.pop(context);
-                _handleImagePicker(ImageSource.gallery);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: Color(0xFF075E54)),
-              title: const Text('Take a Photo'),
-              onTap: () {
-                Navigator.pop(context);
-                _handleImagePicker(ImageSource.camera);
-              },
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined, color: NMTheme.primaryPurple),
+                title: const Text('Choose from Gallery', style: TextStyle(fontWeight: FontWeight.w600)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _handleImagePicker(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined, color: NMTheme.primaryPurple),
+                title: const Text('Take a Photo', style: TextStyle(fontWeight: FontWeight.w600)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _handleImagePicker(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -345,133 +223,54 @@ class _TeacherDoubtDiscussionScreenState
             _recordingDuration++;
           });
         });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.fiber_manual_record, color: Colors.red, size: 16),
-                SizedBox(width: 8),
-                Text('Recording voice note...'),
-              ],
-            ),
-            duration: Duration(seconds: 2),
-            backgroundColor: Colors.black87,
-          ),
-        );
       }
-    } catch (e) {
-      print('❌ Error starting recording: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to start recording: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    } catch (_) {}
   }
 
   Future<void> _stopRecording() async {
-    try {
-      _recordingTimer?.cancel();
-      final path = await _audioRecorder.stop();
+    _recordingTimer?.cancel();
+    final path = await _audioRecorder.stop();
+    setState(() {
+      _isRecording = false;
+    });
 
-      if (path != null && mounted) {
-        setState(() => _isRecording = false);
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Voice note recorded successfully'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 1),
-          ),
-        );
-
-        await _sendMessage(
-          voicePath: path,
-          voiceDuration: _recordingDuration,
-        );
-
-        setState(() {
-          _recordingDuration = 0;
-        });
-      }
-    } catch (e) {
-      print('❌ Error stopping recording: $e');
+    if (path != null) {
       setState(() {
-        _isRecording = false;
-        _recordingDuration = 0;
+        _messages.add({
+          'id': DateTime.now().millisecondsSinceEpoch,
+          'senderId': 'teacher_me',
+          'senderName': 'Prof. Aditya Mishra',
+          'senderInitials': 'AM',
+          'voicePath': path,
+          'voiceDuration': _recordingDuration,
+          'timestamp': DateTime.now(),
+          'isTeacher': true,
+          'type': 'voice',
+        });
       });
+      _scrollToBottom();
     }
   }
 
   Future<void> _playVoiceNote(String path) async {
     try {
       await _audioPlayer.play(DeviceFileSource(path));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Playing voice note...'),
-          duration: Duration(seconds: 1),
-        ),
-      );
-    } catch (e) {
-      print('❌ Error playing voice note: $e');
-    }
+    } catch (_) {}
   }
 
-  Future<void> _markAsResolved() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Mark as Resolved'),
-        content: const Text(
-            'Are you sure you want to mark this doubt as resolved? This action cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF25D366),
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Mark as Resolved'),
-          ),
-        ],
+  void _markAsResolved() {
+    setState(() {
+      widget.doubt['status'] = 'Resolved';
+      widget.doubt['isResolved'] = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Doubt marked as resolved!'),
+        backgroundColor: NMTheme.accentTeal,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
-
-    if (confirm != true) return;
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Doubt marked as resolved!'),
-          backgroundColor: Color(0xFF25D366),
-        ),
-      );
-
-      Get.back(result: true);
-    }
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
   }
 
   String _formatTime(DateTime timestamp) {
@@ -489,180 +288,110 @@ class _TeacherDoubtDiscussionScreenState
     final isResolved = widget.doubt['isResolved'] ?? false;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFECE5DD),
-      appBar: AppBar(
-        title: Row(
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
           children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: const Color(0xFF128C7E),
-              child: Text(
-                widget.doubt['studentInitials'],
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+            NMAppBar(
+              title: widget.doubt['studentName'],
+              isRoot: false,
+              onLeadingTap: () => Get.back(),
+              onSearchTap: () {},
+              onNotificationTap: () {},
+            ),
+            _buildDoubtHeaderCard(),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  return _buildMessageItem(_messages[index]);
+                },
               ),
             ),
-            const SizedBox(width: 12),
+            if (_isSending || _isUploading)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: NMTheme.primaryPurple)),
+                    SizedBox(width: 8),
+                    Text('Sending response...', style: TextStyle(color: NMTheme.textSecondary, fontSize: 12)),
+                  ],
+                ),
+              ),
+            _buildBottomBar(isResolved),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDoubtHeaderCard() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: NMCard(
+        padding: const EdgeInsets.all(12),
+        borderRadius: BorderRadius.circular(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: NMTheme.surface,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: NMTheme.cardShadows,
+              ),
+              child: const Icon(Icons.help_outline_rounded, color: NMTheme.primaryPurple, size: 20),
+            ),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.doubt['studentName'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${widget.doubt['subject']} • ${widget.doubt['topic']}',
+                        style: const TextStyle(
+                          color: NMTheme.primaryPurple,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12.5,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: (widget.doubt['status'] == 'Resolved' ? NMTheme.accentTeal : const Color(0xFFFB8C00)).withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          widget.doubt['status'],
+                          style: TextStyle(
+                            color: widget.doubt['status'] == 'Resolved' ? NMTheme.accentTeal : const Color(0xFFFB8C00),
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 4),
                   Text(
-                    widget.doubt['subject'],
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    widget.doubt['question'],
+                    style: const TextStyle(color: NMTheme.textDark, fontSize: 12, height: 1.3),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
           ],
         ),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-            onSelected: (value) {
-              if (value == 'refresh') {
-                _fetchChat();
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'refresh', child: Text('Refresh')),
-            ],
-          ),
-        ],
-        backgroundColor: const Color(0xFF075E54),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                _buildDoubtInfoCard(),
-                Expanded(
-                  child: _messages.isEmpty
-                      ? _buildEmptyWidget()
-                      : ListView.builder(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.all(8.0),
-                          itemCount: _messages.length,
-                          itemBuilder: (context, index) {
-                            return _buildMessageItem(_messages[index]);
-                          },
-                        ),
-                ),
-                if (_isSending || _isUploading)
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    color: const Color(0xFFECE5DD),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Color(0xFF075E54)),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _isUploading ? 'Uploading image...' : 'Sending...',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                _buildBottomBar(isResolved),
-              ],
-            ),
-    );
-  }
-
-  Widget _buildDoubtInfoCard() {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFDCF8C6),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.help_outline, color: Color(0xFF075E54), size: 18),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  'Topic: ${widget.doubt['topic']}',
-                  style: const TextStyle(
-                    color: Color(0xFF075E54),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            widget.doubt['question'],
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 12,
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyWidget() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.chat_bubble_outline, size: 80, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            'No messages yet',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Start the discussion',
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
-          ),
-        ],
       ),
     );
   }
@@ -671,92 +400,81 @@ class _TeacherDoubtDiscussionScreenState
     final isTeacher = message['isTeacher'] ?? false;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
-        mainAxisAlignment:
-            isTeacher ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isTeacher ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isTeacher) ...[
-            CircleAvatar(
-              radius: 14,
-              backgroundColor: const Color(0xFF128C7E),
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: NMTheme.surface,
+                shape: BoxShape.circle,
+                boxShadow: NMTheme.cardShadows,
+              ),
+              alignment: Alignment.center,
               child: Text(
-                message['senderInitials'],
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                ),
+                message['senderInitials'] ?? 'ST',
+                style: const TextStyle(color: NMTheme.primaryPurple, fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
           ],
           _buildMessageBubble(message, isTeacher),
-          if (isTeacher) const SizedBox(width: 6),
+          if (isTeacher) const SizedBox(width: 4),
         ],
       ),
     );
   }
 
   Widget _buildMessageBubble(Map<String, dynamic> message, bool isTeacher) {
+    final width = MediaQuery.of(context).size.width * 0.72;
+
     return Container(
-      constraints:
-          BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      constraints: BoxConstraints(maxWidth: width),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isTeacher ? const Color(0xFFDCF8C6) : Colors.white,
+        color: isTeacher ? null : NMTheme.cardBg,
+        gradient: isTeacher ? NMTheme.primaryGradient : null,
         borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(12),
-          topRight: const Radius.circular(12),
-          bottomLeft: Radius.circular(isTeacher ? 12 : 2),
-          bottomRight: Radius.circular(isTeacher ? 2 : 12),
+          topLeft: const Radius.circular(16),
+          topRight: const Radius.circular(16),
+          bottomLeft: Radius.circular(isTeacher ? 16 : 4),
+          bottomRight: Radius.circular(isTeacher ? 4 : 16),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        boxShadow: isTeacher
+            ? [
+                BoxShadow(
+                  color: NMTheme.primaryPurple.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : NMTheme.cardShadows,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (message['type'] == 'image' && message['imageFile'] != null) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(
-                message['imageFile'],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    padding: const EdgeInsets.all(20),
-                    child: const Column(
-                      children: [
-                        Icon(Icons.error_outline, color: Colors.red),
-                        SizedBox(height: 8),
-                        Text('Failed to load image',
-                            style: TextStyle(fontSize: 11)),
-                      ],
-                    ),
-                  );
-                },
-              ),
+              borderRadius: BorderRadius.circular(10),
+              child: Image.file(message['imageFile'], fit: BoxFit.cover),
             ),
-            if (message['text'] != null) const SizedBox(height: 6),
+            const SizedBox(height: 6),
           ],
           if (message['type'] == 'voice' && message['voicePath'] != null) ...[
-            _buildVoicePlayer(
-                message['voicePath'], message['voiceDuration'], isTeacher),
-            if (message['text'] != null) const SizedBox(height: 6),
+            _buildVoicePlayer(message['voicePath'], message['voiceDuration'], isTeacher),
+            const SizedBox(height: 6),
           ],
           if (message['text'] != null)
             Text(
               message['text'],
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 14,
+              style: TextStyle(
+                color: isTeacher ? Colors.white : NMTheme.textDark,
+                fontSize: 13.5,
+                height: 1.35,
               ),
             ),
           const SizedBox(height: 4),
@@ -766,17 +484,13 @@ class _TeacherDoubtDiscussionScreenState
               Text(
                 _formatTime(message['timestamp']),
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: isTeacher ? Colors.white70 : NMTheme.textSecondary,
                   fontSize: 10,
                 ),
               ),
               if (isTeacher) ...[
                 const SizedBox(width: 4),
-                Icon(
-                  Icons.done_all,
-                  size: 14,
-                  color: const Color(0xFF7C3AED),
-                ),
+                const Icon(Icons.done_all_rounded, size: 14, color: Colors.white70),
               ],
             ],
           ),
@@ -788,214 +502,132 @@ class _TeacherDoubtDiscussionScreenState
   Widget _buildVoicePlayer(String? path, int? duration, bool isTeacher) {
     return GestureDetector(
       onTap: () {
-        if (path != null) {
-          _playVoiceNote(path);
-        }
+        if (path != null) _playVoiceNote(path);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.play_circle_filled,
-              color: isTeacher ? const Color(0xFF075E54) : const Color(0xFF7C3AED),
-              size: 36,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.play_circle_filled_rounded,
+            color: isTeacher ? Colors.white : NMTheme.primaryPurple,
+            size: 32,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            duration != null ? _formatDuration(duration) : '0:00',
+            style: TextStyle(
+              fontSize: 12,
+              color: isTeacher ? Colors.white : NMTheme.textDark,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 150,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: List.generate(
-                      20,
-                      (index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 1),
-                        child: Container(
-                          width: 2,
-                          height: (index % 3 + 1) * 6.0,
-                          decoration: BoxDecoration(
-                            color: isTeacher
-                                ? const Color(0xFF075E54)
-                                : const Color(0xFF7C3AED),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  duration != null ? _formatDuration(duration) : '0:00',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildBottomBar(bool isResolved) {
-    final bool isDisabled =
-        _isSending || _isUploading || _isRecording || isResolved;
+    final bool isDisabled = _isSending || _isUploading || _isRecording || isResolved;
 
-    return Container(
-      color: const Color(0xFFF0F0F0),
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_isRecording)
-              Container(
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.red[50],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.fiber_manual_record,
-                        color: Colors.red[700], size: 16),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Recording: ${_formatDuration(_recordingDuration)}',
-                      style: TextStyle(
-                        color: Colors.red[700],
-                        fontWeight: FontWeight.w500,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!isResolved && !_isRecording)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: GestureDetector(
+                onTap: _markAsResolved,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: BoxDecoration(
+                    color: NMTheme.accentTeal.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: NMTheme.accentTeal.withOpacity(0.3)),
+                  ),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.check_circle_rounded, color: NMTheme.accentTeal, size: 16),
+                      SizedBox(width: 6),
+                      Text(
+                        'Mark Doubt as Resolved',
+                        style: TextStyle(
+                          color: NMTheme.accentTeal,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.5,
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        _recordingTimer?.cancel();
-                        setState(() {
-                          _isRecording = false;
-                          _recordingDuration = 0;
-                        });
-                        _audioRecorder.stop();
-                      },
-                      child: const Text('Cancel'),
-                    ),
-                  ],
-                ),
-              ),
-            if (!isResolved && !_isRecording)
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
-                child: ElevatedButton.icon(
-                  onPressed: _markAsResolved,
-                  icon: const Icon(Icons.check_circle_outline, size: 18),
-                  label: const Text('Mark as Resolved'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF25D366),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 36),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    elevation: 0,
+                    ],
                   ),
                 ),
               ),
-            if (isResolved)
-              Container(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.check_circle, color: Colors.grey[700], size: 18),
-                    const SizedBox(width: 8),
-                    Text(
-                      'This doubt has been resolved',
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
+            ),
+          Row(
+            children: [
+              Expanded(
+                child: NMCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  borderRadius: BorderRadius.circular(24),
+                  child: Row(
+                    children: [
+                      NMIconButton(
+                        icon: Icons.attach_file_rounded,
+                        size: 32,
+                        iconSize: 18,
+                        iconColor: NMTheme.textSecondary,
+                        onTap: isDisabled ? () {} : _showImageOptions,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextField(
-                            controller: _textController,
-                            onSubmitted: isDisabled ? null : _handleSubmitted,
-                            onChanged: (value) => setState(() {}),
-                            enabled: !isDisabled,
-                            decoration: InputDecoration(
-                              hintText: _isRecording
-                                  ? "Recording..."
-                                  : _isUploading
-                                      ? "Uploading..."
-                                      : isResolved
-                                          ? "Doubt resolved"
-                                          : "Type a message",
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 10),
-                            ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: TextField(
+                          controller: _textController,
+                          onSubmitted: isDisabled ? null : _handleSubmitted,
+                          onChanged: (value) => setState(() {}),
+                          enabled: !isDisabled,
+                          style: const TextStyle(fontSize: 14, color: NMTheme.textDark),
+                          decoration: InputDecoration(
+                            hintText: isResolved ? 'Doubt resolved' : 'Write reply...',
+                            hintStyle: const TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 8),
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.attach_file),
-                          color: Colors.grey[600],
-                          onPressed: isDisabled ? null : _showImageOptions,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.camera_alt),
-                          color: Colors.grey[600],
-                          onPressed: isDisabled
-                              ? null
-                              : () => _handleImagePicker(ImageSource.camera),
-                        ),
-                      ],
-                    ),
+                      ),
+                      NMIconButton(
+                        icon: Icons.camera_alt_outlined,
+                        size: 32,
+                        iconSize: 18,
+                        iconColor: NMTheme.textSecondary,
+                        onTap: isDisabled ? () {} : () => _handleImagePicker(ImageSource.camera),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 6),
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: const Color(0xFF075E54),
-                  child: IconButton(
-                    icon: Icon(
-                      _textController.text.trim().isNotEmpty
-                          ? Icons.send
-                          : (_isRecording ? Icons.stop : Icons.mic),
-                      color: Colors.white,
-                      size: 22,
+              ),
+              const SizedBox(width: 8),
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  gradient: NMTheme.primaryGradient,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: NMTheme.primaryPurple.withOpacity(0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                    onPressed: isDisabled && !_isRecording
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: isDisabled && !_isRecording
                         ? null
                         : () {
                             if (_textController.text.trim().isNotEmpty) {
@@ -1006,12 +638,19 @@ class _TeacherDoubtDiscussionScreenState
                               _startRecording();
                             }
                           },
+                    child: Icon(
+                      _textController.text.trim().isNotEmpty
+                          ? Icons.send_rounded
+                          : (_isRecording ? Icons.stop_rounded : Icons.mic_rounded),
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

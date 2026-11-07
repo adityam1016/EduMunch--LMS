@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class CreateMcqQuestionsScreen extends StatefulWidget {
   final String assignmentTitle;
@@ -70,33 +72,25 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
       if (_editingIndex != null) {
         _questions[_editingIndex!] = question;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Question updated'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('Question updated'),
+            backgroundColor: NMTheme.accentTeal,
             behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );
       } else {
         _questions.add(question);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Question added'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('Question added to test'),
+            backgroundColor: NMTheme.accentTeal,
             behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         );
       }
       _clearForm();
-    });
-
-    // Scroll to bottom to show the new question
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (mounted) {
-        Scrollable.ensureVisible(
-          context,
-          duration: const Duration(milliseconds: 300),
-        );
-      }
     });
   }
 
@@ -112,12 +106,6 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
       _correctAnswerIndex = question['correctAnswer'];
       _marksController.text = question['marks'].toString();
     });
-
-    // Scroll to top to show the form
-    Scrollable.ensureVisible(
-      context,
-      duration: const Duration(milliseconds: 300),
-    );
   }
 
   void _deleteQuestion(int index) {
@@ -128,10 +116,11 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
       }
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Question deleted'),
-        backgroundColor: Colors.red,
+      SnackBar(
+        content: const Text('Question deleted'),
+        backgroundColor: const Color(0xFFE53935),
         behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -139,10 +128,11 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
   void _saveQuestions() {
     if (_questions.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please add at least one question'),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: const Text('Please add at least one question'),
+          backgroundColor: const Color(0xFFE53935),
           behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
       return;
@@ -154,160 +144,144 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F4F8),
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
           children: [
-            const Text(
-              'MCQ Questions',
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+            NMAppBar(
+              title: 'MCQ Builder',
+              isRoot: false,
+              onLeadingTap: () => Get.back(),
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
-            Text(
-              widget.assignmentTitle,
-              style: const TextStyle(
-                color: Colors.black54,
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Get.back(),
-        ),
-        actions: [
-          if (_questions.isNotEmpty)
-            TextButton.icon(
-              onPressed: _saveQuestions,
-              icon: const Icon(Icons.check, color: Colors.green),
-              label: const Text(
-                'Save',
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-              ),
-            ),
-        ],
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _buildQuestionInputCard(),
-            const SizedBox(height: 24),
-            if (_questions.isNotEmpty) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Questions Added',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${_questions.length} Questions',
-                      style: const TextStyle(
-                        color: const Color(0xFF7C3AED),
-                        fontWeight: FontWeight.bold,
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 30),
+                  children: [
+                    _buildQuestionInputCard(),
+                    const SizedBox(height: 24),
+                    if (_questions.isNotEmpty) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Questions Bank',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              color: NMTheme.textDark,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: NMTheme.primaryPurple.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${_questions.length} Added',
+                              style: const TextStyle(
+                                color: NMTheme.primaryPurple,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ],
+                      const SizedBox(height: 12),
+                      ..._questions.asMap().entries.map((entry) {
+                        return _buildQuestionCard(entry.key, entry.value);
+                      }),
+                    ],
+                    if (_questions.isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      Container(
+                        height: 52,
+                        decoration: BoxDecoration(
+                          gradient: NMTheme.primaryGradient,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: NMTheme.primaryPurple.withOpacity(0.35),
+                              blurRadius: 14,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _saveQuestions,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Center(
+                              child: Text(
+                                'Save ${_questions.length} Question${_questions.length > 1 ? 's' : ''}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 15.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 12),
-              ..._questions.asMap().entries.map((entry) {
-                return _buildQuestionCard(entry.key, entry.value);
-              }).toList(),
-            ],
-            const SizedBox(height: 80),
+            ),
           ],
         ),
       ),
-      bottomNavigationBar: _questions.isNotEmpty
-          ? Padding(
-              padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-              ),
-              child: ElevatedButton.icon(
-                onPressed: _saveQuestions,
-                icon: const Icon(Icons.check, color: Colors.white),
-                label: Text(
-                  'Save ${_questions.length} Question${_questions.length > 1 ? 's' : ''}',
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            )
-          : null,
     );
   }
 
   Widget _buildQuestionInputCard() {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF7C3AED).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.quiz, color: const Color(0xFF7C3AED)),
+    return NMCard(
+      padding: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: NMTheme.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: NMTheme.cardShadows,
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  _editingIndex != null ? 'Edit Question' : 'Add New Question',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: const Icon(Icons.quiz_outlined, color: NMTheme.primaryPurple, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                _editingIndex != null ? 'Edit Question #${_editingIndex! + 1}' : 'New Question',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: NMTheme.textDark,
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          NMCard(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+            borderRadius: BorderRadius.circular(14),
+            child: TextFormField(
               controller: _questionController,
               maxLines: 3,
-              decoration: InputDecoration(
-                labelText: 'Question',
-                hintText: 'Enter your question...',
-                filled: true,
-                fillColor: Colors.grey.shade50,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NMTheme.textDark),
+              decoration: const InputDecoration(
+                hintText: 'Type question here...',
+                hintStyle: TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+                border: InputBorder.none,
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -316,89 +290,74 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'Options',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            _buildOptionField(0, _option1Controller, 'A'),
-            const SizedBox(height: 8),
-            _buildOptionField(1, _option2Controller, 'B'),
-            const SizedBox(height: 8),
-            _buildOptionField(2, _option3Controller, 'C'),
-            const SizedBox(height: 8),
-            _buildOptionField(3, _option4Controller, 'D'),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Options (Tap radio to mark correct answer)',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark),
+          ),
+          const SizedBox(height: 10),
+          _buildOptionField(0, _option1Controller, 'A'),
+          const SizedBox(height: 8),
+          _buildOptionField(1, _option2Controller, 'B'),
+          const SizedBox(height: 8),
+          _buildOptionField(2, _option3Controller, 'C'),
+          const SizedBox(height: 8),
+          _buildOptionField(3, _option4Controller, 'D'),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              const Text('Marks:', style: TextStyle(fontWeight: FontWeight.w700, color: NMTheme.textDark)),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: 70,
+                child: NMCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  borderRadius: BorderRadius.circular(10),
                   child: TextFormField(
                     controller: _marksController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Marks',
-                      filled: true,
-                      fillColor: Colors.grey.shade50,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Required';
-                      }
-                      if (int.tryParse(value) == null) {
-                        return 'Invalid';
-                      }
-                      return null;
-                    },
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.w800, color: NMTheme.textDark),
+                    decoration: const InputDecoration(border: InputBorder.none),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _clearForm,
-                    icon: const Icon(Icons.clear),
-                    label: const Text('Clear'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _clearForm,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    side: BorderSide(color: Colors.grey.shade400),
+                  ),
+                  child: const Text('Reset', style: TextStyle(color: NMTheme.textSecondary, fontWeight: FontWeight.w700)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton(
+                  onPressed: _addOrUpdateQuestion,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NMTheme.primaryPurple,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    _editingIndex != null ? 'Update Question' : 'Add Question',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton.icon(
-                    onPressed: _addOrUpdateQuestion,
-                    icon: Icon(
-                      _editingIndex != null ? Icons.update : Icons.add,
-                      color: Colors.white,
-                    ),
-                    label: Text(
-                      _editingIndex != null ? 'Update' : 'Add Question',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7C3AED),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -419,37 +378,31 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
               _correctAnswerIndex = value!;
             });
           },
-          activeColor: Colors.green,
+          activeColor: NMTheme.accentTeal,
         ),
         Expanded(
-          child: TextFormField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: 'Option $label',
-              hintText: 'Enter option...',
-              filled: true,
-              fillColor: isCorrect
-                  ? Colors.green.withOpacity(0.05)
-                  : Colors.grey.shade50,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: isCorrect ? Colors.green : Colors.grey.shade300,
-                ),
+          child: NMCard(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+            borderRadius: BorderRadius.circular(12),
+            child: TextFormField(
+              controller: controller,
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: isCorrect ? FontWeight.w700 : FontWeight.w500,
+                color: isCorrect ? NMTheme.accentTeal : NMTheme.textDark,
               ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: isCorrect ? Colors.green : Colors.grey.shade300,
-                ),
+              decoration: InputDecoration(
+                hintText: 'Option $label',
+                hintStyle: const TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+                border: InputBorder.none,
               ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Required';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Required';
-              }
-              return null;
-            },
           ),
         ),
       ],
@@ -457,12 +410,11 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
   }
 
   Widget _buildQuestionCard(int index, Map<String, dynamic> question) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      child: NMCard(
+        padding: const EdgeInsets.all(14),
+        borderRadius: BorderRadius.circular(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -470,70 +422,69 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF7C3AED).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(6),
+                    color: NMTheme.primaryPurple.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'Q${index + 1}',
                     style: const TextStyle(
-                      color: const Color(0xFF7C3AED),
-                      fontWeight: FontWeight.bold,
+                      color: NMTheme.primaryPurple,
+                      fontWeight: FontWeight.w800,
                       fontSize: 12,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     question['question'],
                     style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.5,
+                      color: NMTheme.textDark,
                     ),
                   ),
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit, size: 20),
-                      onPressed: () => _editQuestion(index),
-                      color: const Color(0xFF7C3AED),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, size: 20),
-                      onPressed: () => _deleteQuestion(index),
-                      color: Colors.red,
-                    ),
-                  ],
+                NMIconButton(
+                  icon: Icons.edit_outlined,
+                  size: 32,
+                  iconSize: 17,
+                  iconColor: NMTheme.primaryPurple,
+                  onTap: () => _editQuestion(index),
+                ),
+                const SizedBox(width: 6),
+                NMIconButton(
+                  icon: Icons.delete_outline_rounded,
+                  size: 32,
+                  iconSize: 17,
+                  iconColor: const Color(0xFFE53935),
+                  onTap: () => _deleteQuestion(index),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             ...List.generate(4, (optIndex) {
               final isCorrect = question['correctAnswer'] == optIndex;
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: 6),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(6),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: isCorrect
-                            ? Colors.green.withOpacity(0.1)
-                            : Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: isCorrect ? Colors.green : Colors.grey.shade300,
-                        ),
+                            ? NMTheme.accentTeal.withOpacity(0.15)
+                            : NMTheme.surface,
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         String.fromCharCode(65 + optIndex),
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: isCorrect ? Colors.green : Colors.grey.shade700,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 11,
+                          color: isCorrect ? NMTheme.accentTeal : NMTheme.textSecondary,
                         ),
                       ),
                     ),
@@ -542,31 +493,31 @@ class _CreateMcqQuestionsScreenState extends State<CreateMcqQuestionsScreen> {
                       child: Text(
                         question['options'][optIndex],
                         style: TextStyle(
-                          fontSize: 14,
-                          color: isCorrect ? Colors.green : Colors.black87,
-                          fontWeight: isCorrect ? FontWeight.w600 : FontWeight.normal,
+                          fontSize: 13,
+                          color: isCorrect ? NMTheme.accentTeal : NMTheme.textDark,
+                          fontWeight: isCorrect ? FontWeight.w700 : FontWeight.w500,
                         ),
                       ),
                     ),
                     if (isCorrect)
-                      const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                      const Icon(Icons.check_circle_rounded, color: NMTheme.accentTeal, size: 16),
                   ],
                 ),
               );
             }),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C3AED).withOpacity(0.1),
+                color: NMTheme.primaryPurple.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 '${question['marks']} Mark${question['marks'] > 1 ? 's' : ''}',
                 style: const TextStyle(
-                  color: const Color(0xFF7C3AED),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+                  color: NMTheme.primaryPurple,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
                 ),
               ),
             ),

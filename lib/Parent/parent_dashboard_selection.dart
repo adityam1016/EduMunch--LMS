@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'parent_app_drawer.dart';
-import 'parent_notification_screen.dart';
 import 'parent_dashboard_main.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
-class ParentDashboard extends StatefulWidget {
-  const ParentDashboard({super.key});
+class ParentDashboardSelection extends StatefulWidget {
+  const ParentDashboardSelection({super.key});
 
   @override
-  State<ParentDashboard> createState() => _ParentDashboardState();
+  State<ParentDashboardSelection> createState() => _ParentDashboardSelectionState();
 }
 
-class _ParentDashboardState extends State<ParentDashboard> {
-  // Children data
+class _ParentDashboardSelectionState extends State<ParentDashboardSelection> {
   final List<Map<String, String>> children = [
     {
-      'name': 'Aarav Sharma',
-      'studentId': '202400101',
+      'name': 'Aditya Mishra',
+      'studentId': '202400123',
       'batch': '11th JEE MAINS',
       'center': 'Kota Main Center',
-      'branch': 'Science',
+      'branch': 'Science Stream (PCM)',
     },
     {
       'name': 'Vikas Sharma',
-      'studentId': '202400102',
+      'studentId': '202400124',
       'batch': '10th BOARDS',
       'center': 'Kota Main Center',
-      'branch': 'Science',
+      'branch': 'High School',
     },
   ];
 
@@ -47,60 +46,16 @@ class _ParentDashboardState extends State<ParentDashboard> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: NMTheme.bg,
       drawer: const ParentAppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  children: [
-                    Builder(
-                      builder: (context) => GestureDetector(
-                        onTap: () => Scaffold.of(context).openDrawer(),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(Icons.menu, color: Colors.white, size: 24),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'EduMunch',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Get.to(() => const ParentNotificationScreen()),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 24),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            NMAppBar(
+              title: 'Select Child',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
             Expanded(
               child: Center(
@@ -109,81 +64,70 @@ class _ParentDashboardState extends State<ParentDashboard> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Select Your Child',
-                        style: Theme.of(context).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: NMTheme.textDark,
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Choose a child to view their dashboard',
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Choose a profile to monitor their academic progress',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+                        style: TextStyle(color: NMTheme.textSecondary, fontSize: 13.5),
                       ),
-                      const SizedBox(height: 60),
-                      Column(
-                        children: children.map((child) {
-                          return GestureDetector(
-                            onTap: () => setState(() => selectedChildName = child['name']),
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 20),
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [const Color(0xFFC4B5FD), const Color(0xFF7C3AED)],
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(color: const Color(0xFF7C3AED).withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 8))
-                                ],
-                              ),
-                              child: Column(
+                      const SizedBox(height: 30),
+                      ...children.map((child) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: NMCard(
+                            padding: const EdgeInsets.all(18),
+                            borderRadius: BorderRadius.circular(20),
+                            child: InkWell(
+                              onTap: () => setState(() => selectedChildName = child['name']),
+                              borderRadius: BorderRadius.circular(20),
+                              child: Row(
                                 children: [
                                   Container(
-                                    width: 80,
-                                    height: 80,
+                                    width: 52,
+                                    height: 52,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.white.withOpacity(0.2),
-                                      border: Border.all(color: Colors.white, width: 3),
+                                      color: NMTheme.surface,
+                                      boxShadow: NMTheme.cardShadows,
                                     ),
-                                    child: const Icon(Icons.person, color: Colors.white, size: 48),
+                                    child: const Icon(Icons.face_rounded, color: NMTheme.primaryPurple, size: 30),
                                   ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    child['name']!,
-                                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          child['name']!,
+                                          style: const TextStyle(
+                                            fontSize: 16.5,
+                                            fontWeight: FontWeight.w800,
+                                            color: NMTheme.textDark,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          '${child['batch']} • ID: ${child['studentId']}',
+                                          style: const TextStyle(fontSize: 12.5, color: NMTheme.textSecondary),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    child['batch']!,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 14, color: Colors.white70),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'ID: ${child['studentId']}',
-                                    style: const TextStyle(fontSize: 12, color: Colors.white60, fontWeight: FontWeight.w500),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        'View Dashboard',
-                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Icon(Icons.arrow_forward, color: Colors.white, size: 18),
-                                    ],
-                                  ),
+                                  const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: NMTheme.primaryPurple),
                                 ],
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),

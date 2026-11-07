@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import 'package:get/get.dart';
 import '../auth_controller.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class SubjectPerformance {
   final String name;
@@ -438,214 +440,256 @@ class _AcademicPerformanceScreenState extends State<AcademicPerformanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
-      appBar: AppBar(
-        title: const Text(
-          'Academic Performance',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color(0xFF7C3AED),
-                const Color(0xFF6D28D9),
-              ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Results',
+              isRoot: false,
             ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Student Info Card
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F3FF),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFDDD6FE)),
-                ),
-                child: Row(
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF7C3AED),
-                      ),
-                      child: const Center(
-                        child: Icon(Icons.person, color: Colors.white, size: 32),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    // Student Info Card
+                    NMCard(
+                      radius: 22,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
                         children: [
-                          Text(
-                            'Ethan Carter',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                              boxShadow: NMTheme.raisedShadow(offset: 2, blur: 4),
+                            ),
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/profile.png',
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.person, color: NMTheme.textSecondary),
+                              ),
                             ),
                           ),
-                          Text(
-                            'Class 12, Section A',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'Aditya Mishra',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                    color: NMTheme.textPrimary,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  '11th JEE MAINS · ID: 202400123',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    color: NMTheme.textSecondary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(height: 24),
+
+                    // Monthly Subject-Wise Performance
+                    const NMSectionHeader(title: 'Subject-Wise Performance'),
+                    const SizedBox(height: 12),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: subjectPerformances.map((subject) {
+                          return GestureDetector(
+                            onTap: () => _showSubjectDetails(subject),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 14),
+                              child: NMCard(
+                                radius: 20,
+                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: NMTheme.insetDecoration(radius: 14),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '${subject.percentage.toInt()}%',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 14,
+                                          color: NMTheme.primaryPurple,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      subject.name,
+                                      style: const TextStyle(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: NMTheme.textPrimary,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Grade ${subject.grade}',
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF10B981),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 26),
+
+                    // Class Leaderboard
+                    const NMSectionHeader(title: 'Class Leaderboard'),
+                    const SizedBox(height: 12),
+
+                    // Leaderboard Tabs
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: ['Physics', 'Chemistry', 'Math'].map((subject) {
+                          final isSelected = selectedSubject == subject;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedSubject = subject;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? NMTheme.surface : NMTheme.cardBg,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isSelected ? const Color(0xFF7C3AED) : Colors.white.withOpacity(0.8),
+                                    width: isSelected ? 1.5 : 1,
+                                  ),
+                                  boxShadow: isSelected
+                                      ? NMTheme.raisedShadow(offset: 2, blur: 4)
+                                      : NMTheme.raisedShadow(offset: 3, blur: 6),
+                                ),
+                                child: Text(
+                                  subject,
+                                  style: TextStyle(
+                                    color: isSelected ? const Color(0xFF7C3AED) : NMTheme.textSecondary,
+                                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Leaderboard List
+                    Column(
+                      children: leaderboard.map((entry) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: NMCard(
+                            radius: 18,
+                            padding: const EdgeInsets.all(14),
+                            border: entry.isCurrentUser
+                                ? Border.all(color: const Color(0xFF7C3AED), width: 1.5)
+                                : null,
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: entry.rank == 1
+                                        ? const Color(0xFFD97706)
+                                        : (entry.rank == 2 ? const Color(0xFF64748B) : const Color(0xFF7C3AED)),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    entry.rank.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        entry.name,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                          color: entry.isCurrentUser ? const Color(0xFF7C3AED) : NMTheme.textPrimary,
+                                        ),
+                                      ),
+                                      Text(
+                                        entry.subject,
+                                        style: const TextStyle(
+                                          fontSize: 11.5,
+                                          color: NMTheme.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                NMWhitePillBadge(
+                                  text: '${entry.percentage.toStringAsFixed(0)}%',
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Monthly Subject-Wise Performance
-              Text(
-                'Monthly Subject-Wise Performance',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: subjectPerformances.map((subject) {
-                    return GestureDetector(
-                      onTap: () => _showSubjectDetails(subject),
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: _buildSubjectCircle(subject),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              // Class Leaderboard
-              Text(
-                'Class Leaderboard',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Leaderboard Tabs
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: ['Physics', 'Chemistry', 'Math'].map((subject) {
-                    final isSelected = selectedSubject == subject;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedSubject = subject;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: isSelected ? const Color(0xFF7C3AED) : Colors.grey[200],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            subject,
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.grey[700],
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Leaderboard List
-              Column(
-                children: leaderboard.map((entry) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: entry.isCurrentUser ? const Color(0xFFF5F3FF) : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: entry.isCurrentUser ? const Color(0xFFC4B5FD) : Colors.grey[300]!,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.amber[600],
-                          ),
-                          child: Center(
-                            child: Text(
-                              entry.rank.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                entry.name,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                entry.subject,
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: entry.isCurrentUser ? const Color(0xFF7C3AED) : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '${entry.percentage.toStringAsFixed(0)}%',
-                            style: TextStyle(
-                              color: entry.isCurrentUser ? Colors.white : Colors.grey[700],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+            ),
+          ],
+        ),
+      ),
+    );
+  }
                 }).toList(),
               ),
             ],

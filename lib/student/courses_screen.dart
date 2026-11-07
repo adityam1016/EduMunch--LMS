@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'app_drawer.dart';
 import '../services/course_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class CoursesScreen extends StatefulWidget {
   const CoursesScreen({super.key});
@@ -16,6 +18,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
   late String _selectedSubject;
   late String _selectedCourse;
   final Map<String, bool> _expandedSections = {};
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -48,8 +51,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
             'status': c.status,
             'progress': c.progress,
             'statusColor': c.status == 'Completed'
-                ? Colors.green
-                : (c.status == 'In Progress' ? const Color(0xFF7C3AED) : Colors.grey),
+                ? const Color(0xFF10B981)
+                : (c.status == 'In Progress' ? const Color(0xFF7C3AED) : NMTheme.textMuted),
           });
         }
         subjects.clear();
@@ -61,9 +64,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
   }
 
   final List<Map<String, dynamic>> subjects = [
-    {'name': 'Physics', 'icon': '⚡', 'color': const Color(0xFF8B5CF6)},
-    {'name': 'Chemistry', 'icon': '🧪', 'color': const Color(0xFF7E57C2)},
-    {'name': 'Maths', 'icon': '📊', 'color': const Color(0xFF66BB6A)},
+    {'name': 'Physics', 'icon': '⚡', 'color': const Color(0xFF0C6E5A)},
+    {'name': 'Chemistry', 'icon': '🧪', 'color': const Color(0xFFD97706)},
+    {'name': 'Maths', 'icon': '📊', 'color': const Color(0xFF7C3AED)},
   ];
 
   final Map<String, List<Map<String, dynamic>>> coursesBySubject = {
@@ -78,7 +81,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         'name': 'Electromagnetism',
         'status': 'Not Started',
         'progress': 0.0,
-        'statusColor': Colors.grey,
+        'statusColor': NMTheme.textMuted,
       },
     ],
     'Chemistry': [
@@ -86,7 +89,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         'name': 'Organic Chemistry Basics',
         'status': 'Completed',
         'progress': 1.0,
-        'statusColor': Colors.green,
+        'statusColor': const Color(0xFF10B981),
       },
       {
         'name': 'Stoichiometry',
@@ -100,7 +103,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         'name': 'Calculus Fundamentals',
         'status': 'Not Started',
         'progress': 0.0,
-        'statusColor': Colors.grey,
+        'statusColor': NMTheme.textMuted,
       },
       {
         'name': 'Algebra Refresher',
@@ -118,59 +121,24 @@ class _CoursesScreenState extends State<CoursesScreen> {
         {
           'title': 'Motion in 1D',
           'status': 'Completed',
-          'duration': '12:34',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
+          'duration': '15:20',
+          'youtubeLink': 'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
         },
         {
-          'title': 'Projectile Motion',
+          'title': 'Acceleration & Velocity',
           'status': 'In Progress',
           'duration': '18:45',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
-        },
-        {
-          'title': 'Kinematic Equations Explained',
-          'status': 'Not Started',
-          'duration': '15:20',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
+          'youtubeLink': 'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
         },
       ],
       'notes': [
         {
-          'title': 'Introduction to Motion',
-          'content':
-              'Motion is the change in position of an object with respect to time. Key concepts include displacement, velocity, and acceleration.',
+          'title': 'Formula Sheet',
+          'content': 'v = u + at\ns = ut + ½at²\nv² = u² + 2as',
         },
         {
-          'title': 'Velocity vs Speed',
-          'content':
-              'Speed is the rate of change of distance. Velocity is the rate of change of displacement. Velocity is a vector quantity.',
-        },
-        {
-          'title': 'Acceleration',
-          'content':
-              'Acceleration is the rate of change of velocity. It can be positive or negative (deceleration). Units: m/s²',
-        },
-      ],
-    },
-    'Electromagnetism': {
-      'progress': 0,
-      'videos': [
-        {
-          'title': 'Electric Field Basics',
-          'status': 'Not Started',
-          'duration': '14:20',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
-        },
-      ],
-      'notes': [
-        {
-          'title': 'What is Electromagnetism?',
-          'content':
-              'Electromagnetism is the study of electric and magnetic fields and their interactions.',
+          'title': 'Important Concepts',
+          'content': 'Displacement is the shortest distance between two points. Distance is the total path length.',
         },
       ],
     },
@@ -178,18 +146,16 @@ class _CoursesScreenState extends State<CoursesScreen> {
       'progress': 100,
       'videos': [
         {
-          'title': 'Carbon and Its Compounds',
+          'title': 'Hydrocarbons Overview',
           'status': 'Completed',
-          'duration': '16:50',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
+          'duration': '22:10',
+          'youtubeLink': 'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
         },
       ],
       'notes': [
         {
-          'title': 'Organic Chemistry Fundamentals',
-          'content':
-              'Organic chemistry is the branch of chemistry that deals with carbon compounds.',
+          'title': 'IUPAC Nomenclature',
+          'content': 'Alkanes end in -ane, Alkenes end in -ene, Alkynes end in -yne.',
         },
       ],
     },
@@ -200,15 +166,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
           'title': 'Balancing Chemical Equations',
           'status': 'In Progress',
           'duration': '13:15',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
+          'youtubeLink': 'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
         },
       ],
       'notes': [
         {
           'title': 'Mole Concept',
-          'content':
-              'A mole is defined as the amount of substance that contains as many particles as there are atoms in 12g of carbon-12.',
+          'content': 'A mole contains 6.022 × 10²³ particles (Avogadro’s number).',
         },
       ],
     },
@@ -219,15 +183,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
           'title': 'Limits and Continuity',
           'status': 'Not Started',
           'duration': '19:30',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
+          'youtubeLink': 'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
         },
       ],
       'notes': [
         {
           'title': 'What is a Limit?',
-          'content':
-              'A limit is the value that a function approaches as the input approaches some value.',
+          'content': 'A limit is the value that a function approaches as input approaches some value.',
         },
       ],
     },
@@ -238,22 +200,19 @@ class _CoursesScreenState extends State<CoursesScreen> {
           'title': 'Linear Equations',
           'status': 'Completed',
           'duration': '11:45',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
+          'youtubeLink': 'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
         },
         {
           'title': 'Quadratic Equations',
           'status': 'In Progress',
           'duration': '17:20',
-          'youtubeLink':
-              'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
+          'youtubeLink': 'https://www.youtube.com/live/hY9zZrYuDVk?si=F2MyJwnAslLg0rII',
         },
       ],
       'notes': [
         {
           'title': 'Algebraic Identities',
-          'content':
-              '(a+b)² = a² + 2ab + b², (a-b)² = a² - 2ab + b², a² - b² = (a+b)(a-b)',
+          'content': '(a+b)² = a² + 2ab + b²\n(a-b)² = a² - 2ab + b²\na² - b² = (a+b)(a-b)',
         },
       ],
     },
@@ -261,84 +220,37 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String currentTitle = 'Courses';
+    if (_currentScreen == 'courses') currentTitle = _selectedSubject;
+    if (_currentScreen == 'details') currentTitle = _selectedCourse;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            // App Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  if (_currentScreen != 'subjects')
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (_currentScreen == 'details') {
-                            _currentScreen = 'courses';
-                          } else {
-                            _currentScreen = 'subjects';
-                          }
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Color(0xFF5B21B6),
-                          size: 24,
-                        ),
-                      ),
-                    )
-                  else
-                    Builder(
-                      builder: (context) => GestureDetector(
-                        onTap: () {
-                          Scaffold.of(context).openDrawer();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.menu,
-                            color: Color(0xFF5B21B6),
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                    ),
-                  const Expanded(
-                    child: Text(
-                      'Courses',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF5B21B6),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 40),
-                ],
-              ),
+            NMAppBar(
+              title: currentTitle,
+              isRoot: _currentScreen == 'subjects',
+              onLeadingTap: _currentScreen != 'subjects'
+                  ? () {
+                      setState(() {
+                        if (_currentScreen == 'details') {
+                          _currentScreen = 'courses';
+                        } else {
+                          _currentScreen = 'subjects';
+                        }
+                      });
+                    }
+                  : null,
             ),
-
-            // Content
             Expanded(
               child: _currentScreen == 'subjects'
                   ? _buildSubjectsScreen()
                   : _currentScreen == 'courses'
-                  ? _buildCoursesScreen()
-                  : _buildCourseDetailsScreen(),
+                      ? _buildCoursesScreen()
+                      : _buildCourseDetailsScreen(),
             ),
           ],
         ),
@@ -347,64 +259,82 @@ class _CoursesScreenState extends State<CoursesScreen> {
   }
 
   Widget _buildSubjectsScreen() {
+    final filtered = subjects.where((s) => s['name'].toString().toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Choose your subject',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+          const SizedBox(height: 14),
+          NMSearchBar(
+            hintText: 'Search subjects, topics...',
+            onChanged: (q) => setState(() => _searchQuery = q),
           ),
           const SizedBox(height: 20),
-          ...subjects.map((subject) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedSubject = subject['name'];
-                  _currentScreen = 'courses';
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 12),
+          const NMSectionHeader(title: 'Choose Subject'),
+          const SizedBox(height: 12),
+          ...filtered.map((subject) {
+            final courses = coursesBySubject[subject['name']] ?? [];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: NMCard(
+                radius: 22,
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: subject['color'].withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: subject['color'], width: 1.5),
-                ),
+                onTap: () {
+                  setState(() {
+                    _selectedSubject = subject['name'];
+                    _currentScreen = 'courses';
+                  });
+                },
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: subject['color'].withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      width: 52,
+                      height: 52,
+                      decoration: NMTheme.insetDecoration(radius: 16),
+                      alignment: Alignment.center,
                       child: Text(
                         subject['icon'],
-                        style: const TextStyle(fontSize: 24),
+                        style: const TextStyle(fontSize: 26),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Text(
-                      subject['name'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            subject['name'],
+                            style: const TextStyle(
+                              fontSize: 16.5,
+                              fontWeight: FontWeight.bold,
+                              color: NMTheme.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            '${courses.length} courses available',
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              color: NMTheme.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: NMTheme.textMuted,
                     ),
                   ],
                 ),
               ),
             );
           }).toList(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -414,35 +344,33 @@ class _CoursesScreenState extends State<CoursesScreen> {
     final courses = coursesBySubject[_selectedSubject] ?? [];
 
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'My Courses',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+          const SizedBox(height: 14),
+          NMSectionHeader(
+            title: 'Available Modules',
+            seeMoreText: 'Filter',
+            onSeeMore: () {},
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           ...courses.map((course) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedCourse = course['name'];
-                  _currentScreen = 'details';
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
+            final double progress = course['progress'] as double;
+            final Color statusColor = course['statusColor'] as Color;
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: NMCard(
+                radius: 22,
+                padding: const EdgeInsets.all(16),
+                onTap: () {
+                  setState(() {
+                    _selectedCourse = course['name'];
+                    _currentScreen = 'details';
+                  });
+                },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -451,16 +379,16 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF5F3FF),
-                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFF7C3AED).withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(
-                            Icons.rocket_launch,
-                            size: 20,
-                            color: Color(0xFF8B5CF6),
+                            Icons.school_rounded,
+                            color: Color(0xFF7C3AED),
+                            size: 22,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,40 +396,55 @@ class _CoursesScreenState extends State<CoursesScreen> {
                               Text(
                                 course['name'],
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 15.5,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: NMTheme.textPrimary,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               Text(
                                 course['status'],
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: course['statusColor'],
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
+                                  color: statusColor,
                                 ),
                               ),
                             ],
                           ),
                         ),
                         const Icon(
-                          Icons.arrow_forward,
-                          size: 20,
-                          color: Colors.grey,
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                          color: NMTheme.textMuted,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: LinearProgressIndicator(
-                        value: course['progress'],
-                        minHeight: 6,
-                        backgroundColor: Colors.grey[300],
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          course['statusColor'],
+                    const SizedBox(height: 14),
+                    // Sunken Progress Bar
+                    Container(
+                      height: 8,
+                      decoration: NMTheme.insetDecoration(radius: 6),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FractionallySizedBox(
+                          widthFactor: progress.clamp(0.0, 1.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: statusColor,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${(progress * 100).toInt()}% completed',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: NMTheme.textMuted,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -509,7 +452,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
               ),
             );
           }).toList(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -517,35 +460,30 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
   Widget _buildCourseDetailsScreen() {
     final details = courseDetails[_selectedCourse];
-    if (details == null) return const SizedBox();
+    if (details == null) {
+      return Center(
+        child: Text(
+          'Details not available',
+          style: TextStyle(color: NMTheme.textSecondary),
+        ),
+      );
+    }
 
     final videos = details['videos'] as List<Map<String, dynamic>>;
     final notes = details['notes'] as List<Map<String, dynamic>>;
     final progress = details['progress'] as int;
 
     return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            _selectedCourse,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Course Progress
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
+          const SizedBox(height: 14),
+          // Course Progress Card
+          NMCard(
+            radius: 20,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -555,30 +493,35 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     const Text(
                       'Course Progress',
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black54,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: NMTheme.textPrimary,
                       ),
                     ),
                     Text(
                       '$progress%',
                       style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF8B5CF6),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF7C3AED),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: LinearProgressIndicator(
-                    value: progress / 100,
-                    minHeight: 8,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFF8B5CF6),
+                Container(
+                  height: 9,
+                  decoration: NMTheme.insetDecoration(radius: 6),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FractionallySizedBox(
+                      widthFactor: (progress / 100).clamp(0.0, 1.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7C3AED),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -589,21 +532,17 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
           // Videos Section
           _buildExpandableSection(
-            title: 'Videos',
-            children: videos.map((video) {
-              return _buildVideoCard(video);
-            }).toList(),
+            title: 'Lectures (${videos.length})',
+            children: videos.map((video) => _buildVideoCard(video)).toList(),
           ),
           const SizedBox(height: 16),
 
           // Notes Section
           _buildExpandableSection(
-            title: 'Notes',
-            children: notes.map((note) {
-              return _buildNoteCard(note);
-            }).toList(),
+            title: 'Study Notes (${notes.length})',
+            children: notes.map((note) => _buildNoteCard(note)).toList(),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
         ],
       ),
     );
@@ -613,10 +552,10 @@ class _CoursesScreenState extends State<CoursesScreen> {
     required String title,
     required List<Widget> children,
   }) {
-    _expandedSections.putIfAbsent(title, () => false);
+    _expandedSections.putIfAbsent(title, () => true);
     return StatefulBuilder(
       builder: (context, setBuilderState) {
-        bool isExpanded = _expandedSections[title] ?? false;
+        bool isExpanded = _expandedSections[title] ?? true;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -633,16 +572,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: NMTheme.textPrimary,
                     ),
                   ),
                   Icon(
-                    isExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color: Colors.black54,
+                    isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                    color: NMTheme.textSecondary,
                   ),
                 ],
               ),
@@ -665,35 +602,33 @@ class _CoursesScreenState extends State<CoursesScreen> {
   }
 
   Widget _buildNoteCard(Map<String, dynamic> note) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            note['title'],
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: NMCard(
+        radius: 18,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              note['title'],
+              style: const TextStyle(
+                fontSize: 14.5,
+                fontWeight: FontWeight.bold,
+                color: NMTheme.textPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            note['content'],
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-              height: 1.4,
+            const SizedBox(height: 8),
+            Text(
+              note['content'],
+              style: const TextStyle(
+                fontSize: 13,
+                color: NMTheme.textSecondary,
+                height: 1.45,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -701,18 +636,16 @@ class _CoursesScreenState extends State<CoursesScreen> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Completed':
-        return Colors.green;
+        return const Color(0xFF10B981);
       case 'In Progress':
         return const Color(0xFF7C3AED);
       case 'Not Started':
-        return Colors.grey;
       default:
-        return Colors.grey;
+        return NMTheme.textMuted;
     }
   }
 }
 
-// Lazy-loading YouTube Video Card Widget
 class _VideoContentCard extends StatefulWidget {
   final String videoTitle;
   final String youtubeLink;
@@ -721,13 +654,12 @@ class _VideoContentCard extends StatefulWidget {
   final Color statusColor;
 
   const _VideoContentCard({
-    Key? key,
     required this.videoTitle,
     required this.youtubeLink,
     required this.duration,
     required this.status,
     required this.statusColor,
-  }) : super(key: key);
+  });
 
   @override
   State<_VideoContentCard> createState() => _VideoContentCardState();
@@ -737,15 +669,8 @@ class _VideoContentCardState extends State<_VideoContentCard> {
   YoutubePlayerController? _controller;
   bool _isPlayerReady = false;
 
-  @override
-  void initState() {
-    super.initState();
-    // Don't initialize controller here - only when play button is pressed
-  }
-
   void _initializeController() {
     if (_controller != null) return;
-
     final videoId = YoutubePlayer.convertUrlToId(widget.youtubeLink);
     if (videoId == null) return;
 
@@ -767,7 +692,6 @@ class _VideoContentCardState extends State<_VideoContentCard> {
 
   void _onPlayerStateChange() {
     if (_controller == null) return;
-
     if (_controller!.value.isFullScreen) {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeLeft,
@@ -794,184 +718,135 @@ class _VideoContentCardState extends State<_VideoContentCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Video Player or Thumbnail
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: _isPlayerReady && _controller != null
-                ? AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: YoutubePlayer(
-                      controller: _controller!,
-                      showVideoProgressIndicator: true,
-                      progressIndicatorColor: Colors.red,
-                      progressColors: const ProgressBarColors(
-                        playedColor: Colors.red,
-                        handleColor: Colors.redAccent,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: NMCard(
+        radius: 22,
+        padding: EdgeInsets.zero,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _isPlayerReady && _controller != null
+                  ? AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: YoutubePlayer(
+                        controller: _controller!,
+                        showVideoProgressIndicator: true,
+                        progressIndicatorColor: const Color(0xFF7C3AED),
                       ),
-                    ),
-                  )
-                : Stack(
-                    children: [
-                      // Thumbnail
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: Image.network(
-                          _getThumbnailUrl(),
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey[300],
-                              child: const Icon(
-                                Icons.video_library,
-                                size: 64,
-                                color: Colors.grey,
-                              ),
-                            );
-                          },
+                    )
+                  : Stack(
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Image.network(
+                            _getThumbnailUrl(),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: NMTheme.sunkenBg,
+                                child: const Icon(Icons.video_library_rounded, size: 48, color: NMTheme.textMuted),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      // Play Button Overlay
-                      Positioned.fill(
-                        child: Container(
-                          color: Colors.black.withOpacity(0.3),
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: _initializeController,
-                              child: Container(
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.red.withOpacity(0.4),
-                                      blurRadius: 20,
-                                      spreadRadius: 5,
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                  size: 40,
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withOpacity(0.35),
+                            child: Center(
+                              child: GestureDetector(
+                                onTap: _initializeController,
+                                child: Container(
+                                  width: 58,
+                                  height: 58,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.3),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: Color(0xFF381868),
+                                    size: 36,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      // Duration Badge
-                      Positioned(
-                        bottom: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                        Positioned(
+                          bottom: 10,
+                          right: 10,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.75),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              widget.duration,
+                              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
                           ),
+                        ),
+                      ],
+                    ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.videoTitle,
+                      style: const TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.bold,
+                        color: NMTheme.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(4),
+                            color: widget.statusColor.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            widget.duration,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                            widget.status,
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.bold,
+                              color: widget.statusColor,
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-          ),
-
-          // Video Info
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.videoTitle,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: widget.statusColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    widget.status,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: widget.statusColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // View Notes Button
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      // View Notes functionality
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Opening notes...'),
-                          duration: Duration(seconds: 1),
+                        NMWhiteButton(
+                          text: 'Study Notes',
+                          icon: Icons.notes_rounded,
+                          textColor: const Color(0xFF7C3AED),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          radius: 10,
+                          onTap: () {},
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.note_outlined, size: 18),
-                    label: const Text('View Notes'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF8B5CF6),
-                      side: const BorderSide(
-                        color: Color(0xFF8B5CF6),
-                        width: 1.5,
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      ],
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

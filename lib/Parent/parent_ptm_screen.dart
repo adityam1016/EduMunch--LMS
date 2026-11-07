@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'parent_app_drawer.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class ParentPTMScreen extends StatefulWidget {
   const ParentPTMScreen({super.key});
@@ -16,91 +18,71 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
   final _agendaController = TextEditingController();
 
   String _selectedRole = 'Subject Faculty';
-  String _selectedTeacher = 'Mrs. Priya Sharma - Mathematics';
-  String _selectedMode = 'In-Person';
+  String _selectedTeacher = 'Prof. Aditya Mishra - Mathematics';
+  String _selectedMode = 'Online';
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
-  TimeOfDay _selectedTime = const TimeOfDay(hour: 10, minute: 0);
+  TimeOfDay _selectedTime = const TimeOfDay(hour: 17, minute: 0);
 
   final List<String> _roles = ['Subject Faculty', 'Admin Staff'];
-  
+
   final Map<String, List<String>> _staffByRole = {
     'Subject Faculty': [
-      'Mrs. Priya Sharma - Mathematics',
-      'Mr. Rajesh Kumar - Physics',
+      'Prof. Aditya Mishra - Mathematics',
+      'Dr. Rajesh Kumar - Physics',
       'Dr. Anjali Verma - Chemistry',
-      'Mr. Vikram Singh - Biology',
-      'Mrs. Sunita Rao - English',
     ],
     'Admin Staff': [
-      'Mr. Anil Kumar - Principal',
-      'Mrs. Reena Gupta - Vice Principal',
-      'Mr. Suresh Sharma - Admission Head',
-      'Mrs. Kavita Singh - Accounts Manager',
+      'Mr. Anil Kumar - Center Head',
+      'Mrs. Reena Gupta - Academic Counselor',
     ],
   };
 
   bool _isSubmitting = false;
 
-  List<String> get _availableStaff => _staffByRole[_selectedRole] ?? [];
-
-  // Sample PTM data - Replace with actual API data
   final List<Map<String, dynamic>> meetings = [
     {
       'id': '1',
-      'title': 'Academic Performance Discussion',
-      'teacherName': 'Mrs. Priya Sharma',
-      'subject': 'Mathematics',
-      'date': '2026-01-15',
-      'time': '10:30 AM',
+      'title': 'Academic Progress & Doubt Review',
+      'teacherName': 'Prof. Aditya Mishra',
+      'subject': 'Mathematics Faculty',
+      'date': 'Tomorrow',
+      'time': '05:00 PM',
       'duration': '30 mins',
       'status': 'Scheduled',
-      'mode': 'In-Person',
-      'room': 'Room 301',
-      'agenda': 'Discussion about student performance in recent tests',
+      'mode': 'Online',
+      'meetingLink': 'https://meet.google.com/edumunch-ptm',
+      'agenda': 'Review of student score in quadratic equations and calculus roadmap',
     },
     {
       'id': '2',
-      'title': 'Behavioral Concerns',
-      'teacherName': 'Mr. Rajesh Kumar',
-      'subject': 'Class Teacher',
-      'date': '2026-01-18',
+      'title': 'Physics Lab Performance Discussion',
+      'teacherName': 'Dr. Rajesh Kumar',
+      'subject': 'Physics Mentor',
+      'date': '18 Jan 2026',
       'time': '02:00 PM',
-      'duration': '45 mins',
+      'duration': '30 mins',
       'status': 'Scheduled',
-      'mode': 'Online',
-      'meetingLink': 'https://meet.google.com/abc-defg-hij',
-      'agenda': 'Discuss classroom behavior and engagement',
+      'mode': 'In-Person',
+      'room': 'Faculty Room 204',
+      'agenda': 'Discussion on kinematics problem sets and time management',
     },
     {
       'id': '3',
-      'title': 'Term-End Review',
+      'title': 'Mid-Term Comprehensive Review',
       'teacherName': 'Dr. Anjali Verma',
-      'subject': 'Physics',
-      'date': '2026-01-05',
+      'subject': 'Chemistry Head',
+      'date': '05 Jan 2026',
       'time': '11:00 AM',
       'duration': '30 mins',
       'status': 'Completed',
       'mode': 'In-Person',
-      'room': 'Physics Lab',
-      'agenda': 'Review of term performance and future goals',
-    },
-    {
-      'id': '4',
-      'title': 'Career Guidance Session',
-      'teacherName': 'Mr. Vikram Singh',
-      'subject': 'Career Counselor',
-      'date': '2026-01-20',
-      'time': '03:30 PM',
-      'duration': '60 mins',
-      'status': 'Scheduled',
-      'mode': 'Online',
-      'meetingLink': 'https://meet.google.com/xyz-pqrs-tuv',
-      'agenda': 'Discuss career options and preparation strategy',
+      'room': 'Chemistry Lab',
+      'agenda': 'Review of organic chemistry test results',
     },
   ];
 
   String _selectedFilter = 'All';
-  final List<String> _filters = ['All', 'Scheduled', 'Completed', 'Cancelled'];
+  final List<String> _filters = ['All', 'Scheduled', 'Completed'];
 
   @override
   void dispose() {
@@ -119,19 +101,17 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF7C3AED),
+              primary: NMTheme.primaryPurple,
               onPrimary: Colors.white,
-              onSurface: Colors.black87,
+              onSurface: NMTheme.textDark,
             ),
           ),
           child: child!,
         );
       },
     );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
     }
   }
 
@@ -143,338 +123,313 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF7C3AED),
+              primary: NMTheme.primaryPurple,
               onPrimary: Colors.white,
-              onSurface: Colors.black87,
+              onSurface: NMTheme.textDark,
             ),
           ),
           child: child!,
         );
       },
     );
-    if (picked != null && picked != _selectedTime) {
-      setState(() {
-        _selectedTime = picked;
-      });
+    if (picked != null) {
+      setState(() => _selectedTime = picked);
     }
   }
 
-  Future<void> _submitRequest() async {
+  Future<void> _scheduleMeeting() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    setState(() => _isSubmitting = true);
+    await Future.delayed(const Duration(milliseconds: 600));
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    final teacherNameParts = _selectedTeacher.split(' - ');
 
     setState(() {
+      meetings.insert(0, {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'title': _titleController.text.trim(),
+        'teacherName': teacherNameParts.first,
+        'subject': teacherNameParts.length > 1 ? teacherNameParts[1] : 'Faculty',
+        'date': '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+        'time': _selectedTime.format(context),
+        'duration': '30 mins',
+        'status': 'Scheduled',
+        'mode': _selectedMode,
+        'meetingLink': _selectedMode == 'Online' ? 'https://meet.google.com/new-meeting' : null,
+        'room': _selectedMode == 'In-Person' ? 'Admin Block Room 102' : null,
+        'agenda': _agendaController.text.trim(),
+      });
       _isSubmitting = false;
       _showScheduleForm = false;
     });
 
-    // Clear form
     _titleController.clear();
     _agendaController.clear();
 
-    // Show success message
     Get.snackbar(
-      'Success',
-      'Your meeting request has been submitted successfully',
+      'Meeting Requested',
+      'Meeting slot booked with faculty. Link sent to registered email.',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFF4CAF50),
+      backgroundColor: NMTheme.accentTeal,
       colorText: Colors.white,
       duration: const Duration(seconds: 3),
-      icon: const Icon(Icons.check_circle, color: Colors.white),
+      borderRadius: 14,
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
-  }
-
-  String _formatTime(TimeOfDay time) {
-    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
-    final minute = time.minute.toString().padLeft(2, '0');
-    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$hour:$minute $period';
-  }
-
   List<Map<String, dynamic>> get _filteredMeetings {
-    if (_selectedFilter == 'All') {
-      return meetings;
-    }
+    if (_selectedFilter == 'All') return meetings;
     return meetings.where((m) => m['status'] == _selectedFilter).toList();
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'Scheduled':
-        return const Color(0xFF8B5CF6);
-      case 'Completed':
-        return const Color(0xFF4CAF50);
-      case 'Cancelled':
-        return const Color(0xFFFF5252);
-      default:
-        return Colors.grey;
-    }
-  }
-
-  IconData _getModeIcon(String mode) {
-    return mode == 'Online' ? Icons.video_call : Icons.meeting_room;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_showScheduleForm) {
-      return _buildScheduleForm();
-    }
-
     return Scaffold(
       drawer: const ParentAppDrawer(),
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF7C3AED),
-        elevation: 0,
-        title: const Text(
-          'Parent-Teacher Meetings',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Filter chips
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: Colors.white,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _filters.map((filter) {
-                  final isSelected = _selectedFilter == filter;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
-                      label: Text(filter),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedFilter = filter;
-                        });
-                      },
-                      selectedColor: const Color(0xFF7C3AED),
-                      backgroundColor: Colors.grey[200],
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black87,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                      checkmarkColor: Colors.white,
-                    ),
-                  );
-                }).toList(),
-              ),
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'PTM Schedule',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
-          ),
-
-          // Meetings list
-          Expanded(
-            child: _filteredMeetings.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.people_outline,
-                          size: 80,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No meetings found',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _filteredMeetings.length,
-                    itemBuilder: (context, index) {
-                      final meeting = _filteredMeetings[index];
-                      return _buildMeetingCard(meeting);
-                    },
-                  ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          setState(() {
-            _showScheduleForm = true;
-          });
-        },
-        backgroundColor: const Color(0xFF7C3AED),
-        icon: const Icon(Icons.add),
-        label: const Text('Schedule Meeting'),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  Widget _buildMeetingCard(Map<String, dynamic> meeting) {
-    return GestureDetector(
-      onTap: () {
-        _showMeetingDetails(meeting);
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+            _buildFilterTabs(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                child: Column(
+                  children: [
+                    if (_showScheduleForm) ...[
+                      _buildScheduleMeetingForm(),
+                      const SizedBox(height: 20),
+                    ],
+                    ..._filteredMeetings.map((m) => _buildMeetingCard(m)),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: !_showScheduleForm
+          ? Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: NMTheme.primaryPurple.withOpacity(0.35),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: FloatingActionButton.extended(
+                onPressed: () => setState(() => _showScheduleForm = true),
+                icon: const Icon(Icons.add_rounded, color: Colors.white),
+                label: const Text('Schedule PTM', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                backgroundColor: NMTheme.primaryPurple,
+                elevation: 0,
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildFilterTabs() {
+    return Container(
+      height: 48,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _filters.length,
+        itemBuilder: (context, index) {
+          final filter = _filters[index];
+          final isSelected = _selectedFilter == filter;
+
+          return GestureDetector(
+            onTap: () => setState(() => _selectedFilter = filter),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: isSelected ? NMTheme.primaryPurple : NMTheme.cardBg,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: NMTheme.primaryPurple.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                    : NMTheme.cardShadows,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                filter,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : NMTheme.textDark,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  fontSize: 12.5,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildScheduleMeetingForm() {
+    final staffList = _staffByRole[_selectedRole] ?? [];
+
+    return NMCard(
+      padding: const EdgeInsets.all(18),
+      borderRadius: BorderRadius.circular(20),
+      child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with teacher info and status
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundColor: const Color(0xFF7C3AED).withOpacity(0.1),
-                    child: const Icon(
-                      Icons.person,
-                      color: Color(0xFF7C3AED),
-                      size: 28,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          meeting['teacherName'],
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Book Meeting Slot',
+                  style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800, color: NMTheme.textDark),
+                ),
+                NMIconButton(
+                  icon: Icons.close_rounded,
+                  size: 32,
+                  iconSize: 18,
+                  iconColor: NMTheme.textSecondary,
+                  onTap: () => setState(() => _showScheduleForm = false),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Text('Faculty / Staff Member', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark)),
+            const SizedBox(height: 6),
+            NMCard(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+              borderRadius: BorderRadius.circular(14),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: staffList.contains(_selectedTeacher) ? _selectedTeacher : (staffList.isNotEmpty ? staffList.first : null),
+                  isExpanded: true,
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded, color: NMTheme.primaryPurple),
+                  style: const TextStyle(fontWeight: FontWeight.w700, color: NMTheme.textDark, fontSize: 13.5),
+                  items: staffList.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => _selectedTeacher = val);
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text('Agenda / Topic', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark)),
+            const SizedBox(height: 6),
+            NMCard(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+              borderRadius: BorderRadius.circular(14),
+              child: TextFormField(
+                controller: _titleController,
+                style: const TextStyle(fontSize: 13.5, color: NMTheme.textDark, fontWeight: FontWeight.w600),
+                decoration: const InputDecoration(
+                  hintText: 'e.g., Term 2 Test Review & Doubts',
+                  hintStyle: TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+                  border: InputBorder.none,
+                ),
+                validator: (val) => val == null || val.trim().isEmpty ? 'Required' : null,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Date', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark)),
+                      const SizedBox(height: 6),
+                      NMCard(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        borderRadius: BorderRadius.circular(12),
+                        child: InkWell(
+                          onTap: _selectDate,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_today_rounded, size: 16, color: NMTheme.primaryPurple),
+                              const SizedBox(width: 8),
+                              Text('${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          meeting['subject'],
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(
-                        meeting['status'],
-                      ).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      meeting['status'],
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: _getStatusColor(meeting['status']),
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Time', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark)),
+                      const SizedBox(height: 6),
+                      NMCard(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        borderRadius: BorderRadius.circular(12),
+                        child: InkWell(
+                          onTap: _selectTime,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.access_time_rounded, size: 16, color: NMTheme.primaryPurple),
+                              const SizedBox(width: 8),
+                              Text(_selectedTime.format(context), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: NMTheme.primaryGradient,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: NMTheme.primaryPurple.withOpacity(0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
-            ),
-
-            const Divider(height: 1),
-
-            // Meeting details
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    meeting['title'],
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _isSubmitting ? null : _scheduleMeeting,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Center(
+                    child: _isSubmitting
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : const Text(
+                            'Confirm Meeting Booking',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15),
+                          ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        meeting['date'],
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(width: 20),
-                      Icon(
-                        Icons.access_time,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        meeting['time'],
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        _getModeIcon(meeting['mode']),
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        meeting['mode'],
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(width: 20),
-                      Icon(Icons.timer, size: 16, color: Colors.grey[600]),
-                      const SizedBox(width: 8),
-                      Text(
-                        meeting['duration'],
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
           ],
@@ -483,654 +438,122 @@ class _ParentPTMScreenState extends State<ParentPTMScreen> {
     );
   }
 
-  void _showMeetingDetails(Map<String, dynamic> meeting) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.7,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Meeting Details',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildDetailRow('Title', meeting['title']),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Teacher', meeting['teacherName']),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Subject', meeting['subject']),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Date', meeting['date']),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Time', meeting['time']),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Duration', meeting['duration']),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Mode', meeting['mode']),
-                    const SizedBox(height: 12),
-                    if (meeting['mode'] == 'In-Person')
-                      _buildDetailRow('Location', meeting['room']),
-                    if (meeting['mode'] == 'Online')
-                      _buildDetailRow(
-                        'Meeting Link',
-                        meeting['meetingLink'],
-                        isLink: true,
-                      ),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Status', meeting['status']),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Agenda',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      meeting['agenda'],
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    if (meeting['status'] == 'Scheduled') ...[
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Get.back();
-                                _cancelMeeting(meeting);
-                              },
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                side: const BorderSide(
-                                  color: Color(0xFFFF5252),
-                                ),
-                              ),
-                              child: const Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Color(0xFFFF5252),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => Get.back(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF7C3AED),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: const Text(
-                                'Close',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ] else
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => Get.back(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7C3AED),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Close',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  Widget _buildMeetingCard(Map<String, dynamic> m) {
+    final isOnline = m['mode'] == 'Online';
+    final isCompleted = m['status'] == 'Completed';
 
-  void _cancelMeeting(Map<String, dynamic> meeting) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Cancel Meeting'),
-        content: const Text('Are you sure you want to cancel this meeting?'),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('No')),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              setState(() {
-                meeting['status'] = 'Cancelled';
-              });
-              Get.snackbar(
-                'Meeting Cancelled',
-                'The meeting has been cancelled successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: const Color(0xFFFF5252),
-                colorText: Colors.white,
-                duration: const Duration(seconds: 3),
-              );
-            },
-            child: const Text('Yes', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value, {bool isLink = false}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 90,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        const Text(': ', style: TextStyle(fontSize: 14)),
-        Expanded(
-          child: Text(
-            value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: isLink ? const Color(0xFF8B5CF6) : Colors.black87,
-              decoration: isLink ? TextDecoration.underline : null,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildScheduleForm() {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF7C3AED),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            setState(() {
-              _showScheduleForm = false;
-            });
-          },
-        ),
-        title: const Text(
-          'Schedule Meeting',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: NMCard(
         padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Info card
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF7C3AED).withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.info_outline,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Text(
-                        'Request will be reviewed by the teacher. You will be notified once confirmed.',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Role selection
-              const Text(
-                'Meeting With',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedRole,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    prefixIcon: Icon(Icons.groups_outlined, color: Color(0xFF7C3AED)),
-                  ),
-                  items: _roles.map((role) {
-                    return DropdownMenuItem(
-                      value: role,
-                      child: Text(role),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedRole = value!;
-                      // Reset teacher selection when role changes
-                      _selectedTeacher = _availableStaff.first;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Staff/Teacher selection based on role
-              Text(
-                _selectedRole == 'Subject Faculty' ? 'Select Teacher' : 'Select Staff',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedTeacher,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    prefixIcon: Icon(Icons.person_outline, color: Color(0xFF7C3AED)),
-                  ),
-                  items: _availableStaff.map((staff) {
-                    return DropdownMenuItem(
-                      value: staff,
-                      child: Text(staff),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedTeacher = value!;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Date selection
-              const Text(
-                'Meeting Date',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: _selectDate,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isOnline ? NMTheme.primaryPurple.withOpacity(0.12) : NMTheme.accentTeal.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
-                  child: Row(
+                  child: Icon(
+                    isOnline ? Icons.videocam_rounded : Icons.apartment_rounded,
+                    color: isOnline ? NMTheme.primaryPurple : NMTheme.accentTeal,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.calendar_today, color: Color(0xFF7C3AED), size: 20),
-                      const SizedBox(width: 12),
                       Text(
-                        _formatDate(_selectedDate),
-                        style: const TextStyle(fontSize: 14, color: Colors.black87),
+                        m['title'],
+                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: NMTheme.textDark),
                       ),
-                      const Spacer(),
-                      Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+                      const SizedBox(height: 2),
+                      Text(
+                        '${m['teacherName']} • ${m['subject']}',
+                        style: const TextStyle(fontSize: 12.5, color: NMTheme.textSecondary, fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-
-              // Time selection
-              const Text(
-                'Meeting Time',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: _selectTime,
-                child: Container(
-                  padding: const EdgeInsets.all(16),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    color: isCompleted ? NMTheme.accentTeal.withOpacity(0.12) : const Color(0xFFFB8C00).withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.access_time, color: Color(0xFF7C3AED), size: 20),
-                      const SizedBox(width: 12),
-                      Text(
-                        _formatTime(_selectedTime),
-                        style: const TextStyle(fontSize: 14, color: Colors.black87),
-                      ),
-                      const Spacer(),
-                      Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Mode selection
-              const Text(
-                'Meeting Mode',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedMode = 'In-Person';
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: _selectedMode == 'In-Person' ? const Color(0xFF7C3AED) : Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.meeting_room,
-                              color: _selectedMode == 'In-Person' ? Colors.white : const Color(0xFF7C3AED),
-                              size: 32,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'In-Person',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: _selectedMode == 'In-Person' ? Colors.white : Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  child: Text(
+                    m['status'],
+                    style: TextStyle(
+                      color: isCompleted ? NMTheme.accentTeal : const Color(0xFFFB8C00),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 11,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedMode = 'Online';
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: _selectedMode == 'Online' ? const Color(0xFF7C3AED) : Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.video_call,
-                              color: _selectedMode == 'Online' ? Colors.white : const Color(0xFF7C3AED),
-                              size: 32,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Online',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: _selectedMode == 'Online' ? Colors.white : Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // Agenda
-              const Text(
-                'Agenda (Optional)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
                 ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: TextFormField(
-                  controller: _agendaController,
-                  decoration: const InputDecoration(
-                    hintText: 'What would you like to discuss?',
-                    prefixIcon: Icon(Icons.description_outlined, color: Color(0xFF7C3AED)),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                  maxLines: 4,
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              // Submit button
-              SizedBox(
+              ],
+            ),
+            const SizedBox(height: 12),
+            NMInsetContainer(
+              padding: const EdgeInsets.all(10),
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submitRequest,
-                  style:
-                      ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ).copyWith(
-                        backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                          (states) {
-                            if (states.contains(WidgetState.disabled)) {
-                              return Colors.grey;
-                            }
-                            return const Color(0xFF7C3AED);
-                          },
-                        ),
-                      ),
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
-                      : const Text(
-                          'Schedule Meeting',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                child: Text(
+                  'Agenda: ${m['agenda']}',
+                  style: const TextStyle(color: NMTheme.textDark, fontSize: 12.5, height: 1.3),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.access_time_rounded, size: 14, color: NMTheme.textSecondary),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${m['date']} • ${m['time']}',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: NMTheme.textSecondary),
+                    ),
+                  ],
+                ),
+                if (isOnline && !isCompleted)
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Get.snackbar(
+                        'Launching Meeting',
+                        'Connecting to Google Meet room...',
+                        backgroundColor: NMTheme.primaryPurple,
+                        colorText: Colors.white,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                    icon: const Icon(Icons.video_call_rounded, size: 18),
+                    label: const Text('Join Now', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: NMTheme.primaryPurple,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      elevation: 0,
+                    ),
+                  )
+                else
+                  Text(
+                    m['room'] ?? m['mode'],
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: NMTheme.primaryPurple),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );

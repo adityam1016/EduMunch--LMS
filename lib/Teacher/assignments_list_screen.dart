@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'create_assignment_template_screen.dart';
 import 'teacher_app_drawer.dart';
 import '../services/assignment_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class AssignmentsListScreen extends StatefulWidget {
   const AssignmentsListScreen({super.key});
@@ -38,7 +40,7 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
       });
     }
   }
-  // Sample assignment templates - Replace with actual data from API
+
   final List<Map<String, dynamic>> _assignmentTemplates = [
     {
       'id': 1,
@@ -46,18 +48,18 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
       'subject': 'Mathematics',
       'type': 'Theory',
       'totalMarks': 50,
-      'description': 'Solve the given quadratic equations using different methods',
+      'description': 'Solve the given quadratic equations using standard factorization & formula methods.',
       'createdDate': DateTime.now().subtract(const Duration(days: 2)),
       'assignedTo': ['Class 10-A', 'Class 10-B'],
     },
     {
       'id': 2,
-      'title': 'Newton\'s Laws MCQ Test',
+      'title': "Newton's Laws MCQ Test",
       'subject': 'Physics',
       'type': 'MCQ',
       'totalMarks': 40,
       'totalQuestions': 20,
-      'description': 'Multiple choice questions on Newton\'s three laws of motion',
+      'description': "Multiple choice questions covering Newton's three laws of motion and momentum.",
       'createdDate': DateTime.now().subtract(const Duration(days: 5)),
       'assignedTo': ['Class 11-Science'],
     },
@@ -67,7 +69,7 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
       'subject': 'Chemistry',
       'type': 'Theory',
       'totalMarks': 30,
-      'description': 'Explain ionic and covalent bonding with examples',
+      'description': 'Explain ionic and covalent bonding with molecular geometry examples.',
       'createdDate': DateTime.now().subtract(const Duration(days: 7)),
       'assignedTo': [],
     },
@@ -91,24 +93,30 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
+              backgroundColor: NMTheme.bg,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(22),
               ),
               title: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      color: NMTheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: NMTheme.cardShadows,
                     ),
-                    child: const Icon(Icons.groups, color: const Color(0xFF7C3AED)),
+                    child: const Icon(Icons.groups_rounded, color: NMTheme.primaryPurple),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Text(
-                      'Assign to Batch/Class',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      'Assign to Batch',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: NMTheme.textDark,
+                      ),
                     ),
                   ),
                 ],
@@ -119,50 +127,57 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
+                    NMInsetContainer(
                       padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      borderRadius: BorderRadius.circular(14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             assignment['title'],
                             style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14.5,
+                              color: NMTheme.textDark,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             '${assignment['subject']} • ${assignment['type']} • ${assignment['totalMarks']} Marks',
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontSize: 13,
+                            style: const TextStyle(
+                              color: NMTheme.textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
                     const Text(
-                      'Select Batches/Classes:',
+                      'Select Target Classes:',
                       style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        color: NMTheme.textDark,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     ...availableBatches.map((batch) {
                       final isSelected = selectedBatches.contains(batch);
                       return CheckboxListTile(
-                        title: Text(batch),
+                        title: Text(
+                          batch,
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                            color: NMTheme.textDark,
+                          ),
+                        ),
                         value: isSelected,
                         contentPadding: EdgeInsets.zero,
                         dense: true,
-                        activeColor: const Color(0xFF7C3AED),
+                        activeColor: NMTheme.primaryPurple,
                         onChanged: (bool? value) {
                           setDialogState(() {
                             if (value == true) {
@@ -173,14 +188,14 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                           });
                         },
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text('Cancel', style: TextStyle(color: NMTheme.textSecondary)),
                 ),
                 ElevatedButton(
                   onPressed: selectedBatches.isEmpty
@@ -192,24 +207,18 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(
-                                'Assignment assigned to ${selectedBatches.length} batch(es)',
-                              ),
-                              backgroundColor: Colors.green,
+                              content: Text('Assignment assigned to ${selectedBatches.length} batch(es)'),
+                              backgroundColor: NMTheme.accentTeal,
                               behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                           );
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C3AED),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    backgroundColor: NMTheme.primaryPurple,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text(
-                    'Assign',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: const Text('Assign', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ],
             );
@@ -223,13 +232,14 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Assignment?'),
-        content: const Text('This action cannot be undone.'),
+        backgroundColor: NMTheme.bg,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Delete Assignment?', style: TextStyle(fontWeight: FontWeight.bold, color: NMTheme.textDark)),
+        content: const Text('This action cannot be undone and will unassign from all batches.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: NMTheme.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -238,20 +248,19 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
               });
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Assignment deleted'),
-                  backgroundColor: Colors.red,
+                SnackBar(
+                  content: const Text('Assignment deleted'),
+                  backgroundColor: const Color(0xFFE53935),
                   behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              backgroundColor: const Color(0xFFE53935),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            child: const Text('Delete', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -261,47 +270,66 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: NMTheme.bg,
       drawer: const TeacherAppDrawer(),
-      backgroundColor: const Color(0xFFF0F4F8),
-      appBar: AppBar(
-        title: const Text(
-          'Assignments',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-      ),
-      body: _assignmentTemplates.isEmpty
-          ? _buildEmptyState()
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _assignmentTemplates.length,
-              itemBuilder: (context, index) {
-                return _buildAssignmentCard(_assignmentTemplates[index], index);
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Assignments',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final result = await Get.to(() => const CreateAssignmentTemplateScreen());
-          if (result != null && result is Map<String, dynamic>) {
-            setState(() {
-              _assignmentTemplates.insert(0, result);
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Assignment template created successfully!'),
-                backgroundColor: Colors.green,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
-        },
-        backgroundColor: const Color(0xFF7C3AED),
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          'Create Assignment',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            Expanded(
+              child: _assignmentTemplates.isEmpty
+                  ? _buildEmptyState()
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                      itemCount: _assignmentTemplates.length,
+                      itemBuilder: (context, index) {
+                        return _buildAssignmentCard(_assignmentTemplates[index], index);
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: NMTheme.primaryPurple.withOpacity(0.35),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: FloatingActionButton.extended(
+          onPressed: () async {
+            final result = await Get.to(() => const CreateAssignmentTemplateScreen());
+            if (result != null && result is Map<String, dynamic>) {
+              setState(() {
+                _assignmentTemplates.insert(0, result);
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Assignment template created successfully!'),
+                  backgroundColor: NMTheme.accentTeal,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              );
+            }
+          },
+          backgroundColor: NMTheme.primaryPurple,
+          elevation: 0,
+          icon: const Icon(Icons.add_rounded, color: Colors.white),
+          label: const Text(
+            'Create Assignment',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
@@ -312,20 +340,28 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.assignment_outlined, size: 100, color: Colors.grey.shade400),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: NMTheme.surface,
+              shape: BoxShape.circle,
+              boxShadow: NMTheme.cardShadows,
+            ),
+            child: const Icon(Icons.assignment_outlined, size: 64, color: NMTheme.primaryPurple),
+          ),
           const SizedBox(height: 20),
-          Text(
+          const Text(
             'No Assignments Yet',
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade700,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: NMTheme.textDark,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Create your first assignment template',
-            style: TextStyle(color: Colors.grey.shade600),
+          const Text(
+            'Create your first assignment template to assign to students',
+            style: TextStyle(color: NMTheme.textSecondary, fontSize: 13),
           ),
         ],
       ),
@@ -336,31 +372,31 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
     final isTheory = assignment['type'] == 'Theory';
     final assignedCount = (assignment['assignedTo'] as List).length;
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () => _showAssignToBatchDialog(assignment),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+      child: NMCard(
+        padding: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          onTap: () => _showAssignToBatchDialog(assignment),
+          borderRadius: BorderRadius.circular(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isTheory
-                          ? Colors.orange.withOpacity(0.1)
-                          : const Color(0xFF7C3AED).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
+                          ? const Color(0xFFFB8C00).withOpacity(0.12)
+                          : NMTheme.primaryPurple.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
-                      isTheory ? Icons.description : Icons.quiz,
-                      color: isTheory ? Colors.orange : const Color(0xFF7C3AED),
+                      isTheory ? Icons.description_outlined : Icons.quiz_outlined,
+                      color: isTheory ? const Color(0xFFFB8C00) : NMTheme.primaryPurple,
                       size: 24,
                     ),
                   ),
@@ -373,43 +409,33 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                           assignment['title'],
                           style: const TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
+                            color: NMTheme.textDark,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           assignment['subject'],
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
+                          style: const TextStyle(
+                            color: NMTheme.textSecondary,
                             fontSize: 13,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  PopupMenuButton(
-                    icon: const Icon(Icons.more_vert),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert_rounded, color: NMTheme.textSecondary),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit, size: 20),
-                            SizedBox(width: 12),
-                            Text('Edit'),
-                          ],
-                        ),
-                      ),
                       const PopupMenuItem(
                         value: 'delete',
                         child: Row(
                           children: [
-                            Icon(Icons.delete, size: 20, color: Colors.red),
-                            SizedBox(width: 12),
-                            Text('Delete', style: TextStyle(color: Colors.red)),
+                            Icon(Icons.delete_outline_rounded, size: 20, color: Color(0xFFE53935)),
+                            SizedBox(width: 10),
+                            Text('Delete', style: TextStyle(color: Color(0xFFE53935), fontWeight: FontWeight.w600)),
                           ],
                         ),
                       ),
@@ -423,89 +449,89 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-              Container(
+              NMInsetContainer(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  assignment['description'],
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                    fontSize: 13,
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    assignment['description'],
+                    style: const TextStyle(
+                      color: NMTheme.textSecondary,
+                      fontSize: 12.5,
+                      height: 1.35,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Row(
                 children: [
-                  _buildInfoChip(
-                    icon: Icons.grid_on,
+                  _buildPillTag(
+                    icon: isTheory ? Icons.edit_note_rounded : Icons.checklist_rounded,
                     label: assignment['type'],
-                    color: isTheory ? Colors.orange : const Color(0xFF7C3AED),
+                    color: isTheory ? const Color(0xFFFB8C00) : NMTheme.primaryPurple,
                   ),
                   const SizedBox(width: 8),
-                  _buildInfoChip(
-                    icon: Icons.star_outline,
+                  _buildPillTag(
+                    icon: Icons.grade_outlined,
                     label: '${assignment['totalMarks']} Marks',
-                    color: const Color(0xFF7C3AED),
+                    color: NMTheme.accentTeal,
                   ),
-                  if (!isTheory) ...[
+                  if (!isTheory && assignment['totalQuestions'] != null) ...[
                     const SizedBox(width: 8),
-                    _buildInfoChip(
-                      icon: Icons.quiz,
+                    _buildPillTag(
+                      icon: Icons.quiz_outlined,
                       label: '${assignment['totalQuestions']} Qs',
-                      color: Colors.green,
+                      color: NMTheme.accentOcean,
                     ),
                   ],
                 ],
               ),
-              const SizedBox(height: 12),
-              const Divider(height: 1),
+              const SizedBox(height: 14),
+              Divider(height: 1, color: Colors.grey.withOpacity(0.18)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.calendar_today, size: 14, color: Colors.grey.shade600),
+                      const Icon(Icons.calendar_today_rounded, size: 14, color: NMTheme.textSecondary),
                       const SizedBox(width: 6),
                       Text(
                         DateFormat('MMM d, yyyy').format(assignment['createdDate']),
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
+                        style: const TextStyle(
+                          color: NMTheme.textSecondary,
                           fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: assignedCount > 0
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.orange.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
+                          ? NMTheme.accentTeal.withOpacity(0.12)
+                          : const Color(0xFFFB8C00).withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
                         Icon(
-                          assignedCount > 0 ? Icons.check_circle : Icons.pending,
-                          size: 14,
-                          color: assignedCount > 0 ? Colors.green : Colors.orange,
+                          assignedCount > 0 ? Icons.check_circle_rounded : Icons.pending_outlined,
+                          size: 13,
+                          color: assignedCount > 0 ? NMTheme.accentTeal : const Color(0xFFFB8C00),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 5),
                         Text(
-                          assignedCount > 0
-                              ? 'Assigned to $assignedCount'
-                              : 'Not Assigned',
+                          assignedCount > 0 ? 'Assigned ($assignedCount)' : 'Unassigned',
                           style: TextStyle(
-                            color: assignedCount > 0 ? Colors.green : Colors.orange,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
+                            color: assignedCount > 0 ? NMTheme.accentTeal : const Color(0xFFFB8C00),
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],
@@ -520,28 +546,28 @@ class _AssignmentsListScreenState extends State<AssignmentsListScreen> {
     );
   }
 
-  Widget _buildInfoChip({
+  Widget _buildPillTag({
     required IconData icon,
     required String label,
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color),
+          Icon(icon, size: 13, color: color),
           const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
               color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],

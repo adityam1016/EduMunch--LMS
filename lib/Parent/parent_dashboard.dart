@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'parent_app_drawer.dart';
 import 'parent_notification_screen.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class ParentDashboard extends StatefulWidget {
   const ParentDashboard({super.key});
@@ -12,37 +14,50 @@ class ParentDashboard extends StatefulWidget {
 
 class _ParentDashboardState extends State<ParentDashboard> {
   final Map<String, String> childData = const {
-    'name': 'Aarav Sharma',
+    'name': 'Aditya Mishra',
     'batch': '11th JEE MAINS',
     'center': 'Kota Main Center',
-    'branch': 'Science',
-    'studentId': '202400101',
+    'branch': 'Science Stream (PCM)',
+    'studentId': '202400123',
+    'rollNo': '11-A-42',
   };
 
-  final List<Map<String, dynamic>> _categories = [
+  final List<Map<String, dynamic>> _quickActions = [
     {
       'name': 'Attendance',
       'icon': Icons.calendar_today_outlined,
-      'color': const Color(0xFF8B5CF6),
       'route': '/parent-attendance',
+      'color': NMTheme.accentOcean,
     },
     {
       'name': 'Performance',
-      'icon': Icons.trending_up,
-      'color': const Color(0xFF26A69A),
+      'icon': Icons.trending_up_rounded,
       'route': '/parent-performance',
+      'color': NMTheme.accentTeal,
     },
     {
-      'name': 'Payments',
-      'icon': Icons.account_balance_wallet,
-      'color': const Color(0xFF66BB6A),
+      'name': 'Fee Payment',
+      'icon': Icons.account_balance_wallet_outlined,
       'route': '/payments',
+      'color': NMTheme.primaryPurple,
+    },
+    {
+      'name': 'Timetable',
+      'icon': Icons.schedule_outlined,
+      'route': '/parent-timetable',
+      'color': const Color(0xFFFB8C00),
+    },
+    {
+      'name': 'PTM Calls',
+      'icon': Icons.groups_outlined,
+      'route': '/ptm',
+      'color': const Color(0xFF43A047),
     },
     {
       'name': 'Grievance',
-      'icon': Icons.feedback_outlined,
-      'color': const Color(0xFFFFB74D),
+      'icon': Icons.support_agent_outlined,
       'route': '/parent-grievance',
+      'color': const Color(0xFFE53935),
     },
   ];
 
@@ -51,39 +66,39 @@ class _ParentDashboardState extends State<ParentDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: NMTheme.bg,
       drawer: const ParentAppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
+            NMAppBar(
+              title: 'EduMunch',
+              isRoot: true,
+              unreadCount: 2,
+              onSearchTap: () {},
+              onNotificationTap: () => Get.to(() => const ParentNotificationScreen()),
+            ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
-                    _buildProfileCard(context),
+                    _buildChildProfileCard(),
                     const SizedBox(height: 24),
-                    _buildHighlightCard(context),
+                    _buildTodayScheduleSection(),
                     const SizedBox(height: 24),
-                    _buildSectionHeader(
-                      context,
-                      'Child Performance Overview',
-                      onSeeMore: () => Get.toNamed('/parent-performance'),
-                    ),
+                    _buildLiveHighlightCard(),
+                    const SizedBox(height: 24),
+                    _buildPerformanceAnalytics(),
+                    const SizedBox(height: 24),
+                    const NMSectionHeader(title: 'Quick Access'),
                     const SizedBox(height: 12),
-                    _buildPerformanceCards(context),
+                    _buildQuickActionGrid(),
                     const SizedBox(height: 24),
-                    _buildSectionHeader(context, 'Quick Access'),
+                    const NMSectionHeader(title: 'Recent Teacher Updates'),
                     const SizedBox(height: 12),
-                    _buildCategoryList(context),
-                    const SizedBox(height: 24),
-                    _buildSectionHeader(context, 'Recent Updates'),
-                    const SizedBox(height: 12),
-                    _buildRecentUpdates(context),
-                    const SizedBox(height: 20),
+                    _buildRecentUpdates(),
                   ],
                 ),
               ),
@@ -94,549 +109,34 @@ class _ParentDashboardState extends State<ParentDashboard> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF7C3AED), Color(0xFF8B5CF6)],
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          children: [
-            Builder(
-              builder: (context) => GestureDetector(
-                onTap: () => Scaffold.of(context).openDrawer(),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.menu, color: Colors.white, size: 24),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                'EduMunch',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => Get.toNamed('/parent-attendance'),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.1)
-                      : Colors.white.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.search, color: Colors.white, size: 24),
-              ),
-            ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: () => Get.to(() => const ParentNotificationScreen()),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.1)
-                      : Colors.white.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.notifications_outlined,
-                    color: Colors.white, size: 24),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCard(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _isProfileExpanded = !_isProfileExpanded;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[300]!),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF4CAF50), width: 2),
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/profile.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.person, size: 40, color: Colors.grey),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        childData['name']!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(childData['batch']!,
-                          style: Theme.of(context).textTheme.bodyMedium),
-                      Text(
-                        'ID: ${childData['studentId']}',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: const Color(0xFF4CAF50),
-                              fontWeight: FontWeight.w500,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  _isProfileExpanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: Colors.grey,
-                ),
-              ],
-            ),
-            if (_isProfileExpanded) ...[
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 12),
-              _buildDetailRow(context, 'Name', childData['name']!),
-              _buildDetailRow(context, 'Batch', childData['batch']!),
-              _buildDetailRow(context, 'Center', childData['center']!),
-              _buildDetailRow(context, 'Branch', childData['branch']!),
-              _buildDetailRow(context, 'Student ID', childData['studentId']!),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(BuildContext context, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 90,
-            child: Text(
-              label,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w500),
-            ),
-          ),
-          Text(': ', style: Theme.of(context).textTheme.bodyMedium),
-          Expanded(
-            child: Text(
-              value,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.search, color: Colors.grey[600]),
-            const SizedBox(width: 8),
-            Text(
-              'Search attendance, performance, payments...',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Colors.grey[500]),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHighlightCard(BuildContext context) {
-    return Container(
+  Widget _buildChildProfileCard() {
+    return NMCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      borderRadius: BorderRadius.circular(24),
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    'Upcoming',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Parent-Teacher Meeting',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Scheduled for Saturday · 10:30 AM',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.white.withOpacity(0.9)),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on_outlined,
-                        color: Colors.white, size: 18),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Conference Room A',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.white),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed('/ptm');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF7C3AED),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('View Details',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Colors.white.withOpacity(0.15),
-            ),
-            child:
-                const Icon(Icons.people_outline, color: Colors.white, size: 40),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(BuildContext context, String title,
-      {VoidCallback? onSeeMore}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context)
-              .textTheme
-              .titleMedium
-              ?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        if (onSeeMore != null)
-          GestureDetector(
-            onTap: onSeeMore,
-            child: Text(
-              'See more',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: const Color(0xFF7C3AED), fontWeight: FontWeight.w600),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildPerformanceCards(BuildContext context) {
-    final stats = [
-      {
-        'label': 'Overall Grade',
-        'value': 'A+',
-        'icon': Icons.star,
-        'color': const Color(0xFF7C3AED),
-      },
-      {
-        'label': 'Attendance',
-        'value': '94%',
-        'icon': Icons.check_circle,
-        'color': const Color(0xFF26A69A),
-      },
-      {
-        'label': 'Rank',
-        'value': '#12',
-        'icon': Icons.emoji_events,
-        'color': const Color(0xFFFFB74D),
-      },
-    ];
-
-    return Row(
-      children: stats.map((stat) {
-        return Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(right: 8),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: (stat['color'] as Color).withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    stat['icon'] as IconData,
-                    color: stat['color'] as Color,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  stat['value'] as String,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  stat['label'] as String,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildCategoryList(BuildContext context) {
-    return SizedBox(
-      height: 110,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: _categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final category = _categories[index];
-          final Color color = category['color'] as Color;
-          return GestureDetector(
-            onTap: () {
-              final route = category['route'] as String?;
-              if (route != null) {
-                Get.toNamed(route);
-              }
-            },
-            child: Container(
-              width: 130,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    color.withOpacity(0.85),
-                    color.withOpacity(0.65),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      category['icon'] as IconData,
-                      size: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    category['name'] as String,
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildRecentUpdates(BuildContext context) {
-    final updates = [
-      {
-        'title': 'Math Test Score Updated',
-        'subtitle': 'Score: 85/100 • Today',
-        'icon': Icons.assignment_turned_in,
-        'color': const Color(0xFF7C3AED),
-      },
-      {
-        'title': 'Fee Payment Successful',
-        'subtitle': 'Quarterly fees paid • Yesterday',
-        'icon': Icons.payment,
-        'color': const Color(0xFF26A69A),
-      },
-      {
-        'title': 'Attendance Report',
-        'subtitle': 'Present 5/5 this week',
-        'icon': Icons.calendar_today,
-        'color': const Color(0xFF66BB6A),
-      },
-    ];
-
-    return Column(
-      children: updates.map((update) {
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Row(
+          Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                width: 60,
+                height: 60,
                 decoration: BoxDecoration(
-                  color: (update['color'] as Color).withOpacity(0.1),
                   shape: BoxShape.circle,
+                  color: NMTheme.surface,
+                  boxShadow: NMTheme.cardShadows,
                 ),
-                child: Icon(
-                  update['icon'] as IconData,
-                  color: update['color'] as Color,
-                  size: 24,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/profile.png',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.face_rounded,
+                        size: 38,
+                        color: NMTheme.primaryPurple,
+                      );
+                    },
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -645,28 +145,648 @@ class _ParentDashboardState extends State<ParentDashboard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      update['title'] as String,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      childData['name']!,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: NMTheme.textDark,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      childData['batch']!,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: NMTheme.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      update['subtitle'] as String,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.grey[600]),
+                    Row(
+                      children: [
+                        Text(
+                          'ID: ${childData['studentId']}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: NMTheme.accentTeal,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: NMTheme.primaryPurple.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'Child View',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: NMTheme.primaryPurple,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right, color: Colors.grey[400]),
+              NMIconButton(
+                icon: _isProfileExpanded
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded,
+                size: 36,
+                iconSize: 22,
+                iconColor: NMTheme.textSecondary,
+                onTap: () {
+                  setState(() {
+                    _isProfileExpanded = !_isProfileExpanded;
+                  });
+                },
+              ),
             ],
           ),
+          if (_isProfileExpanded) ...[
+            const SizedBox(height: 16),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            const SizedBox(height: 14),
+            _buildProfileDetailRow('Center', childData['center']!),
+            const SizedBox(height: 8),
+            _buildProfileDetailRow('Branch / Stream', childData['branch']!),
+            const SizedBox(height: 8),
+            _buildProfileDetailRow('Roll Number', childData['rollNo']!),
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: () => Get.toNamed('/parent-performance'),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: NMTheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: NMTheme.cardShadows,
+                ),
+                alignment: Alignment.center,
+                child: const Text(
+                  'View Complete Academic Profile →',
+                  style: TextStyle(
+                    color: NMTheme.primaryPurple,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileDetailRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12.5,
+            color: NMTheme.textSecondary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 13,
+            color: NMTheme.textDark,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTodayScheduleSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        NMSectionHeader(
+          title: "Today's Schedule",
+          onSeeMore: () => Get.toNamed('/parent-timetable'),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 140,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
+            children: [
+              // Physics Teal Card
+              Container(
+                width: 250,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: NMTheme.physicsTealGradient,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: NMTheme.accentTeal.withOpacity(0.35),
+                      blurRadius: 14,
+                      offset: const Offset(0, 7),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Physics',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        NMGlowingNowBadge(text: 'NOW'),
+                      ],
+                    ),
+                    const Text(
+                      'Dr. Rajesh Kumar',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: const [
+                            Icon(Icons.access_time_rounded, color: Colors.white70, size: 14),
+                            SizedBox(width: 4),
+                            Text(
+                              '11:00 - 12:00',
+                              style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                        const NMWhitePillBadge(text: '11/13'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 14),
+              // Mathematics Ocean Blue Card
+              Container(
+                width: 250,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: NMTheme.mathsOceanGradient,
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    BoxShadow(
+                      color: NMTheme.accentOcean.withOpacity(0.35),
+                      blurRadius: 14,
+                      offset: const Offset(0, 7),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Mathematics',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Text(
+                            'NEXT',
+                            style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Text(
+                      'Prof. Aditya Mishra',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: const [
+                            Icon(Icons.access_time_rounded, color: Colors.white70, size: 14),
+                            SizedBox(width: 4),
+                            Text(
+                              '12:15 - 01:15',
+                              style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                        const NMWhitePillBadge(text: '08/13'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLiveHighlightCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: NMTheme.livePurpleGradient,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: NMTheme.primaryPurple.withOpacity(0.4),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            top: 0,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(2, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.groups_rounded,
+                color: Colors.white,
+                size: 32,
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const NMLiveBadge(),
+              const SizedBox(height: 14),
+              const SizedBox(
+                width: 220,
+                child: Text(
+                  'Parent-Teacher Online Meet',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    height: 1.25,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'With Class Mentor • Today 7:00 PM',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: const [
+                  Icon(Icons.timer_outlined, color: Colors.white70, size: 14),
+                  SizedBox(width: 4),
+                  Text(
+                    '30 min slot',
+                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              NMWhiteButton(
+                label: 'Join Meeting',
+                onTap: () => Get.toNamed('/ptm'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPerformanceAnalytics() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        NMSectionHeader(
+          title: 'Child Performance Analytics',
+          onSeeMore: () => Get.toNamed('/parent-performance'),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: NMCard(
+                padding: const EdgeInsets.all(14),
+                borderRadius: BorderRadius.circular(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Attendance',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: NMTheme.textDark,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: NMTheme.accentTeal.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '94%',
+                            style: TextStyle(
+                              color: NMTheme.accentTeal,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    NMInsetContainer(
+                      height: 8,
+                      borderRadius: BorderRadius.circular(4),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: 0.94,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: NMTheme.accentTeal,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '32 of 34 classes attended',
+                      style: TextStyle(fontSize: 11, color: NMTheme.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: NMCard(
+                padding: const EdgeInsets.all(14),
+                borderRadius: BorderRadius.circular(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Avg Test Score',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: NMTheme.textDark,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: NMTheme.primaryPurple.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            '88%',
+                            style: TextStyle(
+                              color: NMTheme.primaryPurple,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    NMInsetContainer(
+                      height: 8,
+                      borderRadius: BorderRadius.circular(4),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: 0.88,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: NMTheme.primaryPurple,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Rank #3 in Batch',
+                      style: TextStyle(fontSize: 11, color: NMTheme.textSecondary, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickActionGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _quickActions.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.95,
+      ),
+      itemBuilder: (context, index) {
+        final item = _quickActions[index];
+        final Color color = item['color'];
+
+        return NMCard(
+          padding: const EdgeInsets.all(10),
+          borderRadius: BorderRadius.circular(18),
+          child: InkWell(
+            onTap: () => Get.toNamed(item['route']),
+            borderRadius: BorderRadius.circular(18),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    item['icon'],
+                    color: color,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  item['name'],
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: NMTheme.textDark,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
         );
-      }).toList(),
+      },
+    );
+  }
+
+  Widget _buildRecentUpdates() {
+    return Column(
+      children: [
+        _buildUpdateItem(
+          icon: Icons.check_circle_outline_rounded,
+          iconColor: NMTheme.accentTeal,
+          title: 'Mathematics Unit Test Result',
+          subtitle: 'Scored 95/100 (Highest in Class 11-A)',
+          time: 'Yesterday',
+        ),
+        const SizedBox(height: 10),
+        _buildUpdateItem(
+          icon: Icons.fact_check_outlined,
+          iconColor: NMTheme.accentOcean,
+          title: 'Attendance Marked Present',
+          subtitle: 'All 4 lecture periods attended today',
+          time: 'Today, 2:00 PM',
+        ),
+        const SizedBox(height: 10),
+        _buildUpdateItem(
+          icon: Icons.receipt_long_outlined,
+          iconColor: NMTheme.primaryPurple,
+          title: 'Term 2 Fee Receipt Generated',
+          subtitle: 'Invoice #EM-2024-892 paid successfully',
+          time: '3 days ago',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUpdateItem({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required String time,
+  }) {
+    return NMCard(
+      padding: const EdgeInsets.all(14),
+      borderRadius: BorderRadius.circular(16),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                    color: NMTheme.textDark,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: NMTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            time,
+            style: const TextStyle(fontSize: 11, color: NMTheme.textSecondary),
+          ),
+        ],
+      ),
     );
   }
 }

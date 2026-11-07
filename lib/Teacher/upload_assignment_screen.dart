@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'create_mcq_assignment_screen.dart';
 import 'teacher_app_drawer.dart';
 import '../services/assignment_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 enum AssignmentType { theory, mcq }
 
@@ -10,17 +12,12 @@ class UploadAssignmentScreen extends StatefulWidget {
   const UploadAssignmentScreen({super.key});
 
   @override
-  State<UploadAssignmentScreen> createState() =>
-      _UploadAssignmentScreenState();
+  State<UploadAssignmentScreen> createState() => _UploadAssignmentScreenState();
 }
 
-class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
-    with SingleTickerProviderStateMixin {
+class _UploadAssignmentScreenState extends State<UploadAssignmentScreen> {
   final _formKey = GlobalKey<FormState>();
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
 
-  // Form Controllers
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _subjectController = TextEditingController();
   final TextEditingController _topicController = TextEditingController();
@@ -42,21 +39,7 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
-    );
-    _animationController.forward();
-  }
-
-  @override
   void dispose() {
-    _animationController.dispose();
     _titleController.dispose();
     _subjectController.dispose();
     _topicController.dispose();
@@ -77,9 +60,9 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: const Color(0xFF7C3AED),
+              primary: NMTheme.primaryPurple,
               onPrimary: Colors.white,
-              onSurface: Colors.black87,
+              onSurface: NMTheme.textDark,
             ),
           ),
           child: child!,
@@ -95,9 +78,9 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
           return Theme(
             data: Theme.of(context).copyWith(
               colorScheme: const ColorScheme.light(
-                primary: const Color(0xFF7C3AED),
+                primary: NMTheme.primaryPurple,
                 onPrimary: Colors.white,
-                onSurface: Colors.black87,
+                onSurface: NMTheme.textDark,
               ),
             ),
             child: child!,
@@ -133,7 +116,6 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
       }
 
       if (_selectedType == AssignmentType.mcq) {
-        // Navigate to MCQ creation screen
         Get.to(
           () => CreateMcqAssignmentScreen(
             assignmentTitle: _titleController.text.trim(),
@@ -142,8 +124,6 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
           duration: const Duration(milliseconds: 300),
         );
       } else {
-        // For theory type, show success and go back
-        // Persist to Supabase
         AssignmentService.createAssignment(
           title: _titleController.text.trim(),
           subject: _subjectController.text.trim(),
@@ -152,8 +132,8 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
           totalMarks: int.tryParse(_maxMarksController.text.trim()) ?? 100,
           createdBy: 'Teacher',
         );
-        _showSnackbar('Theory assignment created and saved to Supabase!');
-        Future.delayed(const Duration(seconds: 2), () {
+        _showSnackbar('Theory assignment created and saved!');
+        Future.delayed(const Duration(milliseconds: 800), () {
           if (mounted) Get.back();
         });
       }
@@ -166,11 +146,11 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: isError ? Colors.redAccent : Colors.green,
+          backgroundColor: isError ? const Color(0xFFE53935) : NMTheme.accentTeal,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       );
@@ -181,89 +161,95 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const TeacherAppDrawer(),
-      backgroundColor: const Color(0xFFF0F4F8),
-      appBar: AppBar(
-        title: const Text(
-          'Upload Assignment',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-      ),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSectionHeader('Assignment Details'),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _titleController,
-                  label: 'Assignment Title',
-                  hint: 'e.g., Chapter 5 - Thermodynamics',
-                  icon: Icons.title_outlined,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _subjectController,
-                  label: 'Subject',
-                  hint: 'e.g., Physics',
-                  icon: Icons.book_outlined,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _topicController,
-                  label: 'Topic',
-                  hint: 'e.g., Heat Transfer',
-                  icon: Icons.topic_outlined,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _subTopicController,
-                  label: 'Sub-Topic',
-                  hint: 'e.g., Conduction',
-                  icon: Icons.notes_outlined,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _instructionsController,
-                  label: 'Instructions',
-                  hint: 'Enter detailed instructions for students...',
-                  icon: Icons.description_outlined,
-                  maxLines: 4,
-                ),
-                const SizedBox(height: 24),
-                _buildSectionHeader('Assignment Configuration'),
-                const SizedBox(height: 16),
-                _buildBatchDropdown(),
-                const SizedBox(height: 16),
-                _buildDueDateField(),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  controller: _maxMarksController,
-                  label: 'Maximum Marks',
-                  hint: 'e.g., 100',
-                  icon: Icons.grade_outlined,
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 24),
-                _buildSectionHeader('Assignment Type'),
-                const SizedBox(height: 16),
-                _buildTypeSelector(),
-                const SizedBox(height: 32),
-                _buildSubmitButton(),
-                const SizedBox(height: 16),
-              ],
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Upload Assignment',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
-          ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('Assignment Details'),
+                      const SizedBox(height: 14),
+                      _buildTextField(
+                        controller: _titleController,
+                        label: 'Assignment Title',
+                        hint: 'e.g., Chapter 5 - Thermodynamics',
+                        icon: Icons.title_rounded,
+                      ),
+                      const SizedBox(height: 14),
+                      _buildTextField(
+                        controller: _subjectController,
+                        label: 'Subject',
+                        hint: 'e.g., Physics',
+                        icon: Icons.school_outlined,
+                      ),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildTextField(
+                              controller: _topicController,
+                              label: 'Topic',
+                              hint: 'Heat Transfer',
+                              icon: Icons.topic_outlined,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildTextField(
+                              controller: _subTopicController,
+                              label: 'Sub-Topic',
+                              hint: 'Conduction',
+                              icon: Icons.notes_rounded,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      _buildTextField(
+                        controller: _instructionsController,
+                        label: 'Instructions',
+                        hint: 'Enter detailed guidance and submission requirements...',
+                        icon: Icons.description_outlined,
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionHeader('Configuration & Deadlines'),
+                      const SizedBox(height: 14),
+                      _buildBatchDropdown(),
+                      const SizedBox(height: 14),
+                      _buildDueDateField(),
+                      const SizedBox(height: 14),
+                      _buildTextField(
+                        controller: _maxMarksController,
+                        label: 'Maximum Marks',
+                        hint: '100',
+                        icon: Icons.grade_outlined,
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionHeader('Assignment Format'),
+                      const SizedBox(height: 14),
+                      _buildTypeSelector(),
+                      const SizedBox(height: 28),
+                      _buildSubmitButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -274,19 +260,19 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
       children: [
         Container(
           width: 4,
-          height: 24,
+          height: 18,
           decoration: BoxDecoration(
-            color: const Color(0xFF7C3AED),
+            color: NMTheme.primaryPurple,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Text(
           title,
           style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            fontSize: 16.5,
+            fontWeight: FontWeight.w800,
+            color: NMTheme.textDark,
           ),
         ),
       ],
@@ -301,151 +287,156 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(icon, color: const Color(0xFF7C3AED)),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5, color: NMTheme.textDark),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+        const SizedBox(height: 6),
+        NMCard(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+          borderRadius: BorderRadius.circular(14),
+          child: Row(
+            crossAxisAlignment: maxLines > 1 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: maxLines > 1 ? 12 : 0, right: 10),
+                child: Icon(icon, color: NMTheme.primaryPurple, size: 20),
+              ),
+              Expanded(
+                child: TextFormField(
+                  controller: controller,
+                  maxLines: maxLines,
+                  keyboardType: keyboardType,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NMTheme.textDark),
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    hintStyle: const TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter $label';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 1),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return 'Please enter $label';
-        }
-        return null;
-      },
+      ],
     );
   }
 
   Widget _buildBatchDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedBatch,
-      decoration: InputDecoration(
-        labelText: 'Select Batch',
-        prefixIcon: const Icon(Icons.class_outlined, color: const Color(0xFF7C3AED)),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Target Batch',
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5, color: NMTheme.textDark),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+        const SizedBox(height: 6),
+        NMCard(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+          borderRadius: BorderRadius.circular(14),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<String>(
+              value: _selectedBatch,
+              hint: const Text('Select Batch', style: TextStyle(color: NMTheme.textSecondary, fontSize: 13.5)),
+              icon: const Icon(Icons.keyboard_arrow_down_rounded, color: NMTheme.primaryPurple),
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.groups_outlined, color: NMTheme.primaryPurple, size: 20),
+                border: InputBorder.none,
+              ),
+              items: _batches.map((String batch) {
+                return DropdownMenuItem<String>(
+                  value: batch,
+                  child: Text(batch, style: const TextStyle(fontWeight: FontWeight.w600, color: NMTheme.textDark)),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedBatch = newValue;
+                });
+              },
+              validator: (value) {
+                if (value == null) {
+                  return 'Please select a batch';
+                }
+                return null;
+              },
+            ),
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
-      items: _batches.map((String batch) {
-        return DropdownMenuItem<String>(
-          value: batch,
-          child: Text(batch),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedBatch = newValue;
-        });
-      },
-      validator: (value) {
-        if (value == null) {
-          return 'Please select a batch';
-        }
-        return null;
-      },
+      ],
     );
   }
 
   Widget _buildDueDateField() {
-    return TextFormField(
-      controller: _dueDateController,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: 'Due Date & Time',
-        hintText: 'Select due date and time',
-        prefixIcon: const Icon(Icons.calendar_today_outlined,
-            color: const Color(0xFF7C3AED)),
-        suffixIcon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Due Date & Time',
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5, color: NMTheme.textDark),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+        const SizedBox(height: 6),
+        NMCard(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+          borderRadius: BorderRadius.circular(14),
+          child: TextFormField(
+            controller: _dueDateController,
+            readOnly: true,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NMTheme.textDark),
+            decoration: const InputDecoration(
+              hintText: 'Select due date and time',
+              hintStyle: TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+              prefixIcon: Icon(Icons.calendar_month_outlined, color: NMTheme.primaryPurple, size: 20),
+              suffixIcon: Icon(Icons.arrow_drop_down_rounded, color: NMTheme.primaryPurple),
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 12),
+            ),
+            onTap: _selectDueDate,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a due date';
+              }
+              return null;
+            },
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: const Color(0xFF7C3AED), width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
-      onTap: _selectDueDate,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please select a due date';
-        }
-        return null;
-      },
+      ],
     );
   }
 
   Widget _buildTypeSelector() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        children: [
-          _buildTypeOption(
+    return Row(
+      children: [
+        Expanded(
+          child: _buildTypeOption(
             type: AssignmentType.theory,
-            title: 'Theory / Upload',
-            subtitle: 'Students will write and upload their answers',
+            title: 'Theory',
+            subtitle: 'File submission',
             icon: Icons.description_outlined,
-            color: const Color(0xFF7C3AED),
+            accentColor: const Color(0xFFFB8C00),
           ),
-          Divider(height: 1, color: Colors.grey[300]),
-          _buildTypeOption(
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildTypeOption(
             type: AssignmentType.mcq,
-            title: 'Multiple Choice Questions',
-            subtitle: 'Create MCQ-based assignment with auto-grading',
+            title: 'MCQ Quiz',
+            subtitle: 'Auto-graded',
             icon: Icons.quiz_outlined,
-            color: const Color(0xFF7C3AED),
+            accentColor: NMTheme.primaryPurple,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -454,62 +445,41 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
     required String title,
     required String subtitle,
     required IconData icon,
-    required Color color,
+    required Color accentColor,
   }) {
     final bool isSelected = _selectedType == type;
-    return InkWell(
+    return GestureDetector(
       onTap: () => setState(() => _selectedType = type),
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? NMTheme.surface : NMTheme.cardBg,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(color: Colors.black.withOpacity(0.06), offset: const Offset(2, 2), blurRadius: 4),
+                  const BoxShadow(color: Colors.white, offset: Offset(-2, -2), blurRadius: 4),
+                ]
+              : NMTheme.cardShadows,
+          border: isSelected ? Border.all(color: accentColor, width: 2) : Border.all(color: Colors.transparent),
+        ),
+        child: Column(
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: isSelected ? color.withOpacity(0.1) : Colors.grey[100],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                color: isSelected ? color : Colors.grey[600],
-                size: 24,
+            Icon(icon, size: 26, color: isSelected ? accentColor : NMTheme.textSecondary),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 14.5,
+                color: isSelected ? accentColor : NMTheme.textDark,
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected ? Colors.black87 : Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Radio<AssignmentType>(
-              value: type,
-              groupValue: _selectedType,
-              onChanged: (AssignmentType? value) {
-                if (value != null) {
-                  setState(() => _selectedType = value);
-                }
-              },
-              activeColor: color,
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: const TextStyle(fontSize: 11, color: NMTheme.textSecondary),
             ),
           ],
         ),
@@ -518,34 +488,42 @@ class _UploadAssignmentScreenState extends State<UploadAssignmentScreen>
   }
 
   Widget _buildSubmitButton() {
-    return SizedBox(
+    return Container(
       width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: _proceedToNext,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF7C3AED),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+      height: 52,
+      decoration: BoxDecoration(
+        gradient: NMTheme.primaryGradient,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: NMTheme.primaryPurple.withOpacity(0.35),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
           ),
-          elevation: 2,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              _selectedType == AssignmentType.mcq
-                  ? 'Continue to Add Questions'
-                  : 'Create Assignment',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _proceedToNext,
+          borderRadius: BorderRadius.circular(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _selectedType == AssignmentType.mcq
+                    ? 'Continue to Add Questions'
+                    : 'Publish Assignment',
+                style: const TextStyle(
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward, size: 20),
-          ],
+              const SizedBox(width: 8),
+              const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+            ],
+          ),
         ),
       ),
     );

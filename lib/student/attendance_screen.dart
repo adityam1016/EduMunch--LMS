@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import '../services/attendance_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -75,11 +77,25 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       initialDate: selectedDate,
       firstDate: DateTime(2024),
       lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: NMTheme.primaryPurple,
+              onPrimary: Colors.white,
+              surface: NMTheme.surface,
+              onSurface: NMTheme.textPrimary,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
       });
+      _loadAttendance();
     }
   }
 
@@ -87,105 +103,57 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     setState(() {
       selectedDate = selectedDate.subtract(const Duration(days: 1));
     });
+    _loadAttendance();
   }
 
   void _nextDate() {
     setState(() {
       selectedDate = selectedDate.add(const Duration(days: 1));
     });
+    _loadAttendance();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            // App Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  // Menu Icon
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.menu,
-                          color: Color(0xFF5B21B6),
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Centered Title
-                  const Expanded(
-                    child: Text(
-                      'EduMunch',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF5B21B6),
-                      ),
-                    ),
-                  ),
-                  // Placeholder for alignment
-                  SizedBox(
-                    width: 40,
-                  ),
-                ],
-              ),
+            // Top Bar
+            NMAppBar(
+              title: 'Attendance',
+              isRoot: false,
             ),
 
-            // Scrollable Content
+            // Content
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title
-                    const Text(
-                      'Attendance',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 14),
 
-                    // Date Selector with Arrows and Calendar
+                    // Date Selector
                     _buildDateSelector(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
-                    // Punch In/Out Card
+                    // Attendance Summary Cards
+                    _buildSummaryMetrics(),
+                    const SizedBox(height: 18),
+
+                    // Punch In / Out Card
                     _buildPunchCard(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 22),
 
                     // Today's Lectures
-                    const Text(
-                      "Today's Lectures",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
+                    const NMSectionHeader(title: "Today's Lectures"),
                     const SizedBox(height: 12),
                     _buildLecturesList(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -197,60 +165,39 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   Widget _buildDateSelector() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
-      ),
+    return NMCard(
+      radius: 20,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
-          // Previous Arrow
-          GestureDetector(
+          NMIconButton(
+            icon: Icons.chevron_left_rounded,
+            size: 38,
+            iconSize: 22,
             onTap: _previousDate,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: const Icon(
-                Icons.arrow_back,
-                size: 20,
-                color: Color(0xFF8B5CF6),
-              ),
-            ),
           ),
           const SizedBox(width: 12),
-
-          // Date Display with Calendar Picker
           Expanded(
             child: GestureDetector(
               onTap: () => _selectDate(context),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                decoration: NMTheme.insetDecoration(radius: 14),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
-                      Icons.calendar_today,
+                      Icons.calendar_month_rounded,
                       size: 18,
-                      color: Color(0xFF8B5CF6),
+                      color: Color(0xFF7C3AED),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '${selectedDate.day} ${_getMonth(selectedDate.month)} ${selectedDate.year}',
                       style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        fontWeight: FontWeight.w700,
+                        color: NMTheme.textPrimary,
                       ),
                     ),
                   ],
@@ -259,75 +206,118 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             ),
           ),
           const SizedBox(width: 12),
-
-          // Next Arrow
-          GestureDetector(
+          NMIconButton(
+            icon: Icons.chevron_right_rounded,
+            size: 38,
+            iconSize: 22,
             onTap: _nextDate,
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
-              child: const Icon(
-                Icons.arrow_forward,
-                size: 20,
-                color: Color(0xFF8B5CF6),
-              ),
-            ),
           ),
         ],
       ),
     );
   }
 
+  Widget _buildSummaryMetrics() {
+    return Row(
+      children: [
+        Expanded(
+          child: NMCard(
+            radius: 18,
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Present', style: TextStyle(fontSize: 12.5, color: NMTheme.textSecondary)),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  '92.4%',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF10B981),
+                  ),
+                ),
+                const Text('48 of 52 classes', style: TextStyle(fontSize: 10.5, color: NMTheme.textMuted)),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: NMCard(
+            radius: 18,
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Status', style: TextStyle(fontSize: 12.5, color: NMTheme.textSecondary)),
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(color: Color(0xFF7C3AED), shape: BoxShape.circle),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Good',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF7C3AED),
+                  ),
+                ),
+                const Text('Above 75% limit', style: TextStyle(fontSize: 10.5, color: NMTheme.textMuted)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPunchCard() {
     return Row(
       children: [
-        // Punch In Card
         Expanded(
-          child: Container(
+          child: NMCard(
+            radius: 18,
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!, width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Punch In',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 12.5, color: NMTheme.textSecondary, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   '09:02 AM',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: NMTheme.textPrimary),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'On-time',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.green[600],
-                    fontWeight: FontWeight.w500,
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    'On-time',
+                    style: TextStyle(fontSize: 11, color: Color(0xFF10B981), fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -335,40 +325,29 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           ),
         ),
         const SizedBox(width: 12),
-        // Punch Out Card
         Expanded(
-          child: Container(
+          child: NMCard(
+            radius: 18,
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!, width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Punch Out',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 12.5, color: NMTheme.textSecondary, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Not punched out',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
+                const Text(
+                  'Pending',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: NMTheme.textMuted),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: NMTheme.insetDecoration(radius: 6),
+                  child: const Text(
+                    'Auto checkout',
+                    style: TextStyle(fontSize: 11, color: NMTheme.textSecondary, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -391,72 +370,64 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     Color statusColor = _getStatusColor(lecture['status']!);
     Color statusBgColor = _getStatusBgColor(lecture['status']!);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        children: [
-          // Subject Icon
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF5F3FF),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              lecture['icon']!,
-              style: const TextStyle(fontSize: 20),
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Subject Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  lecture['subject']!,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  lecture['time']!,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Status Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: statusBgColor,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              lecture['status']!,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: statusColor,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: NMCard(
+        radius: 18,
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: NMTheme.insetDecoration(radius: 12),
+              alignment: Alignment.center,
+              child: Text(
+                lecture['icon']!,
+                style: const TextStyle(fontSize: 20),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    lecture['subject']!,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: NMTheme.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    lecture['time']!,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: NMTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: statusBgColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                lecture['status']!,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.bold,
+                  color: statusColor,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -464,44 +435,31 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Attended':
-        return Colors.green;
+        return const Color(0xFF10B981);
       case 'Missed':
-        return Colors.red;
+        return const Color(0xFFEF4444);
       case 'Upcoming':
-        return Colors.grey;
+        return const Color(0xFFD97706);
       default:
-        return Colors.grey;
+        return NMTheme.textSecondary;
     }
   }
 
   Color _getStatusBgColor(String status) {
     switch (status) {
       case 'Attended':
-        return Colors.green.withOpacity(0.15);
+        return const Color(0xFF10B981).withOpacity(0.12);
       case 'Missed':
-        return Colors.red.withOpacity(0.15);
+        return const Color(0xFFEF4444).withOpacity(0.12);
       case 'Upcoming':
-        return Colors.grey.withOpacity(0.15);
+        return const Color(0xFFD97706).withOpacity(0.12);
       default:
-        return Colors.grey.withOpacity(0.15);
+        return NMTheme.sunkenBg;
     }
   }
 
   String _getMonth(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[month - 1];
   }
 }

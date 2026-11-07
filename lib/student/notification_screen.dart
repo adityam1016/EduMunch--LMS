@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import '../services/notification_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class Notification {
   final String id;
@@ -53,6 +55,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       });
     }
   }
+
   final List<Notification> notifications = [
     Notification(
       id: '1',
@@ -98,19 +101,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
       message: 'Tomorrow\'s class cancelled',
       description:
           'Tomorrow\'s Biology class has been cancelled due to unavoidable circumstances. Make-up class will be scheduled next week.',
-      timestamp: DateTime.now().subtract(const Duration(days: 2)),
-      isRead: true,
-      category: 'Class',
-    ),
-    Notification(
-      id: '6',
-      title: 'Assignment Deadline',
-      message: 'Chemistry assignment due tomorrow',
-      description:
-          'Chemistry assignment submission deadline is tomorrow. Please submit before 5:00 PM through the portal.',
       timestamp: DateTime.now().subtract(const Duration(days: 3)),
       isRead: true,
-      category: 'Assignment',
+      category: 'Class',
     ),
   ];
 
@@ -154,159 +147,128 @@ class _NotificationScreenState extends State<NotificationScreen> {
       case 'Class':
         return const Color(0xFF7C3AED);
       case 'Exam':
-        return Colors.red;
+        return const Color(0xFFEF4444);
       case 'Result':
-        return Colors.green;
+        return const Color(0xFF10B981);
       case 'Assignment':
-        return Colors.orange;
+        return const Color(0xFFD97706);
       default:
-        return Colors.grey;
+        return NMTheme.textSecondary;
     }
   }
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
       case 'Class':
-        return Icons.class_outlined;
+        return Icons.class_rounded;
       case 'Exam':
-        return Icons.assignment_outlined;
+        return Icons.quiz_rounded;
       case 'Result':
-        return Icons.emoji_events_outlined;
+        return Icons.emoji_events_rounded;
       case 'Assignment':
-        return Icons.assignment_turned_in_outlined;
+        return Icons.assignment_turned_in_rounded;
       default:
-        return Icons.notifications_outlined;
+        return Icons.notifications_rounded;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        centerTitle: true,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF7C3AED),
-                Color(0xFF8B5CF6),
-              ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Notifications',
+              isRoot: false,
             ),
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Filter Chips
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                _buildFilterChip('All', notifications.length),
-                const SizedBox(width: 8),
-                _buildFilterChip('Unread', notifications.where((n) => !n.isRead).length),
-                const SizedBox(width: 8),
-                _buildFilterChip('Class', notifications.where((n) => n.category == 'Class').length),
-                const SizedBox(width: 8),
-                _buildFilterChip('Exam', notifications.where((n) => n.category == 'Exam').length),
-                const SizedBox(width: 8),
-                _buildFilterChip('Assignment', notifications.where((n) => n.category == 'Assignment').length),
-              ],
+            const SizedBox(height: 10),
+
+            // Filter Chips in Neumorphic Horizontal Row
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  _buildFilterTab('All', notifications.length),
+                  const SizedBox(width: 8),
+                  _buildFilterTab('Unread', notifications.where((n) => !n.isRead).length),
+                  const SizedBox(width: 8),
+                  _buildFilterTab('Class', notifications.where((n) => n.category == 'Class').length),
+                  const SizedBox(width: 8),
+                  _buildFilterTab('Exam', notifications.where((n) => n.category == 'Exam').length),
+                  const SizedBox(width: 8),
+                  _buildFilterTab('Assignment', notifications.where((n) => n.category == 'Assignment').length),
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 14),
 
-          // Notifications List
-          Expanded(
-            child: filteredNotifications.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.notifications_none,
-                          size: 64,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No notifications',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: filteredNotifications.length,
-                    itemBuilder: (context, index) {
-                      final notification = filteredNotifications[index];
-                      final isExpanded = expandedNotificationId == notification.id;
-
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isExpanded) {
-                              expandedNotificationId = null;
-                            } else {
-                              expandedNotificationId = notification.id;
-                              _markAsRead(notification.id);
-                            }
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: notification.isRead
-                                  ? Colors.grey[300]!
-                                  : _getCategoryColor(notification.category),
-                              width: notification.isRead ? 1 : 2,
+            // Notifications List
+            Expanded(
+              child: filteredNotifications.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.notifications_none_rounded, size: 64, color: NMTheme.textMuted),
+                          SizedBox(height: 14),
+                          Text(
+                            'No notifications in this category',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: NMTheme.textSecondary,
+                              fontWeight: FontWeight.w600,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(
-                                  notification.isRead ? 0.05 : 0.1,
-                                ),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: filteredNotifications.length,
+                      itemBuilder: (context, index) {
+                        final notification = filteredNotifications[index];
+                        final isExpanded = expandedNotificationId == notification.id;
+                        final color = _getCategoryColor(notification.category);
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: NMCard(
+                            radius: 20,
+                            padding: const EdgeInsets.all(16),
+                            onTap: () {
+                              setState(() {
+                                if (isExpanded) {
+                                  expandedNotificationId = null;
+                                } else {
+                                  expandedNotificationId = notification.id;
+                                  _markAsRead(notification.id);
+                                }
+                              });
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    // Category Icon
                                     Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: _getCategoryColor(notification.category)
-                                            .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(10),
+                                        color: color.withOpacity(0.12),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Icon(
                                         _getCategoryIcon(notification.category),
-                                        color: _getCategoryColor(notification.category),
-                                        size: 24,
+                                        color: color,
+                                        size: 22,
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
-
-                                    // Title and Message
+                                    const SizedBox(width: 14),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,9 +279,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                 child: Text(
                                                   notification.title,
                                                   style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.black87,
+                                                    fontSize: 15,
+                                                    fontWeight: !notification.isRead ? FontWeight.w800 : FontWeight.w600,
+                                                    color: NMTheme.textPrimary,
                                                   ),
                                                 ),
                                               ),
@@ -327,156 +289,96 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                 Container(
                                                   width: 8,
                                                   height: 8,
-                                                  decoration: BoxDecoration(
-                                                    color: _getCategoryColor(
-                                                        notification.category),
+                                                  margin: const EdgeInsets.only(left: 6),
+                                                  decoration: const BoxDecoration(
+                                                    color: Color(0xFFEF4444),
                                                     shape: BoxShape.circle,
                                                   ),
                                                 ),
                                             ],
                                           ),
-                                          const SizedBox(height: 4),
+                                          const SizedBox(height: 3),
                                           Text(
                                             notification.message,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey[600],
+                                            maxLines: isExpanded ? null : 1,
+                                            overflow: isExpanded ? null : TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 12.5,
+                                              color: NMTheme.textSecondary,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-
-                                    // Time
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          _formatTime(notification.timestamp),
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.grey[500],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Icon(
-                                          isExpanded
-                                              ? Icons.keyboard_arrow_up
-                                              : Icons.keyboard_arrow_down,
-                                          color: Colors.grey[500],
-                                          size: 18,
-                                        ),
-                                      ],
+                                    Text(
+                                      _formatTime(notification.timestamp),
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: NMTheme.textMuted,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-
-                              // Expanded Details
-                              if (isExpanded) ...[
-                                Container(
-                                  height: 1,
-                                  color: Colors.grey[200],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Details',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                      Text(
-                                        notification.description,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.grey[700],
-                                          height: 1.5,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Category: ${notification.category}',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: _getCategoryColor(
-                                                  notification.category),
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          if (!notification.isRead)
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 12,
-                                                vertical: 6,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: _getCategoryColor(
-                                                        notification.category)
-                                                    .withOpacity(0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                              ),
-                                              child: Text(
-                                                'New',
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: _getCategoryColor(
-                                                      notification.category),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ],
+                                if (isExpanded) ...[
+                                  const SizedBox(height: 12),
+                                  Container(
+                                    height: 1,
+                                    color: NMTheme.shadowDark.withOpacity(0.3),
                                   ),
-                                ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    notification.description,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: NMTheme.textSecondary,
+                                      height: 1.45,
+                                    ),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFilterChip(String label, int count) {
+  Widget _buildFilterTab(String label, int count) {
     final isSelected = selectedFilter == label;
-    return FilterChip(
-      label: Text('$label ($count)'),
-      selected: isSelected,
-      onSelected: (value) {
+    return GestureDetector(
+      onTap: () {
         setState(() {
           selectedFilter = label;
         });
       },
-      backgroundColor: Colors.white,
-      selectedColor: const Color(0xFF7C3AED),
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.black87,
-        fontWeight: FontWeight.w500,
-      ),
-      side: BorderSide(
-        color: isSelected ? const Color(0xFF7C3AED) : Colors.grey[300]!,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? NMTheme.surface : NMTheme.cardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF7C3AED) : Colors.white.withOpacity(0.8),
+            width: isSelected ? 1.5 : 1,
+          ),
+          boxShadow: isSelected
+              ? NMTheme.raisedShadow(offset: 2, blur: 4)
+              : NMTheme.raisedShadow(offset: 3, blur: 6),
+        ),
+        child: Text(
+          '$label ($count)',
+          style: TextStyle(
+            fontSize: 12.5,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+            color: isSelected ? const Color(0xFF7C3AED) : NMTheme.textSecondary,
+          ),
+        ),
       ),
     );
   }

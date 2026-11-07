@@ -8,6 +8,8 @@ import 'doubt_discussion_screen.dart';
 import 'package:get/get.dart';
 import '../auth_controller.dart';
 import '../services/doubt_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class DoubtsScreen extends StatefulWidget {
   const DoubtsScreen({Key? key}) : super(key: key);
@@ -281,239 +283,191 @@ class _DoubtsScreenState extends State<DoubtsScreen> {
 
   Widget _buildMyDoubtsScreen() {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Color(0xFF8B5CF6)),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        title: const Text(
-          'My Doubts',
-          style: TextStyle(
-            color: Color(0xFF8B5CF6),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
-      body: Column(
-        children: [
-          Expanded(
-            child: doubts.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.help_outline, size: 80, color: Colors.grey[300]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No doubts yet',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: doubts.length,
-                    itemBuilder: (context, index) {
-                      final doubt = doubts[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => DoubtDiscussionScreen(
-                                doubt: doubt,
-                              ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Doubts',
+              isRoot: false,
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: doubts.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.help_outline_rounded, size: 70, color: NMTheme.textMuted),
+                          SizedBox(height: 16),
+                          Text(
+                            'No doubts asked yet',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: NMTheme.textSecondary,
+                              fontWeight: FontWeight.w600,
                             ),
-                          );
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: doubt['subject'] == 'Mathematics'
-                                      ? const Color(0xFF7C3AED).withOpacity(0.15)
-                                      : doubt['subject'] == 'Physics'
-                                          ? const Color(0xFF7C3AED).withOpacity(0.15)
-                                          : doubt['subject'] == 'Chemistry'
-                                              ? Colors.orange.withOpacity(0.15)
-                                              : doubt['subject'] == 'Biology'
-                                                  ? Colors.green.withOpacity(0.15)
-                                                  : doubt['subject'] == 'History'
-                                                      ? Colors.red.withOpacity(0.15)
-                                                      : Colors.teal.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(10),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                      itemCount: doubts.length,
+                      itemBuilder: (context, index) {
+                        final doubt = doubts[index];
+                        final isResolved = doubt['status'] == 'Resolved';
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 14),
+                          child: NMCard(
+                            radius: 20,
+                            padding: const EdgeInsets.all(16),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => DoubtDiscussionScreen(
+                                    doubt: doubt,
+                                  ),
                                 ),
-                                child: Icon(
-                                  doubt['subject'] == 'Mathematics'
-                                      ? Icons.calculate
-                                      : doubt['subject'] == 'Physics'
-                                          ? Icons.science
-                                          : doubt['subject'] == 'Chemistry'
-                                              ? Icons.science
-                                              : doubt['subject'] == 'Biology'
-                                                  ? Icons.bug_report
-                                                  : doubt['subject'] == 'History'
-                                                      ? Icons.history
-                                                      : Icons.language,
-                                  color: doubt['subject'] == 'Mathematics'
-                                      ? const Color(0xFF7C3AED)
-                                      : doubt['subject'] == 'Physics'
-                                          ? const Color(0xFF7C3AED)
-                                          : doubt['subject'] == 'Chemistry'
-                                              ? Colors.orange
-                                              : doubt['subject'] == 'Biology'
-                                                  ? Colors.green
-                                                  : doubt['subject'] == 'History'
-                                                      ? Colors.red
-                                                      : Colors.teal,
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: NMTheme.insetDecoration(radius: 14),
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    doubt['subject'] == 'Mathematics'
+                                        ? Icons.calculate_rounded
+                                        : doubt['subject'] == 'Physics'
+                                            ? Icons.bolt_rounded
+                                            : Icons.science_rounded,
+                                    color: const Color(0xFF7C3AED),
+                                    size: 24,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            doubt['title'],
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: _getStatusColor(doubt['status']).withOpacity(0.15),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: Text(
-                                            doubt['status'],
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: _getStatusColor(doubt['status']),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              doubt['title'],
+                                              style: const TextStyle(
+                                                fontSize: 15.5,
+                                                fontWeight: FontWeight.bold,
+                                                color: NMTheme.textPrimary,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      doubt['submittedTime'],
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: (isResolved ? const Color(0xFF10B981) : const Color(0xFFD97706)).withOpacity(0.14),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              doubt['status'],
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w800,
+                                                color: isResolved ? const Color(0xFF10B981) : const Color(0xFFD97706),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        '${doubt['subject']} · ${doubt['faculty']}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: NMTheme.textSecondary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        doubt['submittedTime'],
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          color: NMTheme.textMuted,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border(
-                top: BorderSide(color: Colors.grey[200]!),
-              ),
+                        );
+                      },
+                    ),
             ),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _currentIndex = 1;
-                  });
-                },
-                icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-                label: const Text(
-                  'Upload Doubt',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8B5CF6),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              child: GestureDetector(
+                onTap: () => setState(() => _currentIndex = 1),
+                child: Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF381868), Color(0xFF4C218E)],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: NMTheme.coloredCardShadow(const Color(0xFF381868), opacity: 0.4),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Ask a New Doubt',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAskDoubtScreen() {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF8B5CF6)),
-          onPressed: () {
-            setState(() {
-              _currentIndex = 0;
-            });
-          },
-        ),
-        title: const Text(
-          'Ask a Doubt',
-          style: TextStyle(
-            color: Color(0xFF8B5CF6),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Ask a Doubt',
+              isRoot: false,
+              onLeadingTap: () => setState(() => _currentIndex = 0),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

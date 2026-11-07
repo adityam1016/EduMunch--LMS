@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../auth_controller.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class ParentAppDrawer extends StatelessWidget {
   const ParentAppDrawer({super.key});
@@ -8,171 +10,190 @@ class ParentAppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: NMTheme.bg,
+      child: SafeArea(
         child: Column(
           children: [
-            // Drawer Header with Gradient
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.only(top: 50, bottom: 24, left: 20, right: 20),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF7C3AED),
-                    Color(0xFF8B5CF6),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: NMCard(
+                padding: const EdgeInsets.all(16),
+                borderRadius: BorderRadius.circular(20),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 54,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: NMTheme.surface,
+                        boxShadow: NMTheme.cardShadows,
+                      ),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.family_restroom_rounded,
+                        color: NMTheme.primaryPurple,
+                        size: 30,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Manoj Sharma',
+                            style: TextStyle(
+                              fontSize: 16.5,
+                              fontWeight: FontWeight.w800,
+                              color: NMTheme.textDark,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 3),
+                          const Text(
+                            'Parent Account',
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: NMTheme.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: NMTheme.accentTeal.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'CHILD: Aditya Mishra',
+                              style: TextStyle(
+                                color: NMTheme.accentTeal,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Profile Image
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/profile.png',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.person,
-                              size: 40,
-                              color: Colors.white,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Manoj Sharma',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Parent',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
             ),
-            // Menu Items
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 children: [
-                  _buildMenuItem(
-                    context,
+                  _buildDrawerTile(
                     icon: Icons.dashboard_outlined,
-                    title: 'Dashboard',
+                    title: 'Parent Dashboard',
                     route: '/parent-dashboard',
                   ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.assignment_outlined,
-                    title: 'Grievance',
-                    route: '/parent-grievance',
-                  ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.people_outline,
-                    title: 'Parent-Teacher Meeting',
-                    route: '/ptm',
-                  ),
-                  _buildMenuItem(
-                    context,
+                  _buildDrawerTile(
                     icon: Icons.calendar_today_outlined,
                     title: 'Attendance Record',
                     route: '/parent-attendance',
                   ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.trending_up,
+                  _buildDrawerTile(
+                    icon: Icons.trending_up_rounded,
                     title: 'Student Performance',
                     route: '/parent-performance',
                   ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.account_balance_wallet,
-                    title: 'Payments',
+                  _buildDrawerTile(
+                    icon: Icons.account_balance_wallet_outlined,
+                    title: 'Fees & Payments',
                     route: '/payments',
                   ),
-                  _buildMenuItem(
-                    context,
-                    icon: Icons.schedule,
-                    title: 'Timetable',
+                  _buildDrawerTile(
+                    icon: Icons.schedule_outlined,
+                    title: 'Class Timetable',
                     route: '/parent-timetable',
                   ),
-                  const Divider(height: 32),
+                  _buildDrawerTile(
+                    icon: Icons.groups_outlined,
+                    title: 'Parent-Teacher Meeting',
+                    route: '/ptm',
+                  ),
+                  _buildDrawerTile(
+                    icon: Icons.support_agent_outlined,
+                    title: 'Grievance & Support',
+                    route: '/parent-grievance',
+                  ),
+                  const SizedBox(height: 12),
+                  Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+                  const SizedBox(height: 12),
                   // Switch to Student Mode
-                  ListTile(
-                    leading: const Icon(
-                      Icons.school,
-                      color: Color(0xFF2196F3),
-                      size: 24,
-                    ),
-                    title: Text(
-                      'Switch to Student Mode',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF2196F3),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: NMCard(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      borderRadius: BorderRadius.circular(14),
+                      child: InkWell(
+                        onTap: () => _showStudentPinDialog(context),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: NMTheme.accentOcean.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.school_outlined,
+                                color: NMTheme.accentOcean,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            const Expanded(
+                              child: Text(
+                                'Switch to Student Mode',
+                                style: TextStyle(
+                                  color: NMTheme.accentOcean,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: NMTheme.accentOcean),
+                          ],
+                        ),
                       ),
                     ),
-                    onTap: () {
-                      _showStudentPinDialog(context);
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
                   ),
-                  const Divider(height: 16),
                 ],
               ),
             ),
-
-            // Logout Section
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    _showLogoutDialog(context);
-                  },
-                  icon: const Icon(Icons.logout),
-                  label: const Text(
-                    'Logout',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GestureDetector(
+                onTap: () => _showLogoutDialog(context),
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: NMTheme.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: NMTheme.cardShadows,
+                    border: Border.all(color: const Color(0xFFE53935).withOpacity(0.3)),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEF5350),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.logout_rounded, color: Color(0xFFE53935), size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Color(0xFFE53935),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -183,57 +204,69 @@ class ParentAppDrawer extends StatelessWidget {
     );
   }
 
-  void _showStudentPinDialog(BuildContext context) async {
-    Get.back(); // Close drawer first
-    
-    final authController = Get.find<AuthController>();
-    final userEmail = authController.email ?? 'student@edumunch.com';
-    
-    // Navigate to student dashboard
-    Get.offAllNamed('/dashboard');
-    
-    Get.snackbar(
-      'Access Granted',
-      'Switched to Student view',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.shade100,
-      colorText: Colors.green.shade900,
-      duration: const Duration(seconds: 2),
-    );
-    
-    // Update the session role
-    authController.setSession(
-      email: userEmail,
-      role: 'Student',
-    );
-  }
-
-  Widget _buildMenuItem(
-    BuildContext context, {
+  Widget _buildDrawerTile({
     required IconData icon,
     required String title,
     required String route,
   }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: Theme.of(context).colorScheme.primary,
-        size: 24,
-      ),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w500,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: NMCard(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: () {
+            Get.back();
+            Get.toNamed(route);
+          },
+          borderRadius: BorderRadius.circular(14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: NMTheme.primaryPurple.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: NMTheme.primaryPurple, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: NMTheme.textDark,
+                  ),
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, size: 18, color: NMTheme.textSecondary),
+            ],
+          ),
         ),
       ),
-      onTap: () {
-        Get.back(); // Close drawer
-        Get.toNamed(route);
-      },
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+    );
+  }
+
+  void _showStudentPinDialog(BuildContext context) {
+    Get.back();
+    final authController = Get.find<AuthController>();
+    final userEmail = authController.email ?? 'student@edumunch.com';
+
+    Get.offAllNamed('/dashboard');
+    Get.snackbar(
+      'Access Granted',
+      'Switched to Student view',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: NMTheme.accentTeal,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+    );
+
+    authController.setSession(
+      email: userEmail,
+      role: 'Student',
     );
   }
 
@@ -241,41 +274,37 @@ class ParentAppDrawer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: NMTheme.bg,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
-        title: Text(
+        title: const Text(
           'Logout',
-          style: Theme.of(context).textTheme.headlineSmall,
+          style: TextStyle(fontWeight: FontWeight.w800, color: NMTheme.textDark),
         ),
-        content: Text(
-          'Are you sure you want to logout?',
-          style: Theme.of(context).textTheme.bodyMedium,
+        content: const Text(
+          'Are you sure you want to sign out from Parent Portal?',
+          style: TextStyle(color: NMTheme.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Colors.black54),
-            ),
+            child: const Text('Cancel', style: TextStyle(color: NMTheme.textSecondary, fontWeight: FontWeight.bold)),
           ),
           ElevatedButton(
             onPressed: () {
               final authController = Get.find<AuthController>();
               authController.clearSession();
-              Get.back(); // Close dialog
+              Get.back();
               Get.offAllNamed('/login');
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF5350),
-              foregroundColor: Colors.white,
+              backgroundColor: const Color(0xFFE53935),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text('Logout'),
+            child: const Text('Logout', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

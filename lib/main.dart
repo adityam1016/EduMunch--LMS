@@ -85,13 +85,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFE8EEF5),
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7C3AED),
+          seedColor: const Color(0xFF381868),
           brightness: Brightness.light,
-          primary: const Color(0xFF7C3AED),
+          primary: const Color(0xFF381868),
+          surface: const Color(0xFFE8EEF5),
         ),
-        primaryColor: const Color(0xFF7C3AED),
+        primaryColor: const Color(0xFF381868),
         textTheme: const TextTheme(
           displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: -0.5),
           displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: -0.5),

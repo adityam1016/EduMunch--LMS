@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'teacher_app_drawer.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class TimetableEntry {
   final String time;
@@ -29,40 +31,27 @@ class TeacherTimetableScreen extends StatefulWidget {
   State<TeacherTimetableScreen> createState() => _TeacherTimetableScreenState();
 }
 
-class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _TeacherTimetableScreenState extends State<TeacherTimetableScreen> {
+  int _selectedTabIndex = 0; // 0: Daily, 1: Weekly
   DateTime _weekStart = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _weekStart = _getWeekStart(DateTime.now());
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   DateTime _getWeekStart(DateTime date) {
     return date.subtract(Duration(days: date.weekday - 1));
   }
 
-  // Sample timetable data
   List<TimetableEntry> get _allEntries {
     List<TimetableEntry> entries = [];
 
-    // Generate entries for the week
     for (int dayOffset = 0; dayOffset < 7; dayOffset++) {
       final currentDay = _weekStart.add(Duration(days: dayOffset));
-      
-      // Skip Sunday
       if (currentDay.weekday == DateTime.sunday) continue;
 
-      // Morning classes
       entries.add(TimetableEntry(
         time: '08:00',
         title: 'Mathematics - Class 10A',
@@ -83,7 +72,6 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         endTime: DateTime(currentDay.year, currentDay.month, currentDay.day, 9, 45),
       ));
 
-      // Break
       entries.add(TimetableEntry(
         time: '10:00',
         title: 'Morning Break',
@@ -113,7 +101,6 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         endTime: DateTime(currentDay.year, currentDay.month, currentDay.day, 12, 0),
       ));
 
-      // Lunch break
       entries.add(TimetableEntry(
         time: '12:00',
         title: 'Lunch Break',
@@ -123,7 +110,6 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         endTime: DateTime(currentDay.year, currentDay.month, currentDay.day, 12, 45),
       ));
 
-      // Afternoon classes
       entries.add(TimetableEntry(
         time: '12:45',
         title: 'Physics - Class 12A',
@@ -134,23 +120,12 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         endTime: DateTime(currentDay.year, currentDay.month, currentDay.day, 13, 30),
       ));
 
-      entries.add(TimetableEntry(
-        time: '13:45',
-        title: 'Chemistry Lab - Class 12B',
-        center: 'Lab 3',
-        duration: '60 min',
-        type: 'class',
-        startTime: DateTime(currentDay.year, currentDay.month, currentDay.day, 13, 45),
-        endTime: DateTime(currentDay.year, currentDay.month, currentDay.day, 14, 45),
-      ));
-
-      // Doubt clearing session on specific days
-      if (currentDay.weekday == DateTime.monday || 
+      if (currentDay.weekday == DateTime.monday ||
           currentDay.weekday == DateTime.wednesday ||
           currentDay.weekday == DateTime.friday) {
         entries.add(TimetableEntry(
           time: '15:00',
-          title: 'Doubt Clearing Session',
+          title: 'Live Doubt Clearing Session',
           center: 'Room 101',
           duration: '60 min',
           type: 'doubt',
@@ -193,131 +168,200 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const TeacherAppDrawer(),
-      backgroundColor: const Color(0xFFF0F4F8),
-      appBar: AppBar(
-        title: const Text(
-          "My Timetable",
-          style: TextStyle(
-              color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        shadowColor: Colors.grey.withOpacity(0.2),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black54),
-            onPressed: () {
-              setState(() {
-                _weekStart = _getWeekStart(DateTime.now());
-              });
-            },
-          ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: "Daily"),
-            Tab(text: "Weekly"),
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Timetable',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
+            ),
+            _buildTabSelector(),
+            Expanded(
+              child: _selectedTabIndex == 0
+                  ? _buildDailyTimetable()
+                  : _buildWeeklyTimetable(),
+            ),
           ],
-          labelColor: const Color.fromARGB(255, 200, 54, 222),
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: const Color(0xFF7C3AED),
-          indicatorWeight: 3.0,
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildDailyTimetable(),
-          _buildWeeklyTimetable(),
-        ],
       ),
     );
   }
 
-  // ==================== DAILY VIEW ====================
+  Widget _buildTabSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: NMInsetContainer(
+        padding: const EdgeInsets.all(4),
+        borderRadius: BorderRadius.circular(16),
+        child: Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedTabIndex = 0),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _selectedTabIndex == 0 ? NMTheme.cardBg : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: _selectedTabIndex == 0 ? NMTheme.cardShadows : null,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Daily View',
+                    style: TextStyle(
+                      color: _selectedTabIndex == 0 ? NMTheme.primaryPurple : NMTheme.textSecondary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedTabIndex = 1),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _selectedTabIndex == 1 ? NMTheme.cardBg : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: _selectedTabIndex == 1 ? NMTheme.cardShadows : null,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Weekly View',
+                    style: TextStyle(
+                      color: _selectedTabIndex == 1 ? NMTheme.primaryPurple : NMTheme.textSecondary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildDailyTimetable() {
     final todaySchedule = _todaySchedule;
 
     if (todaySchedule.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_busy, size: 60, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              'No classes scheduled for today.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+            Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: NMTheme.surface,
+                shape: BoxShape.circle,
+                boxShadow: NMTheme.cardShadows,
+              ),
+              child: const Icon(Icons.event_available_rounded, size: 52, color: NMTheme.accentTeal),
             ),
+            const SizedBox(height: 16),
+            const Text(
+              'No Classes Scheduled',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: NMTheme.textDark),
+            ),
+            const SizedBox(height: 6),
+            const Text('You have no teaching lectures assigned for today.', style: TextStyle(color: NMTheme.textSecondary, fontSize: 13)),
           ],
         ),
       );
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
-        Text(
-          DateFormat('EEEE, MMMM d').format(DateTime.now()),
-          style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              DateFormat('EEEE, MMMM d').format(DateTime.now()),
+              style: const TextStyle(
+                fontSize: 16.5,
+                fontWeight: FontWeight.w800,
+                color: NMTheme.textDark,
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: NMTheme.accentTeal.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '${todaySchedule.length} Sessions',
+                style: const TextStyle(color: NMTheme.accentTeal, fontWeight: FontWeight.w700, fontSize: 12),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 20),
-        ...todaySchedule.map((entry) => _buildTimetableEntry(entry)),
+        const SizedBox(height: 14),
+        ...todaySchedule.map((entry) => _buildTimetableEntryCard(entry)),
       ],
     );
   }
-
-  // ==================== WEEKLY VIEW ====================
 
   Widget _buildWeeklyTimetable() {
     final weekSchedule = _weeklySchedule;
 
     return Column(
       children: [
-        // Week selector
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left),
-                onPressed: () {
-                  setState(() {
-                    _weekStart = _weekStart.subtract(const Duration(days: 7));
-                  });
-                },
-              ),
-              Text(
-                '${DateFormat('MMM d').format(_weekStart)} - ${DateFormat('MMM d').format(_weekStart.add(const Duration(days: 6)))}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+          child: NMCard(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            borderRadius: BorderRadius.circular(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                NMIconButton(
+                  icon: Icons.chevron_left_rounded,
+                  size: 36,
+                  iconSize: 22,
+                  iconColor: NMTheme.primaryPurple,
+                  onTap: () {
+                    setState(() {
+                      _weekStart = _weekStart.subtract(const Duration(days: 7));
+                    });
+                  },
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.chevron_right),
-                onPressed: () {
-                  setState(() {
-                    _weekStart = _weekStart.add(const Duration(days: 7));
-                  });
-                },
-              ),
-            ],
+                Text(
+                  '${DateFormat('MMM d').format(_weekStart)} – ${DateFormat('MMM d').format(_weekStart.add(const Duration(days: 6)))}',
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w800,
+                    color: NMTheme.textDark,
+                  ),
+                ),
+                NMIconButton(
+                  icon: Icons.chevron_right_rounded,
+                  size: 36,
+                  iconSize: 22,
+                  iconColor: NMTheme.primaryPurple,
+                  onTap: () {
+                    setState(() {
+                      _weekStart = _weekStart.add(const Duration(days: 7));
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-        const Divider(height: 1),
-        // Days list
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             itemCount: 7,
             itemBuilder: (context, index) {
               final day = _weekStart.add(Duration(days: index));
@@ -335,259 +379,164 @@ class _TeacherTimetableScreenState extends State<TeacherTimetableScreen>
         day.month == DateTime.now().month &&
         day.day == DateTime.now().day;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: isToday ? 4 : 1,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: isToday
-            ? const BorderSide(color: Color(0xFF7C3AED), width: 2)
-            : BorderSide.none,
-      ),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          initiallyExpanded: isToday,
-          leading: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: isToday ? const Color(0xFF7C3AED) : Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  DateFormat('EEE').format(day),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: isToday ? Colors.white : Colors.grey.shade700,
-                  ),
-                ),
-                Text(
-                  '${day.day}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isToday ? Colors.white : Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          title: Text(
-            DateFormat('EEEE, MMMM d').format(day),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-          subtitle: Text(
-            schedule.isEmpty
-                ? 'No classes scheduled'
-                : '${schedule.length} class${schedule.length > 1 ? 'es' : ''}',
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 12,
-            ),
-          ),
-          children: schedule.isEmpty
-              ? [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'No classes scheduled for this day',
-                      style: TextStyle(color: Colors.grey.shade600),
-                      textAlign: TextAlign.center,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: NMCard(
+        padding: const EdgeInsets.all(12),
+        borderRadius: BorderRadius.circular(16),
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            initiallyExpanded: isToday,
+            tilePadding: EdgeInsets.zero,
+            leading: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: isToday ? NMTheme.primaryPurple : NMTheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: NMTheme.cardShadows,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    DateFormat('EEE').format(day),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: isToday ? Colors.white70 : NMTheme.textSecondary,
                     ),
-                  )
-                ]
-              : schedule
-                  .map((entry) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: _buildCompactEntry(entry),
-                      ))
-                  .toList(),
+                  ),
+                  Text(
+                    '${day.day}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: isToday ? Colors.white : NMTheme.textDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            title: Text(
+              DateFormat('EEEE, MMMM d').format(day),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+                color: isToday ? NMTheme.primaryPurple : NMTheme.textDark,
+              ),
+            ),
+            subtitle: Text(
+              schedule.isEmpty ? 'Free day' : '${schedule.length} lecture slots',
+              style: const TextStyle(color: NMTheme.textSecondary, fontSize: 12),
+            ),
+            children: schedule.isEmpty
+                ? [
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12.0),
+                      child: Text('No classes scheduled for this day', style: TextStyle(color: NMTheme.textSecondary, fontSize: 12.5)),
+                    ),
+                  ]
+                : schedule.map((entry) => Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: _buildTimetableEntryCard(entry, compact: true),
+                    )).toList(),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildCompactEntry(TimetableEntry entry) {
-    Color cardColor;
+  Widget _buildTimetableEntryCard(TimetableEntry entry, {bool compact = false}) {
+    Color accentColor;
     IconData icon;
-    switch (entry.type) {
-      case 'doubt':
-        cardColor = Colors.yellow.shade100;
-        icon = Icons.help_outline;
-        break;
-      case 'break':
-        cardColor = Colors.grey.shade100;
-        icon = Icons.coffee_outlined;
-        break;
-      case 'class':
-      default:
-        cardColor = const Color(0xFFF5F3FF);
-        icon = Icons.class_outlined;
+
+    if (entry.type == 'doubt') {
+      accentColor = NMTheme.accentTeal;
+      icon = Icons.quiz_outlined;
+    } else if (entry.type == 'break') {
+      accentColor = Colors.grey;
+      icon = Icons.coffee_outlined;
+    } else if (entry.title.contains('Physics')) {
+      accentColor = NMTheme.accentTeal;
+      icon = Icons.science_outlined;
+    } else if (entry.title.contains('Chemistry')) {
+      accentColor = NMTheme.primaryPurple;
+      icon = Icons.biotech_outlined;
+    } else {
+      accentColor = NMTheme.accentOcean;
+      icon = Icons.functions_rounded;
     }
 
     return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.black54, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.access_time, size: 12, color: Colors.grey.shade600),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${entry.time} • ${entry.duration}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-                if (entry.center != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    'Center: ${entry.center}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ==================== COMMON COMPONENTS ====================
-
-  Widget _buildTimetableEntry(TimetableEntry entry) {
-    Color cardColor;
-    IconData icon;
-    switch (entry.type) {
-      case 'doubt':
-        cardColor = Colors.yellow.shade100;
-        icon = Icons.help_outline;
-        break;
-      case 'break':
-        cardColor = Colors.grey.shade100;
-        icon = Icons.coffee_outlined;
-        break;
-      case 'class':
-      default:
-        cardColor = const Color(0xFFF5F3FF);
-        icon = Icons.class_outlined;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 70,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.time,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: Colors.grey.shade700),
-                ),
-                Icon(icon, size: 16, color: Colors.grey.shade600),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: NMCard(
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: compact ? 10 : 14),
+        borderRadius: BorderRadius.circular(14),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                color: cardColor,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                color: accentColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(10),
               ),
+              child: Icon(icon, color: accentColor, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     entry.title,
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87),
-                  ),
-                  if (entry.center != null) ...[
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(Icons.location_on_outlined,
-                            size: 14, color: Colors.black.withOpacity(0.6)),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Center: ${entry.center}',
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black.withOpacity(0.6)),
-                        ),
-                      ],
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14.5,
+                      color: NMTheme.textDark,
                     ),
-                  ],
-                  const SizedBox(height: 4),
+                  ),
+                  const SizedBox(height: 3),
                   Row(
                     children: [
-                      Icon(Icons.timer_outlined,
-                          size: 14, color: Colors.black.withOpacity(0.5)),
+                      const Icon(Icons.access_time_rounded, size: 12, color: NMTheme.textSecondary),
                       const SizedBox(width: 4),
                       Text(
-                        'Duration: ${entry.duration}',
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.black.withOpacity(0.5)),
+                        '${entry.time} • ${entry.duration}',
+                        style: const TextStyle(fontSize: 12, color: NMTheme.textSecondary, fontWeight: FontWeight.w500),
                       ),
+                      if (entry.center != null) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.location_on_outlined, size: 12, color: NMTheme.textSecondary),
+                        const SizedBox(width: 2),
+                        Text(
+                          entry.center!,
+                          style: const TextStyle(fontSize: 12, color: NMTheme.textSecondary, fontWeight: FontWeight.w500),
+                        ),
+                      ],
                     ],
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+            if (entry.type == 'doubt')
+              const NMGlowingNowBadge(text: 'LIVE')
+            else
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: NMTheme.surface,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  entry.type.toUpperCase(),
+                  style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800, color: NMTheme.textSecondary),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

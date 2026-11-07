@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'parent_app_drawer.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class ParentAttendanceScreen extends StatefulWidget {
   const ParentAttendanceScreen({super.key});
@@ -10,20 +13,19 @@ class ParentAttendanceScreen extends StatefulWidget {
 
 class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
   DateTime _selectedWeekStart = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-  
-  // Sample attendance data - Replace with actual API data
+
   final Map<String, List<Map<String, dynamic>>> weeklyTimetable = {
     'Monday': [
       {
         'subject': 'Mathematics',
-        'teacher': 'Mrs. Priya Sharma',
+        'teacher': 'Prof. Aditya Mishra',
         'time': '08:00 AM - 09:00 AM',
         'room': 'Room 301',
         'status': 'Present',
       },
       {
         'subject': 'Physics',
-        'teacher': 'Mr. Rajesh Kumar',
+        'teacher': 'Dr. Rajesh Kumar',
         'time': '09:00 AM - 10:00 AM',
         'room': 'Lab 1',
         'status': 'Present',
@@ -53,54 +55,40 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
       },
       {
         'subject': 'Mathematics',
-        'teacher': 'Mrs. Priya Sharma',
+        'teacher': 'Prof. Aditya Mishra',
         'time': '09:00 AM - 10:00 AM',
         'room': 'Room 301',
         'status': 'Present',
       },
       {
         'subject': 'Computer Science',
-        'teacher': 'Mr. Aditya Mishra',
+        'teacher': 'Prof. Rahul Tiwari',
         'time': '11:00 AM - 12:00 PM',
         'room': 'Computer Lab',
-        'status': 'Present',
-      },
-      {
-        'subject': 'Physical Education',
-        'teacher': 'Mr. Rahul Kapoor',
-        'time': '02:00 PM - 03:00 PM',
-        'room': 'Sports Ground',
         'status': 'Present',
       },
     ],
     'Wednesday': [
       {
-        'subject': 'History',
-        'teacher': 'Mrs. Meera Iyer',
+        'subject': 'Physics Lab',
+        'teacher': 'Dr. Rajesh Kumar',
         'time': '08:00 AM - 09:00 AM',
-        'room': 'Room 401',
+        'room': 'Lab 1',
         'status': 'Present',
       },
       {
-        'subject': 'Geography',
-        'teacher': 'Mr. Deepak Nair',
-        'time': '09:00 AM - 10:00 AM',
-        'room': 'Room 402',
-        'status': 'Late',
-      },
-      {
         'subject': 'Mathematics',
-        'teacher': 'Mrs. Priya Sharma',
-        'time': '11:00 AM - 12:00 PM',
+        'teacher': 'Prof. Aditya Mishra',
+        'time': '09:00 AM - 10:00 AM',
         'room': 'Room 301',
         'status': 'Present',
       },
       {
-        'subject': 'Physics',
-        'teacher': 'Mr. Rajesh Kumar',
-        'time': '01:00 PM - 02:00 PM',
-        'room': 'Lab 1',
-        'status': 'Present',
+        'subject': 'Chemistry',
+        'teacher': 'Dr. Anjali Verma',
+        'time': '11:00 AM - 12:00 PM',
+        'room': 'Lab 2',
+        'status': 'Late',
       },
     ],
     'Thursday': [
@@ -118,109 +106,84 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
         'room': 'Room 205',
         'status': 'Present',
       },
-      {
-        'subject': 'Biology',
-        'teacher': 'Mr. Vikram Singh',
-        'time': '11:00 AM - 12:00 PM',
-        'room': 'Lab 3',
-        'status': 'Present',
-      },
-      {
-        'subject': 'Art & Craft',
-        'teacher': 'Mrs. Pooja Desai',
-        'time': '02:00 PM - 03:00 PM',
-        'room': 'Art Room',
-        'status': 'Present',
-      },
     ],
     'Friday': [
       {
         'subject': 'Mathematics',
-        'teacher': 'Mrs. Priya Sharma',
+        'teacher': 'Prof. Aditya Mishra',
         'time': '08:00 AM - 09:00 AM',
         'room': 'Room 301',
         'status': 'Present',
       },
       {
-        'subject': 'Computer Science',
-        'teacher': 'Mr. Aditya Mishra',
-        'time': '09:00 AM - 10:00 AM',
-        'room': 'Computer Lab',
-        'status': 'Absent',
-      },
-      {
         'subject': 'Physics',
-        'teacher': 'Mr. Rajesh Kumar',
+        'teacher': 'Dr. Rajesh Kumar',
         'time': '11:00 AM - 12:00 PM',
         'room': 'Lab 1',
-        'status': 'Present',
-      },
-      {
-        'subject': 'Music',
-        'teacher': 'Mr. Karan Malhotra',
-        'time': '01:00 PM - 02:00 PM',
-        'room': 'Music Room',
-        'status': 'Present',
-      },
-    ],
-    'Saturday': [
-      {
-        'subject': 'Library Period',
-        'teacher': 'Mrs. Kavita Singh',
-        'time': '08:00 AM - 09:00 AM',
-        'room': 'Library',
-        'status': 'Present',
-      },
-      {
-        'subject': 'Activity Club',
-        'teacher': 'Multiple Teachers',
-        'time': '09:00 AM - 11:00 AM',
-        'room': 'Various Rooms',
-        'status': 'Present',
-      },
-      {
-        'subject': 'Sports',
-        'teacher': 'Mr. Rahul Kapoor',
-        'time': '11:00 AM - 12:30 PM',
-        'room': 'Sports Ground',
         'status': 'Present',
       },
     ],
   };
 
-  final List<String> weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  final List<String> weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+  void _selectWeek() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedWeekStart,
+      firstDate: DateTime(2025),
+      lastDate: DateTime(2027),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: NMTheme.primaryPurple,
+              onPrimary: Colors.white,
+              onSurface: NMTheme.textDark,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedWeekStart = picked.subtract(Duration(days: picked.weekday - 1));
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const ParentAppDrawer(),
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Attendance Report',
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Attendance',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                child: Column(
+                  children: [
+                    _buildAttendanceSummary(),
+                    const SizedBox(height: 16),
+                    _buildWeekSelector(),
+                    const SizedBox(height: 16),
+                    ...weekDays.map((day) => _buildDayAttendance(day)),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.calendar_today, color: Color(0xFF7C3AED)),
-            onPressed: _selectWeek,
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _buildAttendanceSummary(),
-          _buildWeekSelector(),
-          Expanded(
-            child: _buildWeeklyTimetable(),
-          ),
-        ],
       ),
     );
   }
@@ -240,23 +203,18 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
       }
     });
 
-    double attendancePercentage = totalClasses > 0 ? (presentCount / totalClasses * 100) : 0;
+    double percentage = totalClasses > 0 ? (presentCount / totalClasses * 100) : 0;
 
     return Container(
-      margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
+        gradient: NMTheme.primaryGradient,
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C3AED).withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: NMTheme.primaryPurple.withOpacity(0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -265,62 +223,48 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Overall Attendance',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'This Week',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${attendancePercentage.toStringAsFixed(1)}%',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   const Text(
-                    'Attendance Rate',
+                    'Overall Attendance',
                     style: TextStyle(
                       color: Colors.white70,
-                      fontSize: 12,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${percentage.toStringAsFixed(1)}%',
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
               Container(
-                width: 1,
-                height: 50,
-                color: Colors.white.withOpacity(0.3),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.18),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.fact_check_rounded, color: Colors.white, size: 32),
               ),
-              _buildStatItem('Present', presentCount, Colors.white),
-              _buildStatItem('Absent', absentCount, Colors.redAccent),
-              _buildStatItem('Late', lateCount, Colors.orangeAccent),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              _buildSummaryPill('Total', '$totalClasses', Colors.white.withOpacity(0.2)),
+              const SizedBox(width: 8),
+              _buildSummaryPill('Present', '$presentCount', NMTheme.accentTeal),
+              const SizedBox(width: 8),
+              _buildSummaryPill('Absent', '$absentCount', const Color(0xFFE53935)),
+              const SizedBox(width: 8),
+              _buildSummaryPill('Late', '$lateCount', const Color(0xFFFB8C00)),
             ],
           ),
         ],
@@ -328,348 +272,194 @@ class _ParentAttendanceScreenState extends State<ParentAttendanceScreen> {
     );
   }
 
-  Widget _buildStatItem(String label, int count, Color color) {
-    return Column(
-      children: [
-        Text(
-          count.toString(),
-          style: TextStyle(
-            color: color,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+  Widget _buildSummaryPill(String label, String value, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(12),
         ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-          ),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 15,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
   Widget _buildWeekSelector() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    final endOfWeek = _selectedWeekStart.add(const Duration(days: 5));
+    final format = DateFormat('MMM d');
+
+    return NMCard(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      borderRadius: BorderRadius.circular(16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left, color: Color(0xFF7C3AED)),
-            onPressed: _previousWeek,
+          NMIconButton(
+            icon: Icons.chevron_left_rounded,
+            size: 36,
+            iconSize: 22,
+            iconColor: NMTheme.primaryPurple,
+            onTap: () {
+              setState(() {
+                _selectedWeekStart = _selectedWeekStart.subtract(const Duration(days: 7));
+              });
+            },
           ),
-          Text(
-            _getWeekRangeText(),
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right, color: Color(0xFF7C3AED)),
-            onPressed: _nextWeek,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWeeklyTimetable() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: weekDays.length,
-      itemBuilder: (context, index) {
-        String day = weekDays[index];
-        List<Map<String, dynamic>> lectures = weeklyTimetable[day] ?? [];
-        
-        return _buildDayCard(day, lectures, index);
-      },
-    );
-  }
-
-  Widget _buildDayCard(String day, List<Map<String, dynamic>> lectures, int dayIndex) {
-    DateTime dayDate = _selectedWeekStart.add(Duration(days: dayIndex));
-    bool isToday = dayDate.day == DateTime.now().day && 
-                   dayDate.month == DateTime.now().month && 
-                   dayDate.year == DateTime.now().year;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: isToday ? Border.all(color: const Color(0xFF7C3AED), width: 2) : null,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isToday ? const Color(0xFF7C3AED) : Colors.grey[100],
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
+          InkWell(
+            onTap: _selectWeek,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      day,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isToday ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    if (isToday)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          'Today',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                const Icon(Icons.calendar_month_rounded, size: 16, color: NMTheme.primaryPurple),
+                const SizedBox(width: 8),
                 Text(
-                  '${dayDate.day}/${dayDate.month}/${dayDate.year}',
-                  style: TextStyle(
+                  '${format.format(_selectedWeekStart)} – ${format.format(endOfWeek)}, ${_selectedWeekStart.year}',
+                  style: const TextStyle(
                     fontSize: 14,
-                    color: isToday ? Colors.white70 : Colors.grey[600],
+                    fontWeight: FontWeight.w800,
+                    color: NMTheme.textDark,
                   ),
                 ),
               ],
             ),
           ),
-          if (lectures.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: Text(
-                  'No classes scheduled',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ),
-            )
-          else
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: lectures.length,
-              separatorBuilder: (context, index) => Divider(
-                height: 1,
-                indent: 16,
-                endIndent: 16,
-                color: Colors.grey[200],
-              ),
-              itemBuilder: (context, index) {
-                return _buildLectureCard(lectures[index]);
-              },
-            ),
+          NMIconButton(
+            icon: Icons.chevron_right_rounded,
+            size: 36,
+            iconSize: 22,
+            iconColor: NMTheme.primaryPurple,
+            onTap: () {
+              setState(() {
+                _selectedWeekStart = _selectedWeekStart.add(const Duration(days: 7));
+              });
+            },
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLectureCard(Map<String, dynamic> lecture) {
+  Widget _buildDayAttendance(String day) {
+    final lectures = weeklyTimetable[day] ?? [];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: NMCard(
+        padding: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  day,
+                  style: const TextStyle(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w800,
+                    color: NMTheme.textDark,
+                  ),
+                ),
+                Text(
+                  '${lectures.length} Classes',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: NMTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...lectures.map((lecture) => _buildLectureItem(lecture)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLectureItem(Map<String, dynamic> lecture) {
     Color statusColor;
-    IconData statusIcon;
-    
-    switch (lecture['status']) {
-      case 'Present':
-        statusColor = Colors.green;
-        statusIcon = Icons.check_circle;
-        break;
-      case 'Absent':
-        statusColor = Colors.red;
-        statusIcon = Icons.cancel;
-        break;
-      case 'Late':
-        statusColor = Colors.orange;
-        statusIcon = Icons.access_time;
-        break;
-      default:
-        statusColor = Colors.grey;
-        statusIcon = Icons.help_outline;
+    if (lecture['status'] == 'Present') {
+      statusColor = NMTheme.accentTeal;
+    } else if (lecture['status'] == 'Absent') {
+      statusColor = const Color(0xFFE53935);
+    } else {
+      statusColor = const Color(0xFFFB8C00);
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: NMTheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: NMTheme.cardShadows,
+      ),
       child: Row(
         children: [
-          Container(
-            width: 4,
-            height: 60,
-            decoration: BoxDecoration(
-              color: statusColor,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        lecture['subject'],
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(statusIcon, size: 14, color: statusColor),
-                          const SizedBox(width: 4),
-                          Text(
-                            lecture['status'],
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: statusColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                Text(
+                  lecture['subject'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                    color: NMTheme.textDark,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(Icons.person_outline, size: 14, color: Colors.grey[600]),
-                    const SizedBox(width: 4),
-                    Text(
-                      lecture['teacher'],
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-                    const SizedBox(width: 4),
-                    Text(
-                      lecture['time'],
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Icon(Icons.room_outlined, size: 14, color: Colors.grey[600]),
-                    const SizedBox(width: 4),
-                    Text(
-                      lecture['room'],
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 2),
+                Text(
+                  '${lecture['time']} • ${lecture['room']}',
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    color: NMTheme.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              lecture['status'],
+              style: TextStyle(
+                color: statusColor,
+                fontWeight: FontWeight.w800,
+                fontSize: 11.5,
+              ),
             ),
           ),
         ],
       ),
     );
-  }
-
-  void _selectWeek() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedWeekStart,
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2027),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF7C3AED),
-              onPrimary: Colors.white,
-              onSurface: Colors.black87,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        _selectedWeekStart = picked.subtract(Duration(days: picked.weekday - 1));
-      });
-    }
-  }
-
-  void _previousWeek() {
-    setState(() {
-      _selectedWeekStart = _selectedWeekStart.subtract(const Duration(days: 7));
-    });
-  }
-
-  void _nextWeek() {
-    setState(() {
-      _selectedWeekStart = _selectedWeekStart.add(const Duration(days: 7));
-    });
-  }
-
-  String _getWeekRangeText() {
-    DateTime weekEnd = _selectedWeekStart.add(const Duration(days: 5));
-    return '${_selectedWeekStart.day}/${_selectedWeekStart.month} - ${weekEnd.day}/${weekEnd.month}/${weekEnd.year}';
   }
 }

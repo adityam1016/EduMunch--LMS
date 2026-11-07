@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'app_drawer.dart';
 import '../services/timetable_service.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class DoubtLectureScreen extends StatefulWidget {
   const DoubtLectureScreen({super.key});
@@ -229,59 +231,23 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            // App Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.menu,
-                          color: Color(0xFF5B21B6),
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'Doubt Lectures',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF5B21B6),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            NMAppBar(
+              title: 'Live Lectures',
+              isRoot: false,
             ),
+            const SizedBox(height: 10),
 
-            // Tab Selector
+            // Inset Tab Selector
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(10),
-                ),
                 padding: const EdgeInsets.all(4),
+                decoration: NMTheme.insetDecoration(radius: 18),
                 child: Row(
                   children: [
                     Expanded(
@@ -291,23 +257,21 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
                             selectedTabIndex = 0;
                           });
                         },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
                           decoration: BoxDecoration(
-                            color: selectedTabIndex == 0
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
+                            color: selectedTabIndex == 0 ? NMTheme.surface : Colors.transparent,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: selectedTabIndex == 0 ? NMTheme.raisedShadow(offset: 2.5, blur: 5) : [],
                           ),
                           child: Text(
                             'Doubt Lectures',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: selectedTabIndex == 0
-                                  ? const Color(0xFFEF5350)
-                                  : Colors.grey[600],
+                              fontWeight: selectedTabIndex == 0 ? FontWeight.w800 : FontWeight.w600,
+                              color: selectedTabIndex == 0 ? NMTheme.primaryPurple : NMTheme.textMuted,
                             ),
                           ),
                         ),
@@ -320,23 +284,21 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
                             selectedTabIndex = 1;
                           });
                         },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(vertical: 9),
                           decoration: BoxDecoration(
-                            color: selectedTabIndex == 1
-                                ? Colors.white
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
+                            color: selectedTabIndex == 1 ? NMTheme.surface : Colors.transparent,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: selectedTabIndex == 1 ? NMTheme.raisedShadow(offset: 2.5, blur: 5) : [],
                           ),
                           child: Text(
                             'Extra Lectures',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: selectedTabIndex == 1
-                                  ? const Color(0xFFEF5350)
-                                  : Colors.grey[600],
+                              fontWeight: selectedTabIndex == 1 ? FontWeight.w800 : FontWeight.w600,
+                              color: selectedTabIndex == 1 ? NMTheme.primaryPurple : NMTheme.textMuted,
                             ),
                           ),
                         ),
@@ -346,12 +308,13 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
             // Content
             if (selectedTabIndex == 0) ...[
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: doubtLectures.map((lecture) {
@@ -363,6 +326,7 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
             ] else ...[
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: extraLectures.map((lecture) {
@@ -372,7 +336,7 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -380,356 +344,220 @@ class _DoubtLectureScreenState extends State<DoubtLectureScreen> {
   }
 
   Widget _buildDoubtLectureCard(Map<String, dynamic> lecture) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with Subject and Status
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      lecture['subject'],
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
-                      ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: NMCard(
+        radius: 22,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    lecture['subject'],
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: NMTheme.primaryPurple,
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: _getStatusColor(lecture['status']).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  lecture['status'],
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: _getStatusColor(lecture['status']),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Topic
-          Text(
-            lecture['topic'],
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Mode Badge
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 6,
-            ),
-            decoration: BoxDecoration(
-              color: _getModeColor(lecture['mode']).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _getModeIcon(lecture['mode']),
-                  size: 12,
-                  color: _getModeColor(lecture['mode']),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  lecture['mode'],
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: _getModeColor(lecture['mode']),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(lecture['status']).withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    lecture['status'],
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: _getStatusColor(lecture['status']),
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 10),
+            const SizedBox(height: 8),
 
-          // Date and Time
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today,
-                size: 14,
-                color: Colors.grey[500],
+            Text(
+              lecture['topic'],
+              style: const TextStyle(
+                fontSize: 15.5,
+                fontWeight: FontWeight.bold,
+                color: NMTheme.textPrimary,
               ),
-              const SizedBox(width: 6),
-              Text(
-                lecture['date'],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(width: 16),
-              Icon(
-                Icons.access_time,
-                size: 14,
-                color: Colors.grey[500],
-              ),
-              const SizedBox(width: 6),
-              Text(
-                lecture['time'],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
+            ),
+            const SizedBox(height: 12),
 
-          // Professor and Students
-          Row(
-            children: [
-              Icon(
-                Icons.person,
-                size: 14,
-                color: Colors.grey[500],
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  lecture['professor'],
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: NMTheme.insetDecoration(radius: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _getModeIcon(lecture['mode']),
+                        size: 13,
+                        color: _getModeColor(lecture['mode']),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        lecture['mode'],
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: _getModeColor(lecture['mode']),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              Icon(
-                Icons.people,
-                size: 14,
-                color: Colors.grey[500],
-              ),
-              const SizedBox(width: 6),
-              Text(
-                '${lecture['students']} students',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+                const SizedBox(width: 12),
+                const Icon(Icons.access_time_rounded, size: 13, color: NMTheme.textMuted),
+                const SizedBox(width: 5),
+                Text(
+                  lecture['time'],
+                  style: const TextStyle(fontSize: 12, color: NMTheme.textSecondary, fontWeight: FontWeight.w500),
                 ),
-              ),
-            ],
-          ),
-          if (lecture['mode'] != 'Offline')
+              ],
+            ),
             const SizedBox(height: 12),
-          if (lecture['mode'] != 'Offline')
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
+
+            Row(
+              children: [
+                const Icon(Icons.person_outline_rounded, size: 14, color: NMTheme.textMuted),
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    lecture['professor'],
+                    style: const TextStyle(fontSize: 12, color: NMTheme.textSecondary),
+                  ),
+                ),
+                const Icon(Icons.group_outlined, size: 14, color: NMTheme.textMuted),
+                const SizedBox(width: 5),
+                Text(
+                  '${lecture['students']} joined',
+                  style: const TextStyle(fontSize: 11.5, color: NMTheme.textMuted),
+                ),
+              ],
+            ),
+            if (lecture['mode'] != 'Offline') ...[
+              const SizedBox(height: 14),
+              NMWhiteButton(
+                text: 'Join Live Now',
+                icon: Icons.video_call_rounded,
+                textColor: const Color(0xFF381868),
+                radius: 12,
+                onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Joining: ${lecture['topic']}'),
+                      content: Text('Connecting to ${lecture['topic']}...'),
                       duration: const Duration(seconds: 2),
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEF5350),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Join Now',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
-            ),
-        ],
+            ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildExtraLectureCard(Map<String, dynamic> lecture) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with Subject and Status
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      lecture['subject'],
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
-                      ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: NMCard(
+        radius: 22,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    lecture['subject'],
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: NMTheme.primaryPurple,
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: _getDifficultyColor(lecture['difficulty']).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  lecture['difficulty'],
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: _getDifficultyColor(lecture['difficulty']),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Topic
-          Text(
-            lecture['topic'],
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Date and Time
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today,
-                size: 14,
-                color: Colors.grey[500],
-              ),
-              const SizedBox(width: 6),
-              Text(
-                lecture['date'],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(width: 16),
-              Icon(
-                Icons.access_time,
-                size: 14,
-                color: Colors.grey[500],
-              ),
-              const SizedBox(width: 6),
-              Text(
-                lecture['time'],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Professor and Seats
-          Row(
-            children: [
-              Icon(
-                Icons.person,
-                size: 14,
-                color: Colors.grey[500],
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  lecture['professor'],
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: _getDifficultyColor(lecture['difficulty']).withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    lecture['difficulty'],
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: _getDifficultyColor(lecture['difficulty']),
+                    ),
                   ),
                 ),
-              ),
-              Icon(
-                Icons.event_seat,
-                size: 14,
-                color: Colors.grey[500],
-              ),
-              const SizedBox(width: 6),
-              Text(
-                lecture['seats'],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
+              ],
+            ),
+            const SizedBox(height: 8),
 
-          // Status Badge
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 6,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF8B5CF6).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              lecture['status'],
+            Text(
+              lecture['topic'],
               style: const TextStyle(
-                fontSize: 11,
+                fontSize: 15.5,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF8B5CF6),
+                color: NMTheme.textPrimary,
               ),
             ),
-          ),
-          const SizedBox(height: 12),
-        ],
+            const SizedBox(height: 12),
+
+            Row(
+              children: [
+                const Icon(Icons.access_time_rounded, size: 13, color: NMTheme.textMuted),
+                const SizedBox(width: 5),
+                Text(
+                  lecture['time'],
+                  style: const TextStyle(fontSize: 12, color: NMTheme.textSecondary, fontWeight: FontWeight.w500),
+                ),
+                const Spacer(),
+                const Icon(Icons.event_seat_rounded, size: 13, color: NMTheme.textMuted),
+                const SizedBox(width: 5),
+                Text(
+                  lecture['seats'],
+                  style: const TextStyle(fontSize: 11.5, color: NMTheme.textMuted),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  lecture['professor'],
+                  style: const TextStyle(fontSize: 12, color: NMTheme.textSecondary),
+                ),
+                NMWhiteButton(
+                  text: 'Register',
+                  icon: Icons.app_registration_rounded,
+                  textColor: const Color(0xFF7C3AED),
+                  radius: 10,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

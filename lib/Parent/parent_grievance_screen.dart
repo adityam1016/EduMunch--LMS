@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'parent_grievance_chat_screen.dart';
 import 'parent_app_drawer.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class ParentGrievanceScreen extends StatefulWidget {
   const ParentGrievanceScreen({super.key});
@@ -33,47 +35,36 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
 
-  // Sample grievances data - Replace with actual API data
   final List<Map<String, dynamic>> grievances = [
     {
       'id': '1',
-      'title': 'Teacher Behavior Issue',
-      'description': 'Math teacher is not responding to student queries',
+      'title': 'Faculty Feedback - Maths Doubt Support',
+      'description': 'Student needs extra assistance in quadratic equations and calculus basics.',
       'status': 'Pending',
       'date': '2026-01-05',
       'category': 'Academic',
-      'lastMessage': 'We are looking into this matter',
+      'lastMessage': 'Head of Department is reviewing your request.',
       'unreadCount': 2,
     },
     {
       'id': '2',
-      'title': 'Bus Timing Delay',
-      'description': 'School bus consistently arrives 30 minutes late',
+      'title': 'Bus Route #4 Timing Delay',
+      'description': 'Evening drop-off bus consistently arrives 25 minutes late.',
       'status': 'In Progress',
       'date': '2026-01-03',
       'category': 'Transport',
-      'lastMessage': 'Driver has been informed',
+      'lastMessage': 'Route supervisor has been dispatched to coordinate.',
       'unreadCount': 0,
     },
     {
       'id': '3',
-      'title': 'Canteen Food Quality',
-      'description': 'Food served in canteen is not fresh',
+      'title': 'Canteen Meal Hygiene',
+      'description': 'Request to enhance water filter sterilization in canteen area.',
       'status': 'Resolved',
       'date': '2025-12-28',
       'category': 'Facilities',
-      'lastMessage': 'New vendor has been appointed',
+      'lastMessage': 'New UV filtration unit installed and inspected.',
       'unreadCount': 0,
-    },
-    {
-      'id': '4',
-      'title': 'Library Books Missing',
-      'description': 'Several reference books are not available',
-      'status': 'Pending',
-      'date': '2026-01-02',
-      'category': 'Facilities',
-      'lastMessage': 'Your request has been received',
-      'unreadCount': 1,
     },
   ];
 
@@ -87,10 +78,10 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImageFromCamera() async {
+  Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? image = await _picker.pickImage(
-        source: ImageSource.camera,
+        source: source,
         maxWidth: 1920,
         maxHeight: 1080,
         imageQuality: 85,
@@ -100,44 +91,13 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
           _selectedImage = File(image.path);
         });
       }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to capture image from camera',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFFFF5252),
-        colorText: Colors.white,
-      );
-    }
-  }
-
-  Future<void> _pickImageFromGallery() async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image.path);
-        });
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick image from gallery',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFFFF5252),
-        colorText: Colors.white,
-      );
-    }
+    } catch (_) {}
   }
 
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: NMTheme.bg,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -145,51 +105,22 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Wrap(
               children: [
-                const Text(
-                  'Upload Image',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
                 ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: Color(0xFF7C3AED),
-                    ),
-                  ),
-                  title: const Text('Camera'),
-                  subtitle: const Text('Take a photo'),
+                  leading: const Icon(Icons.camera_alt_outlined, color: NMTheme.primaryPurple),
+                  title: const Text('Take a Photo', style: TextStyle(fontWeight: FontWeight.w600)),
                   onTap: () {
                     Get.back();
-                    _pickImageFromCamera();
+                    _pickImage(ImageSource.camera);
                   },
                 ),
-                const SizedBox(height: 8),
                 ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.photo_library,
-                      color: Color(0xFF7C3AED),
-                    ),
-                  ),
-                  title: const Text('Gallery'),
-                  subtitle: const Text('Choose from gallery'),
+                  leading: const Icon(Icons.photo_library_outlined, color: NMTheme.primaryPurple),
+                  title: const Text('Choose from Gallery', style: TextStyle(fontWeight: FontWeight.w600)),
                   onTap: () {
                     Get.back();
-                    _pickImageFromGallery();
+                    _pickImage(ImageSource.gallery);
                   },
                 ),
               ],
@@ -203,52 +134,54 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
   Future<void> _submitGrievance() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
+    setState(() => _isSubmitting = true);
+    await Future.delayed(const Duration(milliseconds: 600));
 
     setState(() {
+      grievances.insert(0, {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'title': _titleController.text.trim(),
+        'description': _descriptionController.text.trim(),
+        'status': 'Pending',
+        'date': 'Today',
+        'category': _selectedCategory,
+        'lastMessage': 'Ticket submitted. Review in progress.',
+        'unreadCount': 0,
+      });
       _isSubmitting = false;
       _showRaiseForm = false;
     });
 
-    // Clear form
     _titleController.clear();
     _descriptionController.clear();
     _selectedImage = null;
 
-    // Show success message
     Get.snackbar(
-      'Success',
-      'Your grievance has been submitted successfully',
+      'Grievance Raised',
+      'Your ticket has been logged and assigned to admin support',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFF4CAF50),
+      backgroundColor: NMTheme.accentTeal,
       colorText: Colors.white,
       duration: const Duration(seconds: 3),
-      icon: const Icon(Icons.check_circle, color: Colors.white),
+      borderRadius: 14,
     );
   }
 
   List<Map<String, dynamic>> get _filteredGrievances {
-    if (_selectedFilter == 'All') {
-      return grievances;
-    }
+    if (_selectedFilter == 'All') return grievances;
     return grievances.where((g) => g['status'] == _selectedFilter).toList();
   }
 
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Pending':
-        return const Color(0xFFFF9800);
+        return const Color(0xFFFB8C00);
       case 'In Progress':
-        return const Color(0xFF8B5CF6);
+        return NMTheme.primaryPurple;
       case 'Resolved':
-        return const Color(0xFF4CAF50);
+        return NMTheme.accentTeal;
       default:
-        return Colors.grey;
+        return NMTheme.textSecondary;
     }
   }
 
@@ -259,157 +192,279 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
       case 'Transport':
         return Icons.directions_bus_outlined;
       case 'Facilities':
-        return Icons.location_city_outlined;
+        return Icons.business_outlined;
       default:
-        return Icons.assignment_outlined;
+        return Icons.report_problem_outlined;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_showRaiseForm) {
-      return _buildRaiseGrievanceForm();
-    }
-
     return Scaffold(
       drawer: const ParentAppDrawer(),
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF7C3AED),
-        elevation: 0,
-        title: const Text(
-          'Grievances',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: Column(
-        children: [
-          // Filter chips
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: Colors.white,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: _filters.map((filter) {
-                  final isSelected = _selectedFilter == filter;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
-                      label: Text(filter),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          _selectedFilter = filter;
-                        });
-                      },
-                      selectedColor: const Color(0xFF7C3AED),
-                      backgroundColor: Colors.grey[200],
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black87,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                      checkmarkColor: Colors.white,
-                    ),
-                  );
-                }).toList(),
-              ),
+      backgroundColor: NMTheme.bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: 'Grievance',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () {},
             ),
-          ),
-
-          // Grievances list
-          Expanded(
-            child: _filteredGrievances.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.assignment_outlined,
-                          size: 80,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No grievances found',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _filteredGrievances.length,
-                    itemBuilder: (context, index) {
-                      final grievance = _filteredGrievances[index];
-                      return _buildGrievanceCard(grievance);
-                    },
-                  ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          setState(() {
-            _showRaiseForm = true;
-          });
-        },
-        backgroundColor: const Color(0xFF7C3AED),
-        icon: const Icon(Icons.add),
-        label: const Text('Raise Grievance'),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  Widget _buildGrievanceCard(Map<String, dynamic> grievance) {
-    return GestureDetector(
-      onTap: () {
-        Get.to(
-          () => ParentGrievanceChatScreen(
-            grievanceId: grievance['id'],
-            grievanceTitle: grievance['title'],
-            grievanceStatus: grievance['status'],
-          ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+            _buildFilterTabs(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
+                child: Column(
+                  children: [
+                    if (_showRaiseForm) ...[
+                      _buildRaiseGrievanceForm(),
+                      const SizedBox(height: 20),
+                    ],
+                    ..._filteredGrievances.map((g) => _buildGrievanceCard(g)),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: !_showRaiseForm
+          ? Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: NMTheme.primaryPurple.withOpacity(0.35),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: FloatingActionButton.extended(
+                onPressed: () => setState(() => _showRaiseForm = true),
+                icon: const Icon(Icons.add_rounded, color: Colors.white),
+                label: const Text('Raise Grievance', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                backgroundColor: NMTheme.primaryPurple,
+                elevation: 0,
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildFilterTabs() {
+    return Container(
+      height: 48,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _filters.length,
+        itemBuilder: (context, index) {
+          final filter = _filters[index];
+          final isSelected = _selectedFilter == filter;
+
+          return GestureDetector(
+            onTap: () => setState(() => _selectedFilter = filter),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: isSelected ? NMTheme.primaryPurple : NMTheme.cardBg,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: NMTheme.primaryPurple.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                    : NMTheme.cardShadows,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                filter,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : NMTheme.textDark,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  fontSize: 12.5,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildRaiseGrievanceForm() {
+    return NMCard(
+      padding: const EdgeInsets.all(18),
+      borderRadius: BorderRadius.circular(20),
+      child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with category icon and status
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'New Grievance Ticket',
+                  style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800, color: NMTheme.textDark),
+                ),
+                NMIconButton(
+                  icon: Icons.close_rounded,
+                  size: 32,
+                  iconSize: 18,
+                  iconColor: NMTheme.textSecondary,
+                  onTap: () => setState(() => _showRaiseForm = false),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Text('Category', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark)),
+            const SizedBox(height: 6),
+            NMCard(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+              borderRadius: BorderRadius.circular(14),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedCategory,
+                  isExpanded: true,
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded, color: NMTheme.primaryPurple),
+                  style: const TextStyle(fontWeight: FontWeight.w700, color: NMTheme.textDark, fontSize: 13.5),
+                  items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => _selectedCategory = val);
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text('Subject', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark)),
+            const SizedBox(height: 6),
+            NMCard(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+              borderRadius: BorderRadius.circular(14),
+              child: TextFormField(
+                controller: _titleController,
+                style: const TextStyle(fontSize: 13.5, color: NMTheme.textDark, fontWeight: FontWeight.w600),
+                decoration: const InputDecoration(
+                  hintText: 'Brief title of the issue...',
+                  hintStyle: TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+                  border: InputBorder.none,
+                ),
+                validator: (val) => val == null || val.trim().isEmpty ? 'Required' : null,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text('Details', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: NMTheme.textDark)),
+            const SizedBox(height: 6),
+            NMCard(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              borderRadius: BorderRadius.circular(14),
+              child: TextFormField(
+                controller: _descriptionController,
+                maxLines: 3,
+                style: const TextStyle(fontSize: 13.5, color: NMTheme.textDark),
+                decoration: const InputDecoration(
+                  hintText: 'Explain the issue in detail...',
+                  hintStyle: TextStyle(color: NMTheme.textSecondary, fontSize: 13),
+                  border: InputBorder.none,
+                ),
+                validator: (val) => val == null || val.trim().isEmpty ? 'Required' : null,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _showImageSourceDialog,
+                    icon: const Icon(Icons.attach_file_rounded, size: 18),
+                    label: Text(_selectedImage == null ? 'Attach Photo' : 'Photo Attached'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: NMTheme.primaryPurple,
+                      side: BorderSide(color: NMTheme.primaryPurple.withOpacity(0.3)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Container(
+              width: double.infinity,
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: NMTheme.primaryGradient,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: NMTheme.primaryPurple.withOpacity(0.35),
+                    blurRadius: 12,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _isSubmitting ? null : _submitGrievance,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Center(
+                    child: _isSubmitting
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : const Text(
+                            'Submit Ticket',
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15),
+                          ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGrievanceCard(Map<String, dynamic> g) {
+    final statusColor = _getStatusColor(g['status']);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: NMCard(
+        padding: const EdgeInsets.all(16),
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () {
+            Get.to(() => ParentGrievanceChatScreen(
+                  grievanceId: g['id'],
+                  grievanceTitle: g['title'],
+                  grievanceStatus: g['status'],
+                ));
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C3AED).withOpacity(0.1),
+                      color: NMTheme.primaryPurple.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      _getCategoryIcon(grievance['category']),
-                      color: const Color(0xFF7C3AED),
-                      size: 24,
-                    ),
+                    child: Icon(_getCategoryIcon(g['category']), color: NMTheme.primaryPurple, size: 22),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -417,472 +472,64 @@ class _ParentGrievanceScreenState extends State<ParentGrievanceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          grievance['title'],
+                          g['title'],
                           style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: NMTheme.textDark,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 3),
                         Text(
-                          grievance['category'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
+                          '${g['category']} • ${g['date']}',
+                          style: const TextStyle(fontSize: 12, color: NMTheme.textSecondary),
                         ),
                       ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(
-                        grievance['status'],
-                      ).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
+                      color: statusColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      grievance['status'],
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: _getStatusColor(grievance['status']),
-                      ),
+                      g['status'],
+                      style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w800),
                     ),
                   ),
                 ],
               ),
-            ),
-
-            // Description
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                grievance['description'],
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[700],
-                  height: 1.4,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Footer with date and last message
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
+              const SizedBox(height: 10),
+              NMInsetContainer(
+                padding: const EdgeInsets.all(10),
+                borderRadius: BorderRadius.circular(10),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    g['description'],
+                    style: const TextStyle(color: NMTheme.textDark, fontSize: 12.5, height: 1.3),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
-              child: Row(
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-                  const SizedBox(width: 4),
-                  Text(
-                    grievance['date'],
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  Row(
+                    children: [
+                      const Icon(Icons.chat_bubble_outline_rounded, size: 14, color: NMTheme.primaryPurple),
+                      const SizedBox(width: 5),
+                      Text(
+                        g['lastMessage'] ?? 'Open discussion',
+                        style: const TextStyle(color: NMTheme.primaryPurple, fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      grievance['lastMessage'],
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[700],
-                        fontStyle: FontStyle.italic,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (grievance['unreadCount'] > 0)
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFF5252),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '${grievance['unreadCount']}',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                  const Icon(Icons.arrow_forward_ios_rounded, size: 12, color: NMTheme.primaryPurple),
                 ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRaiseGrievanceForm() {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF7C3AED),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            setState(() {
-              _showRaiseForm = false;
-            });
-          },
-        ),
-        title: const Text(
-          'Raise Grievance',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Info card
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF7C3AED).withOpacity(0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.info_outline,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Text(
-                        'Share your concerns with us. We will respond within 24-48 hours.',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Category selection
-              const Text(
-                'Category',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: DropdownButtonFormField<String>(
-                  value: _selectedCategory,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    prefixIcon: Icon(
-                      Icons.category_outlined,
-                      color: Color(0xFF7C3AED),
-                    ),
-                  ),
-                  items: _categories.map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedCategory = value!;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Title
-              const Text(
-                'Title',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: TextFormField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter grievance title',
-                    prefixIcon: Icon(Icons.title, color: Color(0xFF7C3AED)),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    if (value.trim().length < 5) {
-                      return 'Title must be at least 5 characters';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Description
-              const Text(
-                'Description',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: TextFormField(
-                  controller: _descriptionController,
-                  decoration: const InputDecoration(
-                    hintText: 'Describe your grievance in detail',
-                    prefixIcon: Icon(
-                      Icons.description_outlined,
-                      color: Color(0xFF7C3AED),
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(16),
-                  ),
-                  maxLines: 6,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    if (value.trim().length < 20) {
-                      return 'Description must be at least 20 characters';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Image upload section
-              const Text(
-                'Attachment (Optional)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              if (_selectedImage != null)
-                Stack(
-                  children: [
-                    Container(
-                      height: 200,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        image: DecorationImage(
-                          image: FileImage(_selectedImage!),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedImage = null;
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              else
-                GestureDetector(
-                  onTap: _showImageSourceDialog,
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.grey[300]!,
-                        width: 2,
-                        style: BorderStyle.solid,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.add_photo_alternate_outlined,
-                          size: 48,
-                          color: Colors.grey[400],
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Upload Image',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Camera or Gallery',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 32),
-
-              // Submit button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submitGrievance,
-                  style:
-                      ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ).copyWith(
-                        backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                          (states) {
-                            if (states.contains(WidgetState.disabled)) {
-                              return Colors.grey;
-                            }
-                            return const Color(0xFF7C3AED);
-                          },
-                        ),
-                      ),
-                  child: _isSubmitting
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                          ),
-                        )
-                      : const Text(
-                          'Submit Grievance',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                ),
               ),
             ],
           ),

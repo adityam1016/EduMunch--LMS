@@ -5,6 +5,8 @@ import 'app_drawer.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../auth_controller.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 // Enum for view states
 enum PortalView { portalHome, mcqView, theoryView }
@@ -306,29 +308,26 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: NMTheme.bg,
       drawer: const AppDrawer(),
-      appBar: AppBar(
-        title: const Text(
-          'Student Assessment Portal',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                const Color(0xFF7C3AED),
-                const Color(0xFF6D28D9),
-              ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            NMAppBar(
+              title: currentView == PortalView.portalHome ? 'Test Portal' : 'Assessment',
+              isRoot: currentView == PortalView.portalHome,
+              onLeadingTap: currentView != PortalView.portalHome
+                  ? () {
+                      setState(() {
+                        currentView = PortalView.portalHome;
+                      });
+                    }
+                  : null,
             ),
-          ),
+            Expanded(child: _buildCurrentView()),
+          ],
         ),
       ),
-      body: _buildCurrentView(),
     );
   }
 
@@ -353,135 +352,121 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
     }
 
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header Card
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [const Color(0xFF7C3AED), const Color(0xFF6D28D9)],
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Neumorphic Card
+          NMCard(
+            radius: 24,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Assessment Portal',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: NMTheme.primaryPurple,
+                    letterSpacing: -0.3,
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF7C3AED).withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                SizedBox(height: 6),
+                Text(
+                  'Select an exam below to begin timed evaluations and track performance analytics.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: NMTheme.textSecondary,
+                    height: 1.4,
                   ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Welcome to Assessment Portal',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Choose an exam type to begin your test',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            // Info Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.amber[50],
-                border: Border.all(color: Colors.amber[300]!, width: 1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: Colors.amber[800],
-                    size: 24,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Exam Duration',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.amber[900],
-                          ),
+          ),
+          const SizedBox(height: 18),
+
+          // Duration Info Box in Inset Container
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: NMTheme.insetDecoration(radius: 16),
+            child: Row(
+              children: const [
+                Icon(
+                  Icons.timer_outlined,
+                  color: Color(0xFF7C3AED),
+                  size: 22,
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Standard Duration: 3 Hours',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: NMTheme.textPrimary,
+                          fontSize: 13,
                         ),
-                        Text(
-                          '3 hours (180 minutes) - Timer starts when exam begins',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.amber[800],
-                          ),
+                      ),
+                      Text(
+                        'Timer begins automatically when you launch the test.',
+                        style: TextStyle(
+                          color: NMTheme.textSecondary,
+                          fontSize: 11.5,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            const SizedBox(height: 32),
-            // Section Title
-            Text(
-              'Select Exam Type',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Theory Exam Card
-            _buildExamCard(
-              context,
-              title: 'Theory Exam',
-              subtitle: '5 Descriptive Questions',
-              icon: Icons.description_outlined,
-              onTap: () {
-                setState(() {
-                  currentView = PortalView.theoryView;
-                  _remainingSeconds = 3 * 60 * 60;
-                  _timerStarted = false;
-                });
-              },
-              color1: const Color(0xFF6A5ACD),
-              color2: const Color(0xFF8B7DD8),
-            ),
-            const SizedBox(height: 24),
-            // MCQ Exam Card
-            _buildExamCard(
-              context,
-              title: 'MCQ Exam',
-              subtitle: '10 Multiple Choice Questions',
-              icon: Icons.quiz_outlined,
-              onTap: () {
-                setState(() {
-                  currentView = PortalView.mcqView;
-                  currentQuestionIndex = 0;
-                  showMCQResult = false;
-                  _remainingSeconds = 3 * 60 * 60;
-                  _timerStarted = false;
-                });
-              },
-              color1: const Color(0xFF7C3AED),
-              color2: const Color(0xFF8B5CF6),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 24),
+
+          const NMSectionHeader(title: 'Available Exam Modules'),
+          const SizedBox(height: 12),
+
+          // Theory Exam Card
+          _buildExamCard(
+            context,
+            title: 'Theory Exam',
+            subtitle: '5 Descriptive Questions with Image Upload',
+            icon: Icons.description_rounded,
+            onTap: () {
+              setState(() {
+                currentView = PortalView.theoryView;
+                _remainingSeconds = 3 * 60 * 60;
+                _timerStarted = false;
+              });
+            },
+            color1: const Color(0xFF0C6E5A),
+            color2: const Color(0xFF074F40),
+          ),
+          const SizedBox(height: 16),
+
+          // MCQ Exam Card
+          _buildExamCard(
+            context,
+            title: 'MCQ Assessment',
+            subtitle: '10 Multiple Choice Practice Questions',
+            icon: Icons.quiz_rounded,
+            onTap: () {
+              setState(() {
+                currentView = PortalView.mcqView;
+                currentQuestionIndex = 0;
+                showMCQResult = false;
+                _remainingSeconds = 3 * 60 * 60;
+                _timerStarted = false;
+              });
+            },
+            color1: const Color(0xFF381868),
+            color2: const Color(0xFF4C218E),
+          ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }
@@ -497,128 +482,72 @@ class _TestPortalScreenState extends State<TestPortalScreen> {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        elevation: 12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [color1, color2],
+          ),
+          boxShadow: NMTheme.coloredCardShadow(color1, opacity: 0.4),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                color1,
-                color2,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 58,
+                  height: 58,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.25),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.85),
+                          fontSize: 12.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                NMWhiteButton(
+                  text: 'Start',
+                  textColor: color1,
+                  radius: 12,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  onTap: onTap,
+                ),
               ],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: color1.withOpacity(0.5),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-              BoxShadow(
-                color: color2.withOpacity(0.3),
-                blurRadius: 15,
-                offset: const Offset(-5, 5),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
-                        width: 2,
-                      ),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          subtitle,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.15),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.timer_outlined,
-                      color: Colors.white,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '3 hours duration',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );

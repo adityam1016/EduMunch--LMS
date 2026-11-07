@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'parent_app_drawer.dart';
 import 'parent_notification_screen.dart';
+import '../theme/neumorphic_theme.dart';
+import '../widgets/neumorphic_widgets.dart';
 
 class ParentDashboardMain extends StatefulWidget {
   final String childName;
@@ -23,98 +25,75 @@ class _ParentDashboardMainState extends State<ParentDashboardMain> {
   bool _isProfileExpanded = false;
 
   Map<String, String> get selectedChild {
-    return widget.children.firstWhere((child) => child['name'] == widget.childName);
+    return widget.children.firstWhere(
+      (child) => child['name'] == widget.childName,
+      orElse: () => widget.children.first,
+    );
   }
+
+  final List<Map<String, dynamic>> _features = [
+    {
+      'title': 'Attendance',
+      'icon': Icons.calendar_today_outlined,
+      'color': NMTheme.accentOcean,
+      'route': '/parent-attendance',
+    },
+    {
+      'title': 'Performance',
+      'icon': Icons.trending_up_rounded,
+      'color': NMTheme.accentTeal,
+      'route': '/parent-performance',
+    },
+    {
+      'title': 'Payments',
+      'icon': Icons.account_balance_wallet_outlined,
+      'color': NMTheme.primaryPurple,
+      'route': '/payments',
+    },
+    {
+      'title': 'Timetable',
+      'icon': Icons.schedule_outlined,
+      'color': const Color(0xFFFB8C00),
+      'route': '/parent-timetable',
+    },
+    {
+      'title': 'PTM Online',
+      'icon': Icons.groups_outlined,
+      'color': const Color(0xFF43A047),
+      'route': '/ptm',
+    },
+    {
+      'title': 'Grievance',
+      'icon': Icons.support_agent_outlined,
+      'color': const Color(0xFFE53935),
+      'route': '/parent-grievance',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final child = selectedChild;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: NMTheme.bg,
       drawer: const ParentAppDrawer(),
       body: SafeArea(
         child: Column(
           children: [
-            // App Bar with Gradient
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [const Color(0xFF8B5CF6), const Color(0xFF7C3AED)],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  children: [
-                    Builder(
-                      builder: (context) => GestureDetector(
-                        onTap: () => Scaffold.of(context).openDrawer(),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(Icons.menu, color: Colors.white, size: 24),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'EduMunch',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Get.to(() => const ParentNotificationScreen()),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 24),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            NMAppBar(
+              title: 'EduMunch',
+              isRoot: true,
+              onSearchTap: () {},
+              onNotificationTap: () => Get.to(() => const ParentNotificationScreen()),
             ),
-
-            // Dashboard Title
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 16, bottom: 16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Parent Dashboard',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-              ),
-            ),
-
-            // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: Column(
                   children: [
-                    // Parent Profile Card
-                    _buildParentProfileCard(),
-                    const SizedBox(height: 24),
-
-                    // Child Profile Card
-                    _buildChildProfileCard(),
-                    const SizedBox(height: 24),
-
-                    // Feature Grid
-                    _buildFeatureGrid(),
+                    _buildChildSelectorCard(child),
                     const SizedBox(height: 20),
+                    _buildFeatureGrid(),
                   ],
                 ),
               ),
@@ -125,240 +104,163 @@ class _ParentDashboardMainState extends State<ParentDashboardMain> {
     );
   }
 
-  Widget _buildParentProfileCard() {
-    return Container(
+  Widget _buildChildSelectorCard(Map<String, String> child) {
+    return NMCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, Colors.white.withOpacity(0.95)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Row(
+      borderRadius: BorderRadius.circular(22),
+      child: Column(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF7C3AED), width: 2),
-            ),
-            child: ClipOval(
-              child: Image.asset(
-                'assets/profile.png',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[200],
-                    child: Icon(Icons.person, size: 40, color: Colors.grey),
-                  );
-                },
+          Row(
+            children: [
+              Container(
+                width: 58,
+                height: 58,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: NMTheme.surface,
+                  boxShadow: NMTheme.cardShadows,
+                ),
+                child: const Icon(Icons.face_rounded, size: 36, color: NMTheme.primaryPurple),
               ),
-            ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      child['name'] ?? '',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: NMTheme.textDark,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      child['batch'] ?? '',
+                      style: const TextStyle(fontSize: 13, color: NMTheme.textSecondary, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'ID: ${child['studentId']}',
+                      style: const TextStyle(fontSize: 12, color: NMTheme.accentTeal, fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              ),
+              NMIconButton(
+                icon: _isProfileExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+                size: 36,
+                iconSize: 22,
+                iconColor: NMTheme.textSecondary,
+                onTap: () => setState(() => _isProfileExpanded = !_isProfileExpanded),
+              ),
+            ],
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          if (_isProfileExpanded) ...[
+            const SizedBox(height: 14),
+            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Manoj Sharma',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Parent',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+                const Text('Center', style: TextStyle(color: NMTheme.textSecondary, fontSize: 13)),
+                Text(child['center'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700, color: NMTheme.textDark, fontSize: 13)),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChildProfileCard() {
-    return GestureDetector(
-      onTap: () => setState(() => _isProfileExpanded = !_isProfileExpanded),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.white, Colors.white.withOpacity(0.95)],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[300]!),
-        ),
-        child: Column(
-          children: [
+            const SizedBox(height: 8),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF4CAF50), width: 2),
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/profile.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[200],
-                          child: Icon(Icons.person, size: 40, color: Colors.grey),
-                        );
-                      },
+                const Text('Branch', style: TextStyle(color: NMTheme.textSecondary, fontSize: 13)),
+                Text(child['branch'] ?? '', style: const TextStyle(fontWeight: FontWeight.w700, color: NMTheme.textDark, fontSize: 13)),
+              ],
+            ),
+            const SizedBox(height: 14),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Switch Child:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, color: NMTheme.textDark)),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: widget.children.map((c) {
+                final isSelected = c['name'] == child['name'];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: GestureDetector(
+                    onTap: () => widget.onChangeChild(c['name']!),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: isSelected ? NMTheme.primaryPurple : NMTheme.surface,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: isSelected ? null : NMTheme.cardShadows,
+                      ),
+                      child: Text(
+                        c['name']!,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : NMTheme.textDark,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        selectedChild['name']!,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        selectedChild['batch']!,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      Text(
-                        'ID: ${selectedChild['studentId']}',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: const Color(0xFF4CAF50),
-                              fontWeight: FontWeight.w500,
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  _isProfileExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                  color: Colors.grey,
-                ),
-              ],
+                );
+              }).toList(),
             ),
-            if (_isProfileExpanded) ...[
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 12),
-              _buildDetailRow('Name', selectedChild['name']!),
-              _buildDetailRow('Batch', selectedChild['batch']!),
-              _buildDetailRow('Center', selectedChild['center']!),
-              _buildDetailRow('Branch', selectedChild['branch']!),
-              _buildDetailRow('Student ID', selectedChild['studentId']!),
-            ],
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
-          ),
-          Text(': ', style: Theme.of(context).textTheme.bodyMedium),
-          Expanded(
-            child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-            ),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildFeatureGrid() {
-    final features = [
-      {'icon': Icons.assignment_outlined, 'label': 'Grievance', 'color': const Color(0xFFBA68C8)},
-      {'icon': Icons.people_outline, 'label': 'Parent-Teacher\nMeeting', 'color': const Color(0xFFBA68C8)},
-      {'icon': Icons.calendar_today_outlined, 'label': 'Attendance\nRecord', 'color': const Color(0xFFFFCA28)},
-      {'icon': Icons.trending_up, 'label': 'Student\nPerformance', 'color': const Color(0xFFEF5350)},
-      {'icon': Icons.account_balance_wallet, 'label': 'Payments\nScreen', 'color': const Color(0xFF66BB6A)},
-      {'icon': Icons.emoji_events_outlined, 'label': 'Results', 'color': const Color(0xFF8B5CF6)},
-    ];
-
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+      itemCount: _features.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 0.85,
+        childAspectRatio: 1.35,
       ),
-      itemCount: features.length,
       itemBuilder: (context, index) {
-        final feature = features[index];
-        return _buildFeatureCard(
-          icon: feature['icon'] as IconData,
-          label: feature['label'] as String,
-          color: feature['color'] as Color,
+        final feat = _features[index];
+        final Color color = feat['color'];
+
+        return NMCard(
+          padding: const EdgeInsets.all(16),
+          borderRadius: BorderRadius.circular(18),
+          child: InkWell(
+            onTap: () => Get.toNamed(feat['route']),
+            borderRadius: BorderRadius.circular(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(feat['icon'], color: color, size: 22),
+                ),
+                Text(
+                  feat['title'],
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w800,
+                    color: NMTheme.textDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
-    );
-  }
-
-  Widget _buildFeatureCard({
-    required IconData icon,
-    required String label,
-    required Color color,
-  }) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [color.withOpacity(0.7), color.withOpacity(0.5)],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            )
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: Colors.white),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
